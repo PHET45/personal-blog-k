@@ -4,10 +4,14 @@ const Navbar = () => {
   return (
   <div className = "flex justify-between items-center p-4 w-full">
     <nav className="flex flex-row justify-between px-20 w-full items-center  py-4 md:px-8 bg-background border-b border-muted border-gray-200">
-      <h1 className="">dd</h1>
+      <img src="/public/images/logo.png" alt="logo" />
       <ul className="flex flex-row gap-5 ">
-        <li>Login</li>
-        <li>Signup</li>
+        <li>
+          <button className="text-black bg-white   hover:bg-white focus:outline-none  focus:ring-stone-400 font-medium rounded-full text-sm  me-2 mb-2 dark:bg-white dark:hover:border-stone-400 dark:hover:text-stone-400 dark:focus:ring-stone-400 dark:border-gray-800 px-[40px] py-[12px] border-1">Login</button>
+        </li>
+        <li>
+          <button className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none  focus:ring-gray-300 font-medium rounded-full text-sm  me-2 mb-2 dark:bg-gray-800 dark:hover:bg-[hsla(36,4%,44%,1)] dark:focus:ring-gray-700 dark:border-stone-400 px-[40px] py-[12px] border-1 ">Signup</button>
+        </li>
       </ul>
     </nav>
   </div>
@@ -34,6 +38,8 @@ const Hero = () => {
             <h3 className="text-2xl font-bold mb-4">Thompson P.</h3>
             <p className="text-[#78716c] text-muted-foreground mb-4">
               I am a pet enthusiast and freelance writer who specializes in animal behavior and care. With a deep love for cats, I enjoy sharing insights on feline companionship and wellness.
+            </p>
+            <p className="text-[#78716c] text-muted-foreground">
               When i’m not writing, I spends time volunteering at my local animal shelter, helping cats find loving homes.
             </p>
         </div>
