@@ -1,17 +1,33 @@
 
-import './App.css'
 
+const Navbar = () => {
+  return (
+    <nav className="">
+      <h1 className="">dd</h1>
+      <ul className="">
+        <li>Login</li>
+        <li>Signup</li>
+      </ul>
+    </nav>
+  )
+}
+
+const Hero = () => {
+  return (
+    <section className="">
+      <Navbar />
+    </section>
+  )
+}
 function App() {
-  
-
   return (
     <>
-      <section>
-        <h1>My First React App on Vite</h1>
-      </section>
+
+     <Hero />
 
     </>
   )
 }
 
 export default App
+
