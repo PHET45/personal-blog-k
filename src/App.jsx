@@ -3,7 +3,7 @@ import "tailwindcss";
 const Navbar = () => {
   return (
   <div className = "flex justify-between items-center p-4 w-full">
-    <nav className="flex flex-row justify-between px-20 w-full ">
+    <nav className="flex flex-row justify-between px-20 w-full items-center  py-4 md:px-8 bg-background border-b border-muted border-gray-200">
       <h1 className="">dd</h1>
       <ul className="flex flex-row gap-5 ">
         <li>Login</li>
@@ -16,8 +16,8 @@ const Navbar = () => {
 
 const Hero = () => {
   return (
-    <section className="flex justify-center items-center p-4 w-full">
-      <div className = "flex flex-col justify-center px-20 w-full gap-5">
+    <section className="flex justify-center items-center p-4 w-full ">
+      <div className = "flex flex-col justify-center  items-center w-full gap-5 container md:px-8 px-4 py-8 lg:flex-row lg:py-16 mx-auto">
         <div className = "flex flex-col">
             <h1 className = "flex justify-self-start text-4xl lg:text-5xl font-bold mb-4">
               Stay 
@@ -43,7 +43,7 @@ const Hero = () => {
 }
 function App() {
   return (
-    <div className = "flex flex-col justify-center items-center  w-full">
+    <div className = "flex flex-col justify-center items-center  w-full ">
       <Navbar />
       <Hero />
     </div>
