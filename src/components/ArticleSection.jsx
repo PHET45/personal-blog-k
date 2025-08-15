@@ -5,7 +5,7 @@ const ArticleSection = () => {
   return (
     <div>
         <div className="grid w-full max-w-sm items-center gap-3">
-            <Input type="email" id="email" placeholder="Email" />
+            <Input type="search" id="search" placeholder="search" />
         </div>
     </div>
   )
