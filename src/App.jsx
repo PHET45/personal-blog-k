@@ -12,7 +12,6 @@ function App() {
       <Hero />
       <ArticleSection/>
       <Footer/>
-    
     </div>
   )
 }
