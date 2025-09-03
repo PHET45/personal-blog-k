@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import BlogCard from './BlogCard';
 
 
 const ArticleSection = () => {
@@ -72,6 +73,7 @@ const ArticleSection = () => {
           </div>
         </div>
       </div>
+      <BlogCard/>
     </div>
   )
 }
