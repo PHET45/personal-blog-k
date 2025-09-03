@@ -4,17 +4,25 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
 import BlogCard from './BlogCard';
+import GooeyNav from './ui/GooeyNav';
 
 
 const ArticleSection = () => {
+  const categories = [
+    { value: "Highlight", label: "Highlight" },
+    { value: "Cat", label: "Cat" },
+    { value: "Inspiration", label: "Inspiration" },
+    { value: "General", label: "General" }
+  ];
   
   return (
+    
     <div className='flex flex-col gap-6 p-4 md:p-4'>
+      
       <div className='font-Poppins font-semibold text-2xl leading-8 text-gray-800'>
         <h3>Latest articles</h3>
       </div>
@@ -22,11 +30,16 @@ const ArticleSection = () => {
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between w-full mx-auto p-4 px-16 rounded-lg bg-stone-100 shadow-sm">
         <div className="flex items-center gap-3" >
-            <button className="px-4 py-2 hover:bg-gray-200 focus:bg-gray-300 text-gray-700 rounded-lg font-medium">Highlight</button>
-            <button className="px-4 py-2 text-gray-700 hover:bg-gray-200 focus:bg-gray-300 rounded-lg transition-colors">Cat</button>
-            <button className="px-4 py-2 text-gray-700 hover:bg-gray-200 focus:bg-gray-300 rounded-lg transition-colors">Inspiration</button>
-            <button className="px-4 py-2 text-gray-700 hover:bg-gray-200 focus:bg-gray-300 rounded-lg transition-colors">General</button>
-            
+            <GooeyNav
+              items={categories}
+              particleCount={15}
+              particleDistances={[90, 10]}
+              particleR={100}
+              initialActiveIndex={0}
+              animationTime={600}
+              timeVariance={300}
+              colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+            />
         </div>
         <div className="relative">
             <input 
@@ -62,10 +75,11 @@ const ArticleSection = () => {
       </SelectTrigger>
       <SelectContent className="bg-stone-100 ">
         <SelectGroup >
-          <SelectItem value="Highlight">Highlight</SelectItem>
-          <SelectItem value="Cat">Cat</SelectItem>
-          <SelectItem value="Inspiration">Inspiration</SelectItem>
-          <SelectItem value="General">General</SelectItem>
+          {categories.map((category) => (
+            <SelectItem key={category.value} value={category.value}>
+              {category.label}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>

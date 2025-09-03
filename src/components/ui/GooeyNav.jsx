@@ -134,6 +134,10 @@ const GooeyNav = ({
         {`
           :root {
             --linear-ease: linear(0, 0.068, 0.19 2.7%, 0.804 8.1%, 1.037, 1.199 13.2%, 1.245, 1.27 15.8%, 1.274, 1.272 17.4%, 1.249 19.1%, 0.996 28%, 0.949, 0.928 33.3%, 0.926, 0.933 36.8%, 1.001 45.6%, 1.013, 1.019 50.8%, 1.018 54.4%, 1 63.1%, 0.995 68%, 1.001 85%, 1);
+            --color-1: white;
+            --color-2: white;
+            --color-3: white;
+            --color-4: white;
           }
           .effect {
             position: absolute;
@@ -144,7 +148,7 @@ const GooeyNav = ({
             z-index: 1;
           }
           .effect.text {
-            color: white;
+            color: black;
             transition: color 0.3s ease;
           }
           .effect.text.active {
@@ -159,7 +163,7 @@ const GooeyNav = ({
             position: absolute;
             inset: -75px;
             z-index: -2;
-            background: black;
+            background: transparent;
           }
           .effect.filter::after {
             content: "";
@@ -247,9 +251,13 @@ const GooeyNav = ({
               opacity: 0;
             }
           }
+          li {
+            color: black !important;
+            text-shadow: none !important;
+          }
           li.active {
-            color: black;
-            text-shadow: none;
+            color: black !important;
+            text-shadow: none !important;
           }
           li.active::after {
             opacity: 1;
