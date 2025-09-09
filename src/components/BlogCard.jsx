@@ -1,8 +1,7 @@
-import { blogPosts } from '@/data/blogPost'
-function BlogCard() {
+function BlogCard({ blogs = [] }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 justify-items-center ">
-      {blogPosts.map((post) => (
+      {blogs.map((post) => (
         <div key={post.id} className="flex flex-col gap-4 w-full max-w-md">
           <a
             href="#"
@@ -25,7 +24,7 @@ function BlogCard() {
             </div>
           </a>
           <div className="flex flex-col">
-            <div className="flex">
+            <div className="flex gap-2">
               <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">
                 {post.category}
               </span>

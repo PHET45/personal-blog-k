@@ -1,16 +1,33 @@
-import http from '@/api/http' // <- ใช้ axios instance ที่ config ไว้
+import { blogPosts } from '../data/blogPost'
 
-export const getBlogs = async (keywords = '') => {
-  const res = await http.get(`/blogs?keywords=${encodeURIComponent(keywords)}`)
-  return res.data
+// params: { page?: number, limit?: number, category?: string, keyword?: string } | string
+export const getBlogs = async (params = {}) => {
+  if (typeof params === 'string') {
+    params = { keyword: params }
+  }
+
+  const { page = 1, limit = 6, category = '', keyword = '' } = params
+
+  let filtered = [...blogPosts]
+  if (category) {
+    const cat = String(category).toLowerCase()
+    filtered = filtered.filter((p) => String(p.category).toLowerCase() === cat)
+  }
+
+  if (keyword) {
+    const q = String(keyword).toLowerCase()
+    filtered = filtered.filter((p) =>
+      [p.title, p.description, p.content]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(q))
+    )
+  }
+
+  const start = (Number(page) - 1) * Number(limit)
+  const end = start + Number(limit)
+  return filtered.slice(start, end)
 }
 
 export const getBlogById = async (id) => {
-  const res = await http.get(`/blogs/${id}`)
-  return res.data
-}
-
-export const createBlog = async (data) => {
-  const res = await http.post('/blogs', data)
-  return res.data
+  return blogPosts.find((p) => String(p.id) === String(id)) ?? null
 }

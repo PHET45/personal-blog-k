@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Select,
   SelectContent,
@@ -9,17 +8,19 @@ import {
 } from '@/components/ui/select'
 import BlogCard from './BlogCard'
 import GooeyNav from './ui/GooeyNav'
-// import { useFetch } from '@/hooks/useFetch'
+import { blogPosts } from '../data/blogPost'
+import { useFetch } from '@/hooks/useFetch'
 
 const ArticleSection = () => {
-  // const {  blogs, text, setText, selectedTags, handleTagClick } = useFetch();
-
+  const { blogs, text, setText, category, setCategory } = useFetch()
   const categories = [
     { value: 'Highlight', label: 'Highlight' },
     { value: 'Cat', label: 'Cat' },
     { value: 'Inspiration', label: 'Inspiration' },
     { value: 'General', label: 'General' },
   ]
+
+  const filteredBlogs = blogs.length ? blogs : blogPosts
 
   return (
     <div className="flex flex-col gap-6 items-center p-4 md:p-4">
@@ -45,6 +46,8 @@ const ArticleSection = () => {
             type="text"
             placeholder="Search"
             className="w-64 px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
           <svg
             className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -68,7 +71,9 @@ const ArticleSection = () => {
           <input
             type="text"
             placeholder="Search"
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black-500 focus:border-transparent"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
           <svg
             className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -90,15 +95,15 @@ const ArticleSection = () => {
             Category
           </label>
           <div className="relative">
-            <Select>
+            <Select value={category} onValueChange={setCategory}>
               <SelectTrigger className="w-full px-4 py-2  rounded-lg focus:ring-2   appearance-none ">
                 <SelectValue placeholder="Highlight" />
               </SelectTrigger>
               <SelectContent className="bg-stone-100 ">
                 <SelectGroup>
-                  {categories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -107,7 +112,7 @@ const ArticleSection = () => {
           </div>
         </div>
       </div>
-      <BlogCard />
+      <BlogCard blogs={filteredBlogs} />
     </div>
   )
 }
