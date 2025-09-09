@@ -1,20 +1,12 @@
-
-
-import Navbar from "./components/Nav";
-import Hero from "./components/Hero";
-import {Footer} from "./components/Footer";
-import ArticleSection from "./components/ArticleSection"
+import AppRoutes from './routes/routes'
+import { BrowserRouter } from 'react-router-dom'
 
 function App() {
   return (
-    <div className = "flex flex-col w-full ">
-      <Navbar />
-      <Hero />
-      <ArticleSection/>
-      <Footer/>
-    </div>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   )
 }
 
 export default App
-
