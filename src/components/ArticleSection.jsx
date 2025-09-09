@@ -9,8 +9,11 @@ import {
 } from '@/components/ui/select'
 import BlogCard from './BlogCard'
 import GooeyNav from './ui/GooeyNav'
+// import { useFetch } from '@/hooks/useFetch'
 
 const ArticleSection = () => {
+  // const {  blogs, text, setText, selectedTags, handleTagClick } = useFetch();
+
   const categories = [
     { value: 'Highlight', label: 'Highlight' },
     { value: 'Cat', label: 'Cat' },
