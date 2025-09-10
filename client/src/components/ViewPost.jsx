@@ -26,7 +26,7 @@ export const ViewPost = () => {
     run()
   }, [postid])
   return (
-    <div className="max-w-[1200px] mx-auto p-4 items-center markdown">
+    <div className="max-w-[1200px] mx-auto p-4 items-center ">
       {loading && <div>Loading...</div>}
       {!loading && !post && (
         <div className="flex flex-col items-center gap-6 py-8">
@@ -49,12 +49,12 @@ export const ViewPost = () => {
       )}
       <div>
         {!loading && post && (
-          <article className="max-w-auto">
+          <article className="max-w-auto markdown">
             {post.image && (
               <img
                 src={post.image}
                 alt={post.title}
-                className="w-full rounded-lg mb-6  object-cover object-center"
+                className="w-full rounded-lg mb-6  object-cover object-center "
               />
             )}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
