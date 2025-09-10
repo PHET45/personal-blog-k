@@ -47,7 +47,6 @@ export const useFetch = () => {
     [fetchBlog]
   )
 
-
   // Function to setup DOM observer for category changes
   const setupCategoryObserver = () => {
     const el = document.querySelector('.effect.text')

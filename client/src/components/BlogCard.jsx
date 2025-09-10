@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function BlogCard({ blogs = [] }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 justify-items-center ">
@@ -29,11 +31,11 @@ function BlogCard({ blogs = [] }) {
                 {post.category}
               </span>
             </div>
-            <a href="#">
+            <Link to={`/post/${post.id}`}>
               <h2 className="text-start font-bold text-xl mb-2 line-clamp-2 hover:underline">
                 {post.title}
               </h2>
-            </a>
+            </Link>
             <p className="text-muted-foreground text-sm mb-4 flex-grow line-clamp-3">
               {post.description}
             </p>

@@ -2,6 +2,7 @@ import React from 'react'
 import { FaGithub } from 'react-icons/fa'
 import { FaLinkedin } from 'react-icons/fa'
 import { AiFillGoogleCircle } from 'react-icons/ai'
+import { Link } from 'react-router-dom'
 
 export const Footer = () => {
   return (
@@ -26,8 +27,8 @@ export const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-center lg:justify-end lg:px-5 lg:my-[-30px] py-5  underline">
-        <button className="cursor-pointer">Home page</button>
+      <div className="flex items-center justify-center lg:justify-end lg:px-5 lg:my-[-30px] py-5  ">
+        <Link className='hover:underline' to="/">Home page</Link>
       </div>
     </div>
   )
