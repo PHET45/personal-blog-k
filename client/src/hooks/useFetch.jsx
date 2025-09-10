@@ -47,7 +47,6 @@ export const useFetch = () => {
     [fetchBlog]
   )
 
-  // Function to handle search and fetch logic now inlined in useEffect below
 
   // Function to setup DOM observer for category changes
   const setupCategoryObserver = () => {
