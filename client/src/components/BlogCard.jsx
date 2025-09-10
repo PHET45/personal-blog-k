@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom'
 
 function BlogCard({ blogs = [] }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 justify-items-center ">
+    
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10  justify-items-center p-4 ">
       {blogs.map((post) => (
         <div key={post.id} className="flex flex-col gap-4 w-full max-w-md">
           <a
@@ -53,6 +54,7 @@ function BlogCard({ blogs = [] }) {
         </div>
       ))}
     </div>
+   
   )
 }
 

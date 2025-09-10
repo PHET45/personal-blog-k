@@ -10,6 +10,7 @@ import BlogCard from './BlogCard'
 import GooeyNav from './ui/GooeyNav'
 import { useFetch } from '@/hooks/useFetch'
 
+
 const ArticleSection = () => {
   const {
     blogs,
@@ -31,7 +32,7 @@ const ArticleSection = () => {
   const filteredBlogs = blogs
 
   return (
-    <div className="flex flex-col gap-6 items-center p-4 md:p-4">
+    <div className="flex flex-col gap-10 items-center p-4 md:p-4 ">
       <div className="font-Poppins font-semibold text-2xl leading-8 text-gray-800 self-start">
         <h3>Latest articles</h3>
       </div>
@@ -120,7 +121,20 @@ const ArticleSection = () => {
           </div>
         </div>
       </div>
-      <BlogCard blogs={filteredBlogs} />
+      {isLoading && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 w-full max-w-5xl h-[100vh]">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="w-full max-w-md animate-pulse">
+              <div className="h-[212px] sm:h-[360px] w-full rounded-lg bg-gray-200 mb-4" />
+              <div className="h-4 w-24 bg-gray-200 rounded mb-2" />
+              <div className="h-6 w-3/4 bg-gray-200 rounded mb-3" />
+              <div className="h-4 w-full bg-gray-200 rounded mb-2" />
+              <div className="h-4 w-5/6 bg-gray-200 rounded" />
+            </div>
+          ))}
+        </div>
+      )}
+      {!isLoading && <BlogCard blogs={filteredBlogs} />}
       {hasMore && (
         <div className="text-center mt-8">
           <button
@@ -133,6 +147,7 @@ const ArticleSection = () => {
           </button>
         </div>
       )}
+
     </div>
   )
 }

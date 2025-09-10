@@ -75,6 +75,8 @@ export const useFetch = () => {
     setHasMore(true)
     setBlogs([])
     if (text) {
+      // แสดงสถานะโหลดทันทีขณะรอ debounce เพื่อ UX ที่ลื่นไหลขึ้น
+      setIsLoading(true)
       debouncedFetch(text)
     } else {
       fetchBlog({ page: 1 })
