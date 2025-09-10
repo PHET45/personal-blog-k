@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
     return (
-    <div className = "flex justify-between items-center p-4 w-full">
+    <div className = "flex justify-between items-center p-4 w-full ">
       <nav className="flex flex-row justify-between px-20 w-full items-center  py-4 md:px-8 bg-background border-b border-muted border-gray-200">
         <img src="/public/images/logo.png" alt="logo" />
         <ul className="flex flex-row gap-5 ">
