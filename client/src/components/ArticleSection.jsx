@@ -9,7 +9,7 @@ import {
 import BlogCard from './BlogCard'
 import GooeyNav from './ui/GooeyNav'
 import { useFetch } from '@/hooks/useFetch'
-
+import PillNav from './ui/PillNav'
 
 const ArticleSection = () => {
   const {
@@ -147,7 +147,6 @@ const ArticleSection = () => {
           </button>
         </div>
       )}
-
     </div>
   )
 }
