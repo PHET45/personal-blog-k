@@ -86,7 +86,8 @@ export const ViewPost = () => {
                       <ReactMarkdown>{post.content}</ReactMarkdown>
                     )}
                     {/* laptop */}
-                    <div className="w-full rounded-3xl bg-stone-100 p-4 flex flex-row justify-between items-center shadow-sm mt-4">
+                    {/* Desktop social bar */}
+                    <div className="w-full rounded-3xl bg-stone-100 p-4 flex flex-row justify-between items-center shadow-sm mt-4 hidden lg:flex">
                       <div>
                         <PillNav
                           items={[
@@ -135,6 +136,28 @@ export const ViewPost = () => {
                           hoveredPillTextColor="#222"
                           pillTextColor="#222"
                         />
+                      </div>
+                    </div>
+                    {/* Mobile social bar */}
+                    <div className="w-full rounded-3xl bg-stone-100 p-3 flex flex-col items-center gap-3 shadow-sm mt-4 flex-wrap lg:hidden">
+                      <button className="flex items-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                        <CiFaceSmile className="text-xl mr-2" />
+                        <span>32</span>
+                      </button>
+                      <div className="flex flex-row gap-2 w-full justify-center">
+                        <button className="flex items-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                          <IoCopyOutline className="text-xl mr-2" />
+                          <span>Copy link</span>
+                        </button>
+                        <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                          <FaFacebook />
+                        </button>
+                        <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                          <SlSocialLinkedin />
+                        </button>
+                        <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                          <CiTwitter />
+                        </button>
                       </div>
                     </div>
                   </div>
