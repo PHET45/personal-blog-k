@@ -8,11 +8,19 @@ import {
 } from '@/components/ui/select'
 import BlogCard from './BlogCard'
 import GooeyNav from './ui/GooeyNav'
-import { blogPosts } from '../data/blogPost'
 import { useFetch } from '@/hooks/useFetch'
 
 const ArticleSection = () => {
-  const { blogs, text, setText, category, setCategory } = useFetch()
+  const {
+    blogs,
+    text,
+    setText,
+    category,
+    setCategory,
+    hasMore,
+    isLoading,
+    loadMore,
+  } = useFetch()
   const categories = [
     { value: 'Highlight', label: 'Highlight' },
     { value: 'Cat', label: 'Cat' },
@@ -20,7 +28,7 @@ const ArticleSection = () => {
     { value: 'General', label: 'General' },
   ]
 
-  const filteredBlogs = blogs.length ? blogs : blogPosts
+  const filteredBlogs = blogs
 
   return (
     <div className="flex flex-col gap-6 items-center p-4 md:p-4">
@@ -113,6 +121,18 @@ const ArticleSection = () => {
         </div>
       </div>
       <BlogCard blogs={filteredBlogs} />
+      {hasMore && (
+        <div className="text-center mt-8">
+          <button
+            type="button"
+            onClick={loadMore}
+            disabled={isLoading}
+            className="hover:text-muted-foreground font-medium underline disabled:opacity-60 cursor-pointer"
+          >
+            {isLoading ? 'Loading...' : 'View more'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
