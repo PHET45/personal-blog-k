@@ -9,6 +9,9 @@ import { IoCopyOutline } from 'react-icons/io5'
 import { FaFacebook } from 'react-icons/fa'
 import { CiTwitter } from 'react-icons/ci'
 import { SlSocialLinkedin } from 'react-icons/sl'
+import { Textarea } from './ui/textarea'
+import { Label } from './ui/label'
+
 export const ViewPost = () => {
   const { postid } = useParams()
   const [post, setPost] = useState(null)
@@ -57,141 +60,167 @@ export const ViewPost = () => {
                 className="w-full rounded-lg mb-6  object-cover object-center "
               />
             )}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="lg:col-span-2 ">
-                <div className="flex flex-col lg:flex-row gap-10 items-start">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-3">
-                      {post.category && (
-                        <span className="inline-flex items-center rounded-full bg-green-200 text-green-700 px-3 py-1 text-xs font-semibold">
-                          {post.category}
-                        </span>
-                      )}
-                      {post.date && (
-                        <span className="text-xs text-gray-500">
-                          {post.date}
-                        </span>
-                      )}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+              {/* Main content and author card container */}
+              <div className="flex flex-col items-start gap-3 mb-3 w-full lg:col-span-3 order-1 lg:order-none">
+                <div className="flex flex-row items-start justify-start gap-3">
+                  {post.category && (
+                    <span className="inline-flex items-center rounded-full bg-green-200 text-green-700 px-3 py-1 text-xs font-semibold">
+                      {post.category}
+                    </span>
+                  )}
+                  {post.date && (
+                    <span className="text-xs text-gray-500">{post.date}</span>
+                  )}
+                </div>
+                <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-3">
+                  {post.title}
+                </h1>
+                <p className="text-medium text-gray-600 ">{post.description}</p>
+                <div>
+                  {post.content && (
+                    <ReactMarkdown>{post.content}</ReactMarkdown>
+                  )}
+                </div>
+                {/* Author card: always rendered, position controlled by order classes */}
+                <div className="rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full mt-6 block lg:hidden">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="">
+                      <img
+                        src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
+                        alt="Author avatar"
+                        className="w-1/2 h-10 rounded-full object-cover"
+                      />
                     </div>
-
-                    <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-3">
-                      {post.title}
-                    </h1>
-
-                    <p className="text-sm text-gray-600 mb-6">
-                      {post.description}
-                    </p>
-
-                    {post.content && (
-                      <ReactMarkdown>{post.content}</ReactMarkdown>
-                    )}
-                    {/* laptop */}
-                    {/* Desktop social bar */}
-                    <div className="w-full rounded-3xl bg-stone-100 p-4 flex flex-row justify-between items-center shadow-sm mt-4 hidden lg:flex">
-                      <div>
-                        <PillNav
-                          items={[
-                            {
-                              label: (
-                                <div className="flex items-center">
-                                  <CiFaceSmile />
-                                  <span style={{ marginLeft: 4 }}>32</span>
-                                </div>
-                              ),
-                              href: '',
-                            },
-                          ]}
-                          activeHref="/"
-                          className="custom-nav"
-                          ease="power2.easeOut"
-                          baseColor="#f4f3f0"
-                          pillColor="#fff"
-                          hoveredPillTextColor="#222"
-                          pillTextColor="#222"
-                        />
+                    <div className="w-1/2">
+                      <div className="text-xs text-gray-500 leading-none mb-1">
+                        Author
                       </div>
-                      <div className="flex flex-row gap-2">
-                        <PillNav
-                          items={[
-                            {
-                              label: (
-                                <div className="flex items-center">
-                                  <IoCopyOutline />
-                                  <span style={{ marginLeft: 4 }}>
-                                    Copy link
-                                  </span>
-                                </div>
-                              ),
-                              href: '',
-                            },
-                            { label: <FaFacebook />, href: '' },
-                            { label: <SlSocialLinkedin />, href: '' },
-                            { label: <CiTwitter />, href: '' },
-                          ]}
-                          activeHref="/"
-                          className="custom-nav"
-                          ease="power2.easeOut"
-                          baseColor="#f4f3f0"
-                          pillColor="#fff"
-                          hoveredPillTextColor="#222"
-                          pillTextColor="#222"
-                        />
-                      </div>
-                    </div>
-                    {/* Mobile social bar */}
-                    <div className="w-full rounded-3xl bg-stone-100 p-3 flex flex-col items-center gap-3 shadow-sm mt-4 flex-wrap lg:hidden">
-                      <button className="flex items-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                        <CiFaceSmile className="text-xl mr-2" />
-                        <span>32</span>
-                      </button>
-                      <div className="flex flex-row gap-2 w-full justify-center">
-                        <button className="flex items-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                          <IoCopyOutline className="text-xl mr-2" />
-                          <span>Copy link</span>
-                        </button>
-                        <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                          <FaFacebook />
-                        </button>
-                        <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                          <SlSocialLinkedin />
-                        </button>
-                        <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                          <CiTwitter />
-                        </button>
+                      <div className="text-lg font-extrabold text-gray-900 leading-none">
+                        {post.author}
                       </div>
                     </div>
                   </div>
-                  <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:w-80 lg:sticky top-5 self-start">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="">
-                        <img
-                          src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
-                          alt="Author avatar"
-                          className="w-1/2 h-10 rounded-full object-cover"
-                        />
-                      </div>
-                      <div className="w-1/2">
-                        <div className="text-xs text-gray-500 leading-none mb-1">
-                          Author
-                        </div>
-                        <div className="text-lg font-extrabold text-gray-900 leading-none">
-                          {post.author}
-                        </div>
-                      </div>
-                    </div>
-                    <hr className="border-t-2 border-gray-200 mb-4" />
-                    <p className="text-sm text-gray-600 mb-4">
-                      I am a pet enthusiast and freelance writer who specializes
-                      in animal behavior and care. With a deep love for cats, I
-                      enjoy sharing insights on feline companionship and
-                      wellness.
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      When I'm not writing, I spend time volunteering at my
-                      local animal shelter, helping cats find loving homes.
-                    </p>
+                  <hr className="border-t-2 border-gray-200 mb-4" />
+                  <p className="text-sm text-gray-600 mb-4">
+                    I am a pet enthusiast and freelance writer who specializes
+                    in animal behavior and care. With a deep love for cats, I
+                    enjoy sharing insights on feline companionship and wellness.
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    When I'm not writing, I spend time volunteering at my local
+                    animal shelter, helping cats find loving homes.
+                  </p>
+                </div>
+                {/* Desktop social bar */}
+                <div className="w-full rounded-3xl bg-stone-100 p-4 mb-10 justify-between items-center shadow-sm mt-4 hidden lg:flex ">
+                  <div>
+                    <PillNav
+                      items={[
+                        {
+                          label: (
+                            <div className="flex items-center">
+                              <CiFaceSmile />
+                              <span style={{ marginLeft: 4 }}>32</span>
+                            </div>
+                          ),
+                          href: '',
+                        },
+                      ]}
+                      activeHref="/"
+                      className="custom-nav"
+                      ease="power2.easeOut"
+                      baseColor="#f4f3f0"
+                      pillColor="#fff"
+                      hoveredPillTextColor="#222"
+                      pillTextColor="#222"
+                    />
+                  </div>
+                  <div className="flex flex-row gap-2">
+                    <PillNav
+                      items={[
+                        {
+                          label: (
+                            <div className="flex items-center">
+                              <IoCopyOutline />
+                              <span style={{ marginLeft: 4 }}>Copy link</span>
+                            </div>
+                          ),
+                          href: '',
+                        },
+                        { label: <FaFacebook />, href: '' },
+                        { label: <SlSocialLinkedin />, href: '' },
+                        { label: <CiTwitter />, href: '' },
+                      ]}
+                      activeHref="/"
+                      className="custom-nav"
+                      ease="power2.easeOut"
+                      baseColor="#f4f3f0"
+                      pillColor="#fff"
+                      hoveredPillTextColor="#222"
+                      pillTextColor="#222"
+                    />
                   </div>
                 </div>
+                {/* Mobile social bar */}
+                <div className="w-full rounded-3xl bg-stone-100 p-3 flex flex-col items-center gap-3 shadow-sm mt-4ex-wrap lg:hidden mb-10">
+                  <button className="flex items-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    <CiFaceSmile className="text-xl mr-2" />
+                    <span>32</span>
+                  </button>
+                  <div className="flex flex-row gap-2 w-full justify-center">
+                    <button className="flex items-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                      <IoCopyOutline className="text-xl mr-2" />
+                      <span>Copy link</span>
+                    </button>
+                    <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                      <FaFacebook />
+                    </button>
+                    <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                      <SlSocialLinkedin />
+                    </button>
+                    <button className="flex items-center border border-gray-300 rounded-full w-12 h-12 justify-center bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                      <CiTwitter />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col w-full gap-3 ">
+                  <Label htmlFor="message">Comment</Label>
+                  <Textarea placeholder="What are your thougth?" id="message" />
+                  <button className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm me-2 mb-2 dark:bg-gray-800 dark:hover:bg-[hsla(36,4%,44%,1)] dark:focus:ring-gray-700 dark:border-stone-400 px-[40px] py-[12px] border-1 cursor-pointer w-fit lg:ml-auto">
+                    Send
+                  </button>
+                </div>
+              </div>
+              {/* Author card for desktop only: same card, but only visible on lg+ and in sidebar */}
+              <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:col-span-1 lg:sticky top-5 self-start hidden lg:block">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="">
+                    <img
+                      src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
+                      alt="Author avatar"
+                      className="w-1/2 h-10 rounded-full object-cover"
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <div className="text-xs text-gray-500 leading-none mb-1">
+                      Author
+                    </div>
+                    <div className="text-lg font-extrabold text-gray-900 leading-none">
+                      {post.author}
+                    </div>
+                  </div>
+                </div>
+                <hr className="border-t-2 border-gray-200 mb-4" />
+                <p className="text-sm text-gray-600 mb-4">
+                  I am a pet enthusiast and freelance writer who specializes in
+                  animal behavior and care. With a deep love for cats, I enjoy
+                  sharing insights on feline companionship and wellness.
+                </p>
+                <p className="text-sm text-gray-600">
+                  When I'm not writing, I spend time volunteering at my local
+                  animal shelter, helping cats find loving homes.
+                </p>
               </div>
             </div>
           </article>
