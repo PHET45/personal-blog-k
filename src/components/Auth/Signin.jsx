@@ -1,6 +1,7 @@
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
+import { Link } from 'react-router-dom'
 import React from 'react'
 
 export const Signup = () => {
@@ -70,7 +71,7 @@ export const Signup = () => {
             <p className="text-gray-600">
               Already have an account?{' '}
               <button className="text-gray-800 underline hover:no-underline">
-                Log in
+                <Link to="/login">Log in</Link>
               </button>
             </p>
           </div>

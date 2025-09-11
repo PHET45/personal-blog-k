@@ -1,7 +1,7 @@
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
-
+import { Link } from 'react-router-dom'
 import React from 'react'
 
 export const Login = () => {
@@ -47,7 +47,7 @@ export const Login = () => {
                   <p className="text-gray-600">
                     Don't have any account?{' '}
                     <button className="text-gray-800 underline hover:no-underline">
-                      Sign up
+                      <Link to="/register">Sign up</Link>
                     </button>
                   </p>
                 </div>
