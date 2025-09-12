@@ -148,9 +148,9 @@ export const ViewPost = () => {
                           ),
                           href: '',
                         },
-                        { label: <FaFacebook />, href: '' },
-                        { label: <SlSocialLinkedin />, href: '' },
-                        { label: <CiTwitter />, href: '' },
+                        { label: <FaFacebook />, href: 'www.facebook.com' },
+                        { label: <SlSocialLinkedin />, href: 'www.linkedin.com' },
+                        { label: <CiTwitter />, href: 'www.twitter.com' },
                       ]}
                       activeHref="/"
                       className="custom-nav"

@@ -17,6 +17,7 @@
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.2",
     "gsap": "^3.13.0",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.539.0",
