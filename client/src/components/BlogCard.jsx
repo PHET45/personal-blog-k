@@ -87,7 +87,7 @@ function BlogCard({ blogs = [] }) {
           <div className="flex flex-col">
             <div className="flex gap-2">
               <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">
-                {post.category_id || "Uncategorized"}
+                {post.category?.name || "Uncategorized"}
               </span>
             </div>
             <Link to={`/post/${post.id}`}>
