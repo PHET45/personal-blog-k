@@ -28,9 +28,7 @@
 //   return filtered.slice(start, end)
 // }
 
-// export const getBlogById = async (id) => {
-//   return blogPosts.find((p) => String(p.id) === String(id)) ?? null
-// }
+
 
 // services/blogService.js
 import axios from "axios";
@@ -45,10 +43,6 @@ export const getBlogs = async () => {
     throw new Error(err.response?.data?.message || err.message);
   }
 };
-
-// config.js
-
-
 
 
 

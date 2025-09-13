@@ -63,14 +63,20 @@ export const ViewPost = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
               {/* Main content and author card container */}
               <div className="flex flex-col items-start gap-3 mb-3 w-full lg:col-span-3 order-1 lg:order-none">
-                <div className="flex flex-row items-start justify-start gap-3">
+                <div className="flex flex-row items-center justify-center gap-3 ">
                   {post.category && (
                     <span className="inline-flex items-center rounded-full bg-green-200 text-green-700 px-3 py-1 text-xs font-semibold">
-                      {post.category}
+                      {post.category.name || 'Uncategorized'}
                     </span>
                   )}
                   {post.date && (
-                    <span className="text-xs text-gray-500">{post.date}</span>
+                    <span className="text-xs text-gray-500 ">
+                      {new Date(post.date).toLocaleDateString('en-US', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </span>
                   )}
                 </div>
                 <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-3">
@@ -149,7 +155,10 @@ export const ViewPost = () => {
                           href: '',
                         },
                         { label: <FaFacebook />, href: 'www.facebook.com' },
-                        { label: <SlSocialLinkedin />, href: 'www.linkedin.com' },
+                        {
+                          label: <SlSocialLinkedin />,
+                          href: 'www.linkedin.com',
+                        },
                         { label: <CiTwitter />, href: 'www.twitter.com' },
                       ]}
                       activeHref="/"
