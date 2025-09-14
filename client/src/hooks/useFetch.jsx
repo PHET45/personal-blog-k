@@ -6,26 +6,29 @@ export const useFetch = () => {
   const [filteredBlogs, setFilteredBlogs] = useState([])
   const [text, setText] = useState('')
   const [selectedTags, setSelectedTags] = useState([])
-  const [category, setCategory] = useState('')
+  const [category, setCategory] = useState('Highlight') // เริ่มต้นด้วย Highlight
   const [page, setPage] = useState(1)
   const [limit] = useState(4)
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
-  // 📌 ดึงข้อมูลจาก backend
+  // 📌 ดึงข้อมูลจาก backend โดยส่ง category + pagination
   const fetchBlog = useCallback(
     async (query, { append = false } = {}) => {
       try {
         setIsLoading(true)
         const params = query || {}
 
-        const effectiveCategory = category === 'Highlight' ? '' : category
-        if (effectiveCategory) params.category = effectiveCategory
+        // ✅ ถ้าเลือก Highlight จะไม่ส่ง category ไป (ให้ได้ทั้งหมด)
+        if (category && category !== 'Highlight') {
+          params.category = category
+        }
 
         params.page = params.page ?? 1
         params.limit = params.limit ?? limit
 
         const items = await getBlogs(params)
+        console.log('Fetched blogs:', items) // Debug
 
         setBlogs((prev) => (append ? [...prev, ...items] : items))
         setHasMore(Array.isArray(items) ? items.length === limit : false)
@@ -39,7 +42,7 @@ export const useFetch = () => {
     [category, limit]
   )
 
-  // 📌 ดึงข้อมูลเมื่อ category เปลี่ยน
+  // 📌 ดึงข้อมูลใหม่เมื่อ category เปลี่ยน
   useEffect(() => {
     setPage(1)
     setHasMore(true)
@@ -52,7 +55,7 @@ export const useFetch = () => {
     fetchBlog({ page }, { append: true })
   }, [page, fetchBlog])
 
-  // 📌 Filter frontend ตาม text + tags
+  // 📌 Filter frontend (เฉพาะ text + tags)
   useEffect(() => {
     let result = [...blogs]
 
@@ -72,13 +75,9 @@ export const useFetch = () => {
   }, [text, selectedTags, blogs])
 
   const handleTagClick = (tag) => {
-    setSelectedTags((prev) => {
-      if (prev.includes(tag)) {
-        return prev.filter((t) => t !== tag)
-      } else {
-        return [...prev, tag]
-      }
-    })
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    )
   }
 
   const loadMore = () => {
@@ -87,7 +86,7 @@ export const useFetch = () => {
   }
 
   return {
-    blogs: filteredBlogs, // ✅ ส่งออกเป็นข้อมูลที่ถูกกรองแล้ว
+    blogs: filteredBlogs, // ✅ blogs ที่ถูก filter แล้ว
     text,
     setText,
     selectedTags,
@@ -101,4 +100,5 @@ export const useFetch = () => {
     loadMore,
   }
 }
+
 export default useFetch

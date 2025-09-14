@@ -9,12 +9,31 @@ const GooeyNav = ({
   timeVariance = 300,
   colors = [1, 2, 3, 1, 2, 3, 1, 4],
   initialActiveIndex = 0,
+  value, // prop สำหรับ controlled component
+  onValueChange, // prop สำหรับ controlled component
 }) => {
+  console.log('GooeyNav component is rendered!')
+  console.log('GooeyNav received value:', value)
+  console.log('GooeyNav received onValueChange:', typeof onValueChange)
+  console.log('GooeyNav received items:', items.length)
+
   const containerRef = useRef(null)
   const navRef = useRef(null)
   const filterRef = useRef(null)
   const textRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex)
+
+  // Sync active state กับ value จาก parent
+  useEffect(() => {
+    console.log('GooeyNav useEffect - syncing value:', value)
+    if (value && items.length > 0) {
+      const index = items.findIndex(item => item.value === value)
+      console.log('Found index for value:', index)
+      if (index !== -1 && index !== activeIndex) {
+        setActiveIndex(index)
+      }
+    }
+  }, [value, items, activeIndex])
 
   const noise = (n = 1) => n / 2 - Math.random() * n
   const getXY = (distance, pointIndex, totalPoints) => {
@@ -84,11 +103,24 @@ const GooeyNav = ({
     Object.assign(textRef.current.style, styles)
     textRef.current.innerText = element.innerText
   }
+  
   const handleClick = (e, index) => {
+    console.log('GooeyNav handleClick called - index:', index)
     const liEl = e.currentTarget
     if (activeIndex === index) return
+    
+    const selectedItem = items[index]
+    console.log('Selected item:', selectedItem)
+    
     setActiveIndex(index)
     updateEffectPosition(liEl)
+    
+    // เรียก callback เพื่อแจ้ง parent component
+    if (onValueChange && selectedItem) {
+      console.log('Calling onValueChange with:', selectedItem.value)
+      onValueChange(selectedItem.value)
+    }
+    
     if (filterRef.current) {
       const particles = filterRef.current.querySelectorAll('.particle')
       particles.forEach((p) => filterRef.current.removeChild(p))
@@ -102,6 +134,7 @@ const GooeyNav = ({
       makeParticles(filterRef.current)
     }
   }
+  
   const handleKeyDown = (e, index) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
@@ -111,6 +144,7 @@ const GooeyNav = ({
       }
     }
   }
+  
   useEffect(() => {
     if (!navRef.current || !containerRef.current) return
     const activeLi = navRef.current.querySelectorAll('li')[activeIndex]
@@ -131,7 +165,6 @@ const GooeyNav = ({
 
   return (
     <>
-      {/* This effect is quite difficult to recreate faithfully using Tailwind, so a style tag is a necessary workaround */}
       <style>
         {`
           :root {
@@ -299,8 +332,11 @@ const GooeyNav = ({
                 }`}
               >
                 <a
-                  onClick={(e) => handleClick(e, index)}
-                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleClick(e, index)
+                  }}
+                  href="#"
                   onKeyDown={(e) => handleKeyDown(e, index)}
                   className="outline-none py-[0.6em] px-[1em] inline-block"
                 >
