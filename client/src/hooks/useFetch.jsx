@@ -1,100 +1,89 @@
+
 import { useState, useEffect, useCallback } from 'react'
 import { getBlogs } from '../services/blogService'
 
 export const useFetch = () => {
-  const [blogs, setBlogs] = useState([])
-  const [filteredBlogs, setFilteredBlogs] = useState([])
-  const [text, setText] = useState('')
+  const [blogs, setBlogs] = useState([])           // raw data
+  const [filteredBlogs, setFilteredBlogs] = useState([]) // filtered data
+  const [text, setText] = useState('')            // search input
   const [selectedTags, setSelectedTags] = useState([])
-  const [category, setCategory] = useState('Highlight') // เริ่มต้นด้วย Highlight
+  const [category, setCategory] = useState('Highlight')
   const [page, setPage] = useState(1)
-  const [limit] = useState(4)
+  const limit = 6
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
-  // 📌 ดึงข้อมูลจาก backend โดยส่ง category + pagination
+  // ฟังก์ชันดึงข้อมูล blogs จาก backend
   const fetchBlog = useCallback(
-    async (query, { append = false } = {}) => {
+    async ({ append = false } = {}) => {
       try {
         setIsLoading(true)
-        const params = query || {}
 
-        // ✅ ถ้าเลือก Highlight จะไม่ส่ง category ไป (ให้ได้ทั้งหมด)
+        const params = {
+          page,
+          limit,
+        }
+
         if (category && category !== 'Highlight') {
           params.category = category
         }
 
-        params.page = params.page ?? 1
-        params.limit = params.limit ?? limit
-
         const items = await getBlogs(params)
-        console.log('Fetched blogs:', items) // Debug
-
-        setBlogs((prev) => (append ? [...prev, ...items] : items))
-        setHasMore(Array.isArray(items) ? items.length === limit : false)
+        setBlogs(prev => append ? [...prev, ...items] : items)
+        setHasMore(items.length === limit)
       } catch (err) {
-        console.error('Error fetching blog:', err)
+        console.error('Error fetching blogs:', err)
         setHasMore(false)
       } finally {
         setIsLoading(false)
       }
     },
-    [category, limit]
+    [category, page]
   )
 
-  // 📌 ดึงข้อมูลใหม่เมื่อ category เปลี่ยน
+  // ดึงข้อมูลเมื่อ category เปลี่ยน
   useEffect(() => {
     setPage(1)
-    setHasMore(true)
-    fetchBlog({ page: 1 })
+    fetchBlog()
   }, [category, fetchBlog])
 
-  // 📌 ดึงข้อมูลเพิ่มเมื่อ page เปลี่ยน
+  // ดึงข้อมูลเพิ่มเมื่อ page เปลี่ยน
   useEffect(() => {
     if (page === 1) return
-    fetchBlog({ page }, { append: true })
+    fetchBlog({ append: true })
   }, [page, fetchBlog])
 
-  // 📌 Filter frontend (เฉพาะ text + tags)
+  // Filter frontend: text + selectedTags
   useEffect(() => {
-    let result = [...blogs]
+    let result = blogs
 
     if (text) {
-      result = result.filter((b) =>
-        b.title.toLowerCase().includes(text.toLowerCase())
-      )
+      const lowerText = text.toLowerCase()
+      result = result.filter(b => b.title.toLowerCase().includes(lowerText))
     }
 
     if (selectedTags.length > 0) {
-      result = result.filter((b) =>
-        selectedTags.every((tag) => b.tags?.includes(tag))
-      )
+      result = result.filter(b => selectedTags.every(tag => b.tags?.includes(tag)))
     }
 
     setFilteredBlogs(result)
-  }, [text, selectedTags, blogs])
+  }, [blogs, text, selectedTags])
 
-  const handleTagClick = (tag) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    )
-  }
+  const handleTagClick = tag =>
+    setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])
 
   const loadMore = () => {
-    if (isLoading || !hasMore) return
-    setPage((prevPage) => prevPage + 1)
+    if (!isLoading && hasMore) setPage(prev => prev + 1)
   }
 
   return {
-    blogs: filteredBlogs, // ✅ blogs ที่ถูก filter แล้ว
+    blogs: filteredBlogs,
     text,
     setText,
     selectedTags,
     handleTagClick,
     category,
     setCategory,
-    page,
-    limit,
     isLoading,
     hasMore,
     loadMore,
