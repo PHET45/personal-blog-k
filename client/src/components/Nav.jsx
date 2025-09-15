@@ -4,7 +4,7 @@ import { RxHamburgerMenu } from 'react-icons/rx'
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = React.useState(false)
   return (
-    <div className="flex justify-between items-center p-4 w-full ">
+    <div className="flex justify-between items-center p-4 w-full"> 
       <nav className="flex flex-row justify-between px-20 w-full items-center py-4 md:px-8 bg-background border-b border-gray-200">
         <img src="/public/images/logo.png" alt="logo" />
         <ul className="hidden md:flex flex-row gap-5">

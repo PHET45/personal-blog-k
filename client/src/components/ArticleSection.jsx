@@ -54,13 +54,13 @@ const ArticleSection = () => {
   }
 
   return (
-    <div className="flex flex-col gap-10 items-center p-4 md:p-4 ">
-      <div className="font-Poppins font-semibold text-2xl leading-8 text-gray-800 self-start">
+    <div className="flex flex-col gap-10 justify-center items-center p-4 md:p-4 w-full ">
+      <div className="flex flex-row justify-start items-start font-Poppins font-semibold text-2xl text-gray-800  w-[1200px]">
         <h3>Latest articles</h3>
       </div>
-
+        
       {/* Desktop Layout */}
-      <div className="hidden md:flex items-center justify-between w-full mx-auto p-4 px-16 rounded-lg bg-stone-100 shadow-sm">
+      <div className="hidden md:flex items-center justify-between w-[1200px] mx-auto p-4 px-16 rounded-lg bg-stone-100 shadow-sm">
         <div className="flex items-center gap-3">
           <GooeyNav
             items={categories}

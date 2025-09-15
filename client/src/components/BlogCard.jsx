@@ -7,9 +7,9 @@ function BlogCard({ blogs = [] }) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 justify-items-center p-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 justify-items-center p-4 ">
       {blogs.map((post) => (
-        <div key={post.id} className="flex flex-col gap-4 w-full max-w-md">
+        <div key={post.id} className="flex flex-col gap-4 w-[582px] ">
           <Link
             to={`/post/${post.id}`}
             className="relative h-[212px] sm:h-[360px] flex items-center justify-center overflow-hidden rounded-md bg-gray-100"
