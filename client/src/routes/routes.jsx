@@ -4,6 +4,7 @@ import { RegisterPage } from '../page/Auth/RegisterPage'
 import { useRoutes } from 'react-router-dom'
 import { ViewPostPage } from '@/page/User/ViewPostPage'
 import ArticleManagementPage from '@/page/Admin/ArticlePage/ArticleManagementPage'
+import { CreateArticlePage } from '@/page/Admin/ArticlePage/CreateArticlePage'
 
 export default function AppRoutes() {
   return useRoutes([
@@ -11,6 +12,7 @@ export default function AppRoutes() {
     { path: '/login', element: <LoginPage /> },
     { path: '/register', element: <RegisterPage /> },
     { path: '/post/:postid', element:<ViewPostPage />},
-    { path: '/admin/article-management', element: <ArticleManagementPage /> }
+    { path: '/admin/article-management', element: <ArticleManagementPage /> },
+    { path: '/admin/create-article', element: <CreateArticlePage /> },
   ])
 }
