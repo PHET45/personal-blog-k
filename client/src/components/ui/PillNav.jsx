@@ -233,7 +233,7 @@ const PillNav = ({
         >
           <ul
             role="menubar"
-            className="list-none flex items-stretch m-0 p-[3px] h-full"
+            className="list-none flex items-stretch mb-3 p-0 h-full"
             style={{ gap: 'var(--pill-gap)' }}
           >
             {items.map((item, i) => {
