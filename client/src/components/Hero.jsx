@@ -9,7 +9,7 @@ const Hero = () => {
     <section className="flex justify-center items-center p-4 w-full ">
       <div className="flex flex-col justify-center  items-center w-full gap-5 container md:px-8 px-4 py-8 lg:flex-row lg:py-16 mx-auto">
         <div className="flex flex-col lg:w-1/3">
-          <h1 className="flex flex-col justify-self-start text-4xl lg:text-5xl font-bold mb-4">
+          <h1 className="flex flex-col items-end text-4xl lg:text-5xl font-bold mb-4">
             <BlurText
               text=" Stay "
               delay={150}
@@ -38,7 +38,7 @@ const Hero = () => {
           </p>
         </div>
 
-        <div className="lg:w-1/3">
+       <div className='flex flex-col lg:flex-row items-center lg:w-1/4 mt-8 lg:mt-0'>
           <AnimatedContent
             distance={150}
             direction="horizontal"
@@ -49,7 +49,7 @@ const Hero = () => {
             animateOpacity
             scale={1.1}
             threshold={0.2}
-            delay={0.3}
+            delay={0.3}   
           >
             <div>
               <img
@@ -59,7 +59,7 @@ const Hero = () => {
               />
             </div>
           </AnimatedContent>
-        </div>
+      </div>
 
         <div className="flex flex-col lg:w-1/3 lg:pl-8 ">
           <h2 className="text-xl font-semibold mb-2">-Author</h2>
