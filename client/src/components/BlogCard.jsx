@@ -37,7 +37,7 @@ function BlogCard({ blogs = [] }) {
             </p>
             <div className="flex items-center text-sm">
               <img
-                className="w-8 h-8 rounded-full mr-2"
+                className="w-8 h-8 rounded-full mr-2 object-cover object-center"
                 src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
                 alt="Author"
               />
