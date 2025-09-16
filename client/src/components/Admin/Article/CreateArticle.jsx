@@ -30,10 +30,10 @@ const CreateArticle = () => {
   return (
     <div className="min-h-screen ml-[280px] bg-gray-50">
         <SideBar />
-
+        
       {/* Header */}
-      <div className="bg-white border-b">
-        <div className="flex justify-between items-center p-6">
+      
+        <div className="flex justify-between items-center px-15 border-b-1 border-stone-200 h-[96px]">
           <h1 className="text-2xl font-semibold text-gray-800">Create article</h1>
           <div className="flex gap-3">
             <button 
@@ -50,10 +50,10 @@ const CreateArticle = () => {
             </button>
           </div>
         </div>
-      </div>
+      
 
       {/* Main Content */}
-      <div className="p-6 max-w-4xl">
+      <div className="flex-1 p-15 w-full">
         <div className="space-y-6">
           {/* Thumbnail Image */}
           <div className="border-2 border-dashed border-blue-300 rounded-lg">
@@ -161,6 +161,7 @@ const CreateArticle = () => {
         </div>
       </div>
     </div>
+   
   );
 };
 

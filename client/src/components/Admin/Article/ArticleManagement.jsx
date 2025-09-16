@@ -61,23 +61,23 @@ const ArticleManagement = () => {
   })
 
   return (
-    <div className="min-h-screen ml-[280px] max-w-screen mx-auto bg-gray-50">
+    <div className="min-h-screen  ml-[280px] max-w-screen mx-auto bg-gray-50">
       <SideBar />
 
-      {/* Main Content */}
-      <div className="flex-1 p-8 w-full">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Article management
-          </h1>
-          <button className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-4xl flex items-center transition-colors ">
-            <Plus className="w-4 h-4 mr-2" />
-            <Link to="/admin/create-article">Create article</Link>
-            
-          </button>
-        </div>
+      {/* Header */}
 
+      <div className="flex justify-between items-center px-15 border-b-1 border-stone-200 h-[96px]">
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Article management
+        </h1>
+        <button className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-4xl flex items-center transition-colors ">
+          <Plus className="w-4 h-4 mr-2" />
+          <Link to="/admin/create-article">Create article</Link>
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-15 w-full">
         {/* Search and Filters */}
         <div className="flex gap-4 mb-6">
           <div className="flex-1 relative">
@@ -120,7 +120,6 @@ const ArticleManagement = () => {
             <div className="col-span-6">Article title</div>
             <div className="col-span-2">Category</div>
             <div className="col-span-2">Status</div>
-            <div className="col-span-2">Actions</div>
           </div>
 
           {filteredArticles.map((article) => (
@@ -162,7 +161,6 @@ const ArticleManagement = () => {
           </div>
         )}
       </div>
-     
     </div>
   )
 }

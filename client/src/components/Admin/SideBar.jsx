@@ -1,6 +1,6 @@
 import React from 'react'
 import { ExternalLink } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom'; // ถ้าใช้ React Router
+import { useNavigate, useLocation, Link } from 'react-router-dom'; // ถ้าใช้ React Router
 
 const SideBar = () => {
   const navigate = useNavigate();
@@ -62,14 +62,14 @@ const SideBar = () => {
         ))}
       </nav>
 
-      <div className="absolute bottom-0 left-0 w-[280px] p-6 border-t">
-        <div className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800 mb-3">
+      <div className="absolute bottom-0 left-0 w-[280px] p-6  border-gray-200">
+        <div className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800 mb-3 border-b border-gray-200 pb-3">
           <ExternalLink className="w-4 h-4 mr-3" />
-          hh. website
+          <Link to="/">hh. website</Link>hh. website
         </div>
         <div className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800">
           <span className="mr-3">🚪</span>
-          Log out
+          <Link to="/login">Log out</Link>
         </div>
       </div>
     </div>
