@@ -28,31 +28,24 @@
 //   return filtered.slice(start, end)
 // }
 
-
-
 // services/blogService.js
-import axios from "axios";
-import {API_URL} from "./config";
-
+import axios from 'axios'
+import { API_URL } from './config'
 
 export const getBlogs = async () => {
   try {
-    const res = await axios.get(`${API_URL}/posts`);
-    return res.data; // backend ส่ง object blog เดียว
+    const res = await axios.get(`${API_URL}/posts`)
+    return res.data // backend ส่ง object blog เดียว
   } catch (err) {
-    throw new Error(err.response?.data?.message || err.message);
+    throw new Error(err.response?.data?.message || err.message)
   }
-};
-
-
+}
 
 export const getBlogById = async (id) => {
   try {
-    const res = await   axios.get(`${API_URL}/posts/${id}`);
-    return res.data; // backend ส่ง object blog เดียว
+    const res = await axios.get(`${API_URL}/posts/${id}`)
+    return res.data // backend ส่ง object blog เดียว
   } catch (err) {
-    throw new Error(err.response?.data?.message || err.message);
+    throw new Error(err.response?.data?.message || err.message)
   }
-};
-
-
+}

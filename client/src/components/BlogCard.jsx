@@ -1,5 +1,4 @@
-
-import { Link } from "react-router-dom"
+import { Link } from 'react-router-dom'
 
 function BlogCard({ blogs = [] }) {
   if (!blogs.length) {
@@ -16,15 +15,17 @@ function BlogCard({ blogs = [] }) {
           >
             <img
               className="w-full h-full object-cover rounded-md"
-              src={post.image || "https://via.placeholder.com/400x200"}
+              src={post.image || 'https://via.placeholder.com/400x200'}
               alt={post.title}
-              onError={(e) => (e.target.src = "https://via.placeholder.com/400x200")}
+              onError={(e) =>
+                (e.target.src = 'https://via.placeholder.com/400x200')
+              }
             />
           </Link>
           <div className="flex flex-col">
             <div className="flex gap-2">
               <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">
-                {post.category?.name || "Uncategorized"}
+                {post.category?.name || 'Uncategorized'}
               </span>
             </div>
             <Link to={`/post/${post.id}`}>
@@ -41,7 +42,7 @@ function BlogCard({ blogs = [] }) {
                 src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
                 alt="Author"
               />
-              <span>{post.author || "Unknown"}</span>
+              <span>{post.author || 'Unknown'}</span>
               <span className="mx-2 text-gray-300">|</span>
               <span>{new Date(post.date).toLocaleDateString()}</span>
             </div>
