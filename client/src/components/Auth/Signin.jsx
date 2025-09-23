@@ -4,9 +4,10 @@ import { Label } from '../../components/ui/label'
 import { Link, useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { AuthService } from '../../services/auth'
+import * as yup from 'yup'
+import { toast } from 'react-toast'
 
 export const Signup = () => {
-  
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -14,10 +15,43 @@ export const Signup = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState({})
+
+  const signupSchema = yup.object().shape({
+    name: yup
+      .string()
+      .min(2, 'Name must be at least 2 characters')
+      .required('Name is required'),
+    username: yup
+      .string()
+      .min(3, 'Username must be at least 3 characters')
+      .required('Username is required'),
+    email: yup.string().email('Email is invalid').required('Email is required'),
+    password: yup
+      .string()
+      .min(6, 'Password must be at least 6 characters')
+      .required('Password is required'),
+  })
 
   const handleSignup = async (e) => {
     e.preventDefault()
     setError('')
+    setFieldErrors({})
+    try {
+      await signupSchema.validate(
+        { name, username, email, password },
+        { abortEarly: false }
+      )
+    } catch (validationError) {
+      if (validationError?.name === 'ValidationError') {
+        const newErrors = {}
+        validationError.inner?.forEach((ve) => {
+          if (ve.path && !newErrors[ve.path]) newErrors[ve.path] = ve.message
+        })
+        setFieldErrors(newErrors)
+        return
+      }
+    }
     try {
       const res = await AuthService.register({
         name,
@@ -26,11 +60,13 @@ export const Signup = () => {
         password,
       })
       if (res.user) {
-        
+        toast.success('Sign up successful')
         navigate('/login')
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Sign up failed')
+      const message = err.response?.data?.error || 'Sign up failed'
+      setError(message)
+      toast.error(message)
     }
   }
 
@@ -52,11 +88,22 @@ export const Signup = () => {
               id="name"
               type="text"
               placeholder="Name"
-              className="bg-white border-gray-200 rounded-lg px-4 py-3 h-12"
+              className={`bg-white rounded-lg px-4 py-3 h-12 ${
+                fieldErrors.name
+                  ? 'border-red-500 focus-visible:ring-red-500'
+                  : 'border-gray-200'
+              }`}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value)
+                if (fieldErrors.name)
+                  setFieldErrors({ ...fieldErrors, name: '' })
+              }}
               required
             />
+            {fieldErrors.name ? (
+              <p className="text-red-500 text-sm">{fieldErrors.name}</p>
+            ) : null}
           </div>
 
           <div className="space-y-2">
@@ -67,11 +114,22 @@ export const Signup = () => {
               id="username"
               type="text"
               placeholder="Username"
-              className="bg-white border-gray-200 rounded-lg px-4 py-3 h-12"
+              className={`bg-white rounded-lg px-4 py-3 h-12 ${
+                fieldErrors.username
+                  ? 'border-red-500 focus-visible:ring-red-500'
+                  : 'border-gray-200'
+              }`}
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value)
+                if (fieldErrors.username)
+                  setFieldErrors({ ...fieldErrors, username: '' })
+              }}
               required
             />
+            {fieldErrors.username ? (
+              <p className="text-red-500 text-sm">{fieldErrors.username}</p>
+            ) : null}
           </div>
 
           <div className="space-y-2">
@@ -82,11 +140,22 @@ export const Signup = () => {
               id="email"
               type="email"
               placeholder="Email"
-              className="bg-white border-gray-200 rounded-lg px-4 py-3 h-12"
+              className={`bg-white rounded-lg px-4 py-3 h-12 ${
+                fieldErrors.email
+                  ? 'border-red-500 focus-visible:ring-red-500'
+                  : 'border-gray-200'
+              }`}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                if (fieldErrors.email)
+                  setFieldErrors({ ...fieldErrors, email: '' })
+              }}
               required
             />
+            {fieldErrors.email ? (
+              <p className="text-red-500 text-sm">{fieldErrors.email}</p>
+            ) : null}
           </div>
 
           <div className="space-y-2">
@@ -97,11 +166,22 @@ export const Signup = () => {
               id="password"
               type="password"
               placeholder="Password"
-              className="bg-white border-gray-200 rounded-lg px-4 py-3 h-12"
+              className={`bg-white rounded-lg px-4 py-3 h-12 ${
+                fieldErrors.password
+                  ? 'border-red-500 focus-visible:ring-red-500'
+                  : 'border-gray-200'
+              }`}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                if (fieldErrors.password)
+                  setFieldErrors({ ...fieldErrors, password: '' })
+              }}
               required
             />
+            {fieldErrors.password ? (
+              <p className="text-red-500 text-sm">{fieldErrors.password}</p>
+            ) : null}
           </div>
 
           <div className="pt-4">
