@@ -44,7 +44,7 @@ export const Login = () => {
       const res = await login(email, password)
       if (res.token) {
         toast.success('Login successful')
-        navigate('/profile')
+        navigate('/')
       }
     } catch (err) {
       setError(err.message || 'Login failed')
@@ -60,8 +60,6 @@ export const Login = () => {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          {error && <p className="text-red-500 text-center">{error}</p>}
-
           <div className="space-y-2">
             <Label htmlFor="email" className="text-gray-600">
               Email
@@ -71,7 +69,7 @@ export const Login = () => {
               type="email"
               placeholder="Email"
               className={`bg-white rounded-lg px-4 py-3 h-12 ${
-                fieldErrors.email
+                fieldErrors.email || error
                   ? 'border-red-500 focus-visible:ring-red-500'
                   : 'border-gray-200'
               }`}
@@ -97,7 +95,7 @@ export const Login = () => {
               type="password"
               placeholder="Password"
               className={`bg-white rounded-lg px-4 py-3 h-12 ${
-                fieldErrors.password
+                fieldErrors.password || error
                   ? 'border-red-500 focus-visible:ring-red-500'
                   : 'border-gray-200'
               }`}
