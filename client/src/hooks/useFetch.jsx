@@ -1,35 +1,33 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useContext } from 'react'
 import { getBlogs } from '../services/blogService'
+import { AuthContext } from '@/context/AuthContextObject'
 
 export const useFetch = () => {
-  const [blogs, setBlogs] = useState([]) // raw data
-  const [filteredBlogs, setFilteredBlogs] = useState([]) // filtered data
-  const [text, setText] = useState('') // search input
-  const [selectedTags, setSelectedTags] = useState([])
+  const { user } = useContext(AuthContext) // track login/logout
+  const [blogs, setBlogs] = useState([])
+  const [text, setText] = useState('')
   const [category, setCategory] = useState('Highlight')
   const [page, setPage] = useState(1)
   const limit = 6
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
-  // ฟังก์ชันดึงข้อมูล blogs จาก backend
   const fetchBlog = useCallback(
     async ({ append = false } = {}) => {
       try {
         setIsLoading(true)
 
-        const params = {
-          page,
-          limit,
-        }
+        const params = { page, limit }
+        if (category && category !== 'Highlight') params.category = category
 
-        if (category && category !== 'Highlight') {
-          params.category = category
-        }
+        const res = await getBlogs(params)
 
-        const items = await getBlogs(params)
-        const list = Array.isArray(items) ? items : []
-        setBlogs((prev) => (append ? [...prev, ...list] : list))
+        // ✅ รองรับ backend ที่ return data ไม่ตรง
+        const list = Array.isArray(res)
+          ? res
+          : res?.data || res?.blogs || []
+
+        setBlogs(prev => (append ? [...prev, ...list] : list))
         setHasMore(list.length === limit)
       } catch (err) {
         console.error('Error fetching blogs:', err)
@@ -41,51 +39,25 @@ export const useFetch = () => {
     [category, page]
   )
 
-  // ดึงข้อมูลเมื่อ category เปลี่ยน
+  // รีเฟรชตอน login/logout หรือ category change
   useEffect(() => {
     setPage(1)
-    fetchBlog()
-  }, [category, fetchBlog])
+    fetchBlog({ append: false })
+  }, [category, user, fetchBlog])
 
-  // ดึงข้อมูลเพิ่มเมื่อ page เปลี่ยน
+  // โหลดเพิ่มตอนเปลี่ยนหน้า
   useEffect(() => {
-    if (page === 1) return
-    fetchBlog({ append: true })
+    if (page > 1) fetchBlog({ append: true })
   }, [page, fetchBlog])
 
-  // Filter frontend: text + selectedTags
-  useEffect(() => {
-    let result = blogs
-
-    if (text) {
-      const lowerText = text.toLowerCase()
-      result = result.filter((b) => b.title.toLowerCase().includes(lowerText))
-    }
-
-    if (selectedTags.length > 0) {
-      result = result.filter((b) =>
-        selectedTags.every((tag) => b.tags?.includes(tag))
-      )
-    }
-
-    setFilteredBlogs(result)
-  }, [blogs, text, selectedTags])
-
-  const handleTagClick = (tag) =>
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    )
-
   const loadMore = () => {
-    if (!isLoading && hasMore) setPage((prev) => prev + 1)
+    if (!isLoading && hasMore) setPage(prev => prev + 1)
   }
 
   return {
-    blogs: filteredBlogs,
+    blogs,
     text,
     setText,
-    selectedTags,
-    handleTagClick,
     category,
     setCategory,
     isLoading,
@@ -93,5 +65,3 @@ export const useFetch = () => {
     loadMore,
   }
 }
-
-export default useFetch

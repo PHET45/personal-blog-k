@@ -1,4 +1,3 @@
-
 import {
   Select,
   SelectContent,
@@ -34,7 +33,11 @@ const ArticleSection = () => {
     })),
   ]
 
-  // ✅ filter blogs ตาม category + search
+  const handleCategoryChange = (val) => {
+    setCategory(val)
+  }
+
+  // Filter frontend: search + category
   const filteredBlogs = blogs.filter((b) => {
     const matchText =
       !text ||
@@ -48,18 +51,14 @@ const ArticleSection = () => {
     return matchText && b.category?.name === category
   })
 
-  const handleCategoryChange = (val) => {
-    console.log('Category clicked:', val) // Debug log
-    setCategory(val)
-  }
-
   return (
-    <div className="flex flex-col gap-10 justify-center items-center p-4 md:p-4 w-full ">
-      <div className="flex flex-row justify-start items-start font-Poppins font-semibold text-2xl text-gray-800  w-[1200px]">
+    <div className="flex flex-col gap-10 justify-center items-center p-4 md:p-4 w-full">
+      {/* Header */}
+      <div className="flex flex-row justify-start items-start font-Poppins font-semibold text-2xl text-gray-800 w-[1200px]">
         <h3>Latest articles</h3>
       </div>
-        
-      {/* Desktop Layout */}
+
+      {/* Desktop Filter */}
       <div className="hidden md:flex items-center justify-between w-[1200px] mx-auto p-4 px-16 rounded-lg bg-stone-100 shadow-sm">
         <div className="flex items-center gap-3">
           <GooeyNav
@@ -75,6 +74,7 @@ const ArticleSection = () => {
             colors={[1, 2, 3, 1, 2, 3, 1, 4]}
           />
         </div>
+
         <div className="relative">
           <input
             type="text"
@@ -99,55 +99,32 @@ const ArticleSection = () => {
         </div>
       </div>
 
-      {/* Mobile Layout */}
+      {/* Mobile Filter */}
       <div className="md:hidden flex flex-col gap-4 w-full mx-auto p-4 rounded-lg bg-stone-100 shadow-sm">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <svg
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
-
-        <div className="flex flex-col space-y-2 ">
-          <label className="text-gray-600 text-sm font-medium font-Poppins ">
-            Category
-          </label>
-          <div className="relative">
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-full px-4 py-2 rounded-lg focus:ring-2 appearance-none ">
-                <SelectValue placeholder="Highlight" />
-              </SelectTrigger>
-              <SelectContent className="bg-stone-100 ">
-                <SelectGroup>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        <input
+          type="text"
+          placeholder="Search"
+          className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <Select value={category || 'Highlight'} onValueChange={setCategory}>
+          <SelectTrigger className="w-full px-4 py-2 rounded-lg focus:ring-2 appearance-none">
+            <SelectValue placeholder="Highlight" />
+          </SelectTrigger>
+          <SelectContent className="bg-stone-100">
+            <SelectGroup>
+              {categories.map((cat) => (
+                <SelectItem key={cat.value} value={cat.value}>
+                  {cat.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Loading Skeleton */}
+      {/* Loading */}
       {isLoading && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 w-full max-w-5xl h-[100vh]">
           {[...Array(4)].map((_, i) => (
