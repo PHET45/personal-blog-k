@@ -1,42 +1,49 @@
-import React from 'react'
-import { ExternalLink } from 'lucide-react';
-import { useNavigate, useLocation, Link } from 'react-router-dom'; // ถ้าใช้ React Router
+import React, { useContext } from 'react'
+import { ExternalLink } from 'lucide-react'
+import { useNavigate, useLocation, Link } from 'react-router-dom' // ถ้าใช้ React Router
+import { AuthContext } from '@/context/AuthContextObject'
 
 const SideBar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { logout } = useContext(AuthContext)
+
   const sidebarItems = [
-    { 
-      name: 'Article management', 
+    {
+      name: 'Article management',
       path: '/admin/article-management',
-      icon: '📄' 
+      icon: '📄',
     },
-    { 
-      name: 'Category management', 
+    {
+      name: 'Category management',
       path: '/admin/category-management',
-      icon: '📁' 
+      icon: '📁',
     },
-    { 
-      name: 'Profile', 
+    {
+      name: 'Profile',
       path: '/admin/profile',
-      icon: '👤' 
+      icon: '👤',
     },
-    { 
-      name: 'Notification', 
+    {
+      name: 'Notification',
       path: '/admin/notification',
-      icon: '🔔' 
+      icon: '🔔',
     },
-    { 
-      name: 'Reset password', 
+    {
+      name: 'Reset password',
       path: '/admin/reset-password',
-      icon: '🔑' 
-    }
-  ];
+      icon: '🔑',
+    },
+  ]
 
   const handleNavigation = (path) => {
-    navigate(path);
-  };
+    navigate(path)
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <div className="fixed top-0 left-0 h-screen w-[280px] bg-white shadow-sm">
@@ -44,7 +51,7 @@ const SideBar = () => {
         <div className="text-2xl font-bold text-gray-800 mb-2">hh.</div>
         <div className="text-sm text-orange-400 font-medium">Admin panel</div>
       </div>
-      
+
       <nav className="mt-8">
         {sidebarItems.map((item, index) => (
           <div
@@ -52,7 +59,7 @@ const SideBar = () => {
             onClick={() => handleNavigation(item.path)}
             className={`flex items-center px-6 py-3 text-sm cursor-pointer transition-colors ${
               location.pathname === item.path
-                ? 'bg-gray-100 text-gray-900 border-r-2 border-gray-800' 
+                ? 'bg-gray-100 text-gray-900 border-r-2 border-gray-800'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
@@ -67,9 +74,12 @@ const SideBar = () => {
           <ExternalLink className="w-4 h-4 mr-3" />
           <Link to="/">hh. website</Link>hh. website
         </div>
-        <div className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+        <div
+          className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800"
+          onClick={handleLogout}
+        >
           <span className="mr-3">🚪</span>
-          <Link to="/login">Log out</Link>
+          Log out
         </div>
       </div>
     </div>

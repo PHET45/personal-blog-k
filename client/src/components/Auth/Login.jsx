@@ -28,6 +28,8 @@ export const Login = () => {
     e.preventDefault()
     setError('')
     setFieldErrors({})
+  
+    // 1️⃣ Validate form
     try {
       await loginSchema.validate({ email, password }, { abortEarly: false })
     } catch (validationError) {
@@ -37,20 +39,34 @@ export const Login = () => {
           if (ve.path && !newErrors[ve.path]) newErrors[ve.path] = ve.message
         })
         setFieldErrors(newErrors)
-        return
       }
+      return
     }
+  
+    // 2️⃣ Try login
     try {
       const res = await login(email, password)
-      if (res.token) {
+      if (res?.user) {
+        // 3️⃣ Success toast
         toast.success('Login successful')
-        navigate('/')
+  
+        // 4️⃣ Check role and navigate
+        const role = res.user.app_metadata?.role || res.user.role
+        if (role === 'admin') {
+          navigate('/admin/article-management', { replace: true })
+        } else {
+          navigate('/', { replace: true })
+        }
+      } else {
+        throw new Error('Login failed')
       }
     } catch (err) {
-      setError(err.message || 'Login failed')
+      // 5️⃣ Handle error
+      setError(err.message || "Login failed")
       toast.error("Your password is incorrect or this email doesn't exist")
     }
   }
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-stone-100">

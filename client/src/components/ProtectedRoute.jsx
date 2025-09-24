@@ -1,19 +1,25 @@
 import React, { useContext } from 'react'
-import { Navigate } from 'react-router-dom'
 import { AuthContext } from '@/context/AuthContextObject'
 
+
 export default function ProtectedRoute({ children, roles }) {
-  const { user } = useContext(AuthContext)
+  const { user, loading } = useContext(AuthContext)
+  
 
-  // ถ้าไม่ได้ login
-  if (!user) {
-    return <Navigate to="/login" />
+  if (loading) return <div>Loading...</div>
+
+  if (!user) return <Navigate to="/login" replace />
+
+  const userRole = user.app_metadata?.role || user.role
+  console.log('ProtectedRoute userRole:', userRole)
+  console.log('Allowed roles:', roles)
+
+  // ถ้า roles ถูกกำหนดและ userRole ไม่อยู่ใน roles → block
+  if (roles && !roles.includes(userRole)) {
+    console.log('Access denied, redirecting...')
+    return <Navigate to="/" replace />
   }
 
-  // ถ้ามีการตรวจ role เช่น admin
-  if (roles && !roles.includes(user.role)) {
-    return <Navigate to="/" />
-  }
-
+  // ถ้า role ผ่าน → render children
   return children
 }
