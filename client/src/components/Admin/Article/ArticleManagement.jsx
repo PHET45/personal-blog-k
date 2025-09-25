@@ -12,7 +12,6 @@ const ArticleManagement = () => {
     blogs
   } = useFetch()
   const articles = blogs
-  .filter((b) => b.status?.status === 'publish')
   .map((b) => ({
     id: b.id,
     title: b.title,
@@ -67,8 +66,8 @@ const ArticleManagement = () => {
             className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-32 h-[48px] w-[200px]"
           >
             <option>Status</option>
-            <option>Published</option>
-            <option>Draft</option>
+            <option>published</option>
+            <option>draft</option>
             <option>Archived</option>
           </select>
 
