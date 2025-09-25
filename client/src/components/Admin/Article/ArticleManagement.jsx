@@ -2,53 +2,23 @@ import React, { useState } from 'react'
 import { Search, Plus, Edit2, Trash2 } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
 import { Link } from 'react-router-dom'
+import { useFetch } from '@/hooks/useFetch.jsx'
+
 const ArticleManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('Status')
   const [categoryFilter, setCategoryFilter] = useState('Category')
-
-  const articles = [
-    {
-      id: 1,
-      title:
-        'Understanding Cat Behavior: Why Your Feline Friend Acts the Way They Do',
-      category: 'Cat',
-      status: 'Published',
-    },
-    {
-      id: 2,
-      title: 'The Fascinating World of Cats: Why We Love Our Furry Friends',
-      category: 'Cat',
-      status: 'Published',
-    },
-    {
-      id: 3,
-      title:
-        "Finding Motivation: How to Stay Inspired Through Life's Challenges",
-      category: 'General',
-      status: 'Published',
-    },
-    {
-      id: 4,
-      title:
-        "The Science of the Cat's Purr: How It Benefits Cats and Humans Alike",
-      category: 'Cat',
-      status: 'Published',
-    },
-    {
-      id: 5,
-      title: 'Top 10 Health Tips to Keep Your Cat Happy and Healthy',
-      category: 'Cat',
-      status: 'Published',
-    },
-    {
-      id: 6,
-      title: 'Unlocking Creativity: Simple Habits to Spark Inspiration Daily',
-      category: 'Inspiration',
-      status: 'Published',
-    },
-  ]
-
+  const {
+    blogs
+  } = useFetch()
+  const articles = blogs
+  .filter((b) => b.status?.status === 'publish')
+  .map((b) => ({
+    id: b.id,
+    title: b.title,
+    category: b.category?.name || 'Uncategorized',
+    status: b.status?.status === 'publish' ? 'published' : 'draft',
+  }))
   const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title
       .toLowerCase()
