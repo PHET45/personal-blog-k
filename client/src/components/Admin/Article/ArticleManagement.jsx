@@ -1,44 +1,83 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Search, Plus, Edit2, Trash2 } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
 import { Link } from 'react-router-dom'
 import { useFetch } from '@/hooks/useFetch.jsx'
+import { getStatuses } from '@/services/blogService.js'
 
 const ArticleManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('Status')
   const [categoryFilter, setCategoryFilter] = useState('Category')
+  const [statuses, setStatuses] = useState([])
   const { blogs } = useFetch()
-  const articles = blogs.map((b) => ({
-    id: b.id,
-    title: b.title,
-    category: b.category?.name || 'Uncategorized',
-    status: b.status?.status === 'publish' ? 'published' : 'draft',
-  }))
+
+  // Fetch statuses once
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      try {
+        const data = await getStatuses()
+        setStatuses(data)
+      } catch (err) {
+        console.error('Failed to fetch statuses', err)
+      }
+    }
+    fetchStatuses()
+  }, [])
+
+  // Map articles
+  const articles =
+    blogs?.map((b) => {
+      const statusObj = statuses.find((s) => s.status === b.status?.status)
+      let status = statusObj?.status || null
+
+      // แปลง publish → Published
+      if (status === 'publish') status = 'Published'
+
+      return {
+        id: b.id,
+        title: b.title || 'Untitled',
+        category: b.category?.name || 'Uncategorized',
+        status,
+      }
+    }) || []
+
+  // Filter articles
   const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
+
     const matchesStatus =
-      statusFilter === 'Status' || article.status === statusFilter
+      statusFilter === 'Status' ||
+      (article.status &&
+        article.status.toLowerCase() === statusFilter.toLowerCase())
+
     const matchesCategory =
       categoryFilter === 'Category' || article.category === categoryFilter
+
     return matchesSearch && matchesStatus && matchesCategory
   })
 
+  // Unique categories for dropdown
+  const uniqueCategories = [
+    ...new Set(blogs?.map((b) => b.category?.name || 'Uncategorized')),
+  ]
+
   return (
-    <div className="min-h-screen  ml-[280px] max-w-screen mx-auto bg-gray-50">
+    <div className="min-h-screen ml-[280px] max-w-screen mx-auto bg-[#F9F8F6]">
       <SideBar />
 
       {/* Header */}
-
-      <div className="flex justify-between items-center px-15 border-b-1 border-stone-200 h-[96px]">
+      <div className="flex justify-between items-center px-15 border-b border-stone-200 h-[96px]">
         <h1 className="text-2xl font-semibold text-gray-800">
           Article management
         </h1>
-        <button className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-4xl flex items-center transition-colors ">
+        <button className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-4xl flex items-center transition-colors">
           <Plus className="w-4 h-4 mr-2" />
-          <Link to="/admin/create-article">Create article</Link>
+          <Link to="/admin/article-management/create-article">
+            Create article
+          </Link>
         </button>
       </div>
 
@@ -57,74 +96,93 @@ const ArticleManagement = () => {
             />
           </div>
 
+          {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-32 h-[48px] w-[200px]"
           >
-            <option>Status</option>
-            <option>published</option>
-            <option>draft</option>
-            <option>Archived</option>
+            <option value="Status">Status</option>
+            {statuses.map((s) => {
+              let label = s.status
+              if (label === 'publish') label = 'Published'
+              return (
+                <option key={s.id || label} value={label}>
+                  {label}
+                </option>
+              )
+            })}
           </select>
 
+          {/* Category Filter */}
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-32 h-[48px] w-[200px]"
           >
-            <option>Category</option>
-            <option>Cat</option>
-            <option>General</option>
-            <option>Inspiration</option>
+            <option value="Category">Category</option>
+            {uniqueCategories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
           </select>
         </div>
 
         {/* Articles Table */}
-        <div className="bg-white rounded-lg shadow-sm ">
+        <div className="bg-[#F9F8F6] rounded-lg shadow-sm border-1 border-[#DAD6D1]">
           <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 text-sm font-medium text-gray-600">
             <div className="col-span-6">Article title</div>
             <div className="col-span-2">Category</div>
             <div className="col-span-2">Status</div>
           </div>
 
-          {filteredArticles.map((article) => (
+          {filteredArticles.map((article, index) => (
             <div
               key={article.id}
-              className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+              className={`grid grid-cols-12 gap-4 p-4 border-b border-gray-100 transition-colors shadow-[0_2px_12px_rgba(0,0,0,0.1)]
+        ${index % 2 === 0 ? 'bg-[#F9F8F6]' : 'bg-[#EFEEEB]'}`}
             >
               <div className="col-span-6">
                 <div className="text-sm text-gray-900 font-medium">
                   {article.title}
                 </div>
               </div>
+
               <div className="col-span-2">
                 <div className="text-sm text-gray-600">{article.category}</div>
               </div>
+
               <div className="col-span-2">
+                {/* Status with color */}
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-    ${
-      article.status === 'published'
-        ? 'bg-green-100 text-green-800'
-        : article.status === 'draft'
-        ? 'bg-yellow-100 text-yellow-800'
-        : 'bg-gray-100 text-gray-800'
-    }`}
+            ${
+              article.status === 'Published'
+                ? 'bg-green-100 text-green-800'
+                : article.status === 'draft'
+                ? 'bg-yellow-100 text-yellow-800'
+                : article.status === 'archived'
+                ? 'bg-gray-100 text-gray-800'
+                : 'bg-gray-100 text-gray-400 animate-pulse'
+            }`}
                 >
                   <div
                     className={`w-1.5 h-1.5 rounded-full mr-1.5
-      ${
-        article.status === 'published'
-          ? 'bg-green-500'
-          : article.status === 'draft'
-          ? 'bg-yellow-500'
-          : 'bg-gray-500'
-      }`}
+              ${
+                article.status === 'Published'
+                  ? 'bg-green-500'
+                  : article.status === 'draft'
+                  ? 'bg-yellow-500'
+                  : article.status === 'archived'
+                  ? 'bg-gray-500'
+                  : 'bg-gray-300 animate-pulse'
+              }`}
                   ></div>
-                  {article.status}
+                  {article.status || 'Loading...'}
                 </span>
               </div>
+
               <div className="col-span-2">
                 <div className="flex items-center space-x-2">
                   <button className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors">
@@ -137,13 +195,13 @@ const ArticleManagement = () => {
               </div>
             </div>
           ))}
-        </div>
 
-        {filteredArticles.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            No articles found matching your criteria.
-          </div>
-        )}
+          {filteredArticles.length === 0 && (
+            <div className="text-center py-12 text-gray-500">
+              No articles found matching your criteria.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -25,7 +25,7 @@ export default function AppRoutes() {
       )
     },
     { 
-      path: '/admin/create-article', 
+      path: '/admin/article-management/create-article', 
       element: (
         <ProtectedRoute roles={["admin"]}>
           <CreateArticlePage />

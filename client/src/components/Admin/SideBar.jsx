@@ -46,22 +46,25 @@ const SideBar = () => {
   }
 
   return (
-    <div className="fixed top-0 left-0 h-screen w-[280px] bg-white shadow-sm">
-      <div className="p-6">
-        <div className="text-2xl font-bold text-gray-800 mb-2">hh.</div>
+    <div className="fixed top-0 left-0 h-screen w-[280px] bg-[#EFEEEB] shadow-sm">
+      <div className="h-[212px] flex flex-col items-start justify-center px-7">
+        <img src='/logo.svg' alt='logo'/>
         <div className="text-sm text-orange-400 font-medium">Admin panel</div>
       </div>
 
-      <nav className="mt-8">
+      <nav className="flex flex-col">
         {sidebarItems.map((item, index) => (
           <div
             key={index}
             onClick={() => handleNavigation(item.path)}
-            className={`flex items-center px-6 py-3 text-sm cursor-pointer transition-colors ${
-              location.pathname === item.path
-                ? 'bg-gray-100 text-gray-900 border-r-2 border-gray-800'
-                : 'text-gray-600 hover:bg-gray-50'
+            className={`flex items-center px-6 py-6 text-sm cursor-pointer transition-colors ${
+              location.pathname.startsWith(item.path)
+                ? 'bg-[#DAD6D1] text-gray-900'
+                : 'text-gray-600 hover:bg-[#DAD6D1] '
             }`}
+            
+            
+            
           >
             <span className="mr-3">{item.icon}</span>
             {item.name}

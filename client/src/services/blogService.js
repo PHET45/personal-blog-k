@@ -22,3 +22,12 @@ export const getBlogById = async (id) => {
     throw new Error(err.response?.data?.message || err.message)
   }
 }
+
+export const getStatuses = async (params = {}) => {
+  try {
+    const res = await axios.get(`${API_URL}/statuses`, { params })
+    return res.data?.data ?? res.data
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message)
+  }
+}
