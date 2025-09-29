@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 export const Footer = () => {
   return (
     <div className='flex items-center justify-center flex-col gap-4 w-full bg-[hsla(45,11%,93%,1)]'>
-    <div className="lg:h-[144px] opacity-100 pt-10 pr-4 pb-10 pl-4 gap-5  lg:w-[1440px] flex md:flex-row flex-col justify-center items-center lg:justify-between w-full">
+    <div className="lg:h-[144px] opacity-100 lg:px-30 gap-5 py-5 lg:w-[1440px] flex md:flex-row flex-col  justify-center items-center lg:justify-between w-full">
       <div className="flex flex-row justify-center items-center gap-x-10 lg:justify-start lg:gap-10">
         <div className="font-poppins font-medium text-base leading-6 tracking-normal">
           Get in touch
