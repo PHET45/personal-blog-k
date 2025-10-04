@@ -12,10 +12,7 @@ const GooeyNav = ({
   value, // prop สำหรับ controlled component
   onValueChange, // prop สำหรับ controlled component
 }) => {
-  console.log('GooeyNav component is rendered!')
-  console.log('GooeyNav received value:', value)
-  console.log('GooeyNav received onValueChange:', typeof onValueChange)
-  console.log('GooeyNav received items:', items.length)
+ 
 
   const containerRef = useRef(null)
   const navRef = useRef(null)
@@ -25,10 +22,10 @@ const GooeyNav = ({
 
   // Sync active state กับ value จาก parent
   useEffect(() => {
-    console.log('GooeyNav useEffect - syncing value:', value)
+    
     if (value && items.length > 0) {
       const index = items.findIndex(item => item.value === value)
-      console.log('Found index for value:', index)
+     
       if (index !== -1 && index !== activeIndex) {
         setActiveIndex(index)
       }
@@ -105,19 +102,19 @@ const GooeyNav = ({
   }
   
   const handleClick = (e, index) => {
-    console.log('GooeyNav handleClick called - index:', index)
+   
     const liEl = e.currentTarget
     if (activeIndex === index) return
     
     const selectedItem = items[index]
-    console.log('Selected item:', selectedItem)
+    
     
     setActiveIndex(index)
     updateEffectPosition(liEl)
     
     // เรียก callback เพื่อแจ้ง parent component
     if (onValueChange && selectedItem) {
-      console.log('Calling onValueChange with:', selectedItem.value)
+      
       onValueChange(selectedItem.value)
     }
     

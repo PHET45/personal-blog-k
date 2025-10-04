@@ -204,6 +204,7 @@ export const ViewPost = () => {
                             <span style={{ marginLeft: 4 }}>{likeCount}</span>
                           </div>
                         ),
+                        key: 'like-button',
                       },
                     ]}
                     activeHref="/"

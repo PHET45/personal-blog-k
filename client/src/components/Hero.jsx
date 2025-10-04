@@ -3,7 +3,7 @@ import BlurText from './ui/BlurText'
 
 const Hero = () => {
   const handleAnimationComplete = () => {
-    console.log('Animation completed!')
+
   }
   return (
     <div className="flex flex-col justify-center w-full items-center lg:w-[1200px] lg:gap-10 md:gap-5 container md:px-8 px-4 py-8 lg:flex-row lg:py-16 mx-auto">

@@ -65,10 +65,10 @@ export const toggleLike = async (postId, token) => {
       }
     )
     
-    console.log('✅ toggleLike success:', res.data)
+    
     return res.data
   } catch (err) {
-    console.error('❌ toggleLike error:', {
+    console.error( {
       status: err.response?.status,
       data: err.response?.data,
       message: err.message

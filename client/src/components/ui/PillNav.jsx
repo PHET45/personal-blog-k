@@ -291,7 +291,7 @@ const PillNav = ({
                 'relative overflow-hidden inline-flex items-center justify-center h-full no-underline rounded-full box-border font-semibold text-[16px] leading-[0] uppercase tracking-[0.2px] whitespace-nowrap cursor-pointer px-0'
 
               return (
-                <li key={item.href} role="none" className="flex h-full">
+                <li key={item.id || item.href || i} role="none" className="flex h-full">
                   {isRouterLink(item.href) ? (
                     <Link
                       role="menuitem"
@@ -355,7 +355,7 @@ const PillNav = ({
         }}
       >
         <ul className="list-none m-0 p-[3px] flex flex-col gap-[3px]">
-          {items.map((item) => {
+          {items.map((item, index) => {
             const defaultStyle = {
               background: 'var(--pill-bg, #fff)',
               color: 'var(--pill-text, #fff)',
@@ -373,7 +373,7 @@ const PillNav = ({
               'block py-3 px-4 text-[16px] font-medium rounded-[50px] transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]'
 
             return (
-              <li key={item.href}>
+              <li key={item.id || item.href || index}>
                 {isRouterLink(item.href) ? (
                   <Link
                     to={item.href}
