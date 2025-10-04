@@ -13,6 +13,7 @@ import { SlSocialLinkedin } from 'react-icons/sl'
 import { Textarea } from './ui/textarea'
 import { Label } from './ui/label'
 import { X } from 'lucide-react'
+import MetaBalls from '@/components/ui/MetaBalls'
 
 export const ViewPost = () => {
   const { postid } = useParams()
@@ -22,8 +23,7 @@ export const ViewPost = () => {
   const [likeCount, setLikeCount] = useState(0)
   const [isLiked, setIsLiked] = useState(false)
   const [user, setUser] = useState(null)
-  
-  // ✅ ฟังก์ชันดึง token จาก localStorage
+
   const getToken = () => {
     return localStorage.getItem('token')
   }
@@ -34,7 +34,7 @@ export const ViewPost = () => {
         // โหลดโพสต์
         const data = await getBlogById(postid)
         setPost(data)
-        
+
         // โหลด user profile
         try {
           const profile = await AuthService.getProfile()
@@ -56,7 +56,7 @@ export const ViewPost = () => {
         setLoading(false)
       }
     }
-  
+
     fetchData()
     // จัดการ overflow ถ้ามี dialog เปิด
     const originalOverflow = document.body.style.overflow
@@ -69,20 +69,20 @@ export const ViewPost = () => {
   // ✅ Like handler ที่เชื่อมกับ API
   const handleLikeClick = async () => {
     const token = getToken()
-  
+
     if (!token) {
       setShowDialog(true)
       return
     }
-  
+
     // เก็บค่าก่อนหน้าไว้ rollback ได้
     const prevLiked = isLiked
     const prevCount = likeCount
-  
+
     // ✅ อัปเดต UI ทันที
     setIsLiked(!isLiked)
     setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
-  
+
     try {
       // ✅ เรียก API เบื้องหลัง
       const res = await toggleLike(postid, token)
@@ -103,9 +103,24 @@ export const ViewPost = () => {
 
   return (
     <div className="max-w-[1200px] mx-auto p-4 items-center ">
-      {loading && <div>Loading...</div>}
+      {loading && (
+        <div className='flex flex-col items-center  gap-6 lg:py-100'>
+          <MetaBalls
+            color="oklch(89.7% 0.196 126.665)"
+            cursorBallColor="oklch(89.7% 0.196 126.665)"
+            cursorBallSize={5}
+            ballCount={30}
+            animationSize={30}
+            enableMouseInteraction={true}
+            enableTransparency={true}
+            hoverSmoothness={0.05}
+            clumpFactor={2}
+            speed={0.3}
+          />
+        </div>
+      )}
       {!loading && !post && (
-        <div className="flex flex-col items-center gap-6 py-8">
+        <div className="flex flex-col items-center  gap-6 lg:py-100">
           <FuzzyText
             baseIntensity={0.2}
             hoverIntensity={0.5}
@@ -160,7 +175,7 @@ export const ViewPost = () => {
                     <ReactMarkdown>{post.content}</ReactMarkdown>
                   )}
                 </div>
-                
+
                 <div className="rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full mt-6 block lg:hidden">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="">
@@ -250,7 +265,6 @@ export const ViewPost = () => {
                   <button
                     className={`flex items-center justify-center w-full border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 `}
                     onClick={handleLikeClick}
-                    
                   >
                     <CiFaceSmile className="text-xl mr-2" />
                     <span>{likeCount}</span>
@@ -282,22 +296,18 @@ export const ViewPost = () => {
                         : 'Please login to comment'
                     }
                     id="message"
-                    onClick={handleCommentClick }
+                    onClick={handleCommentClick}
                     disabled={!user}
                     readOnly={!user}
                     className={
-                      !user
-                        ? 'cursor-not-allowed opacity-50'
-                        : 'cursor-text'
+                      !user ? 'cursor-not-allowed opacity-50' : 'cursor-text'
                     }
                   />
                   <button
                     className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm me-2 mb-2 dark:bg-gray-800 dark:hover:bg-[hsla(36,4%,44%,1)] dark:focus:ring-gray-700 dark:border-stone-400 px-[40px] py-[12px] border-1 w-fit lg:ml-auto ${
-                      !user
-                        ? 'opacity-50 cursor-not-allowed'
-                        : 'cursor-pointer'
+                      !user ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                     }`}
-                    onClick={!user? handleCommentClick : undefined}
+                    onClick={!user ? handleCommentClick : undefined}
                   >
                     Send
                   </button>
@@ -341,7 +351,6 @@ export const ViewPost = () => {
             style={{ pointerEvents: 'auto' }}
             onClick={() => {
               setShowDialog(false)
-              
             }}
           >
             <div
@@ -351,7 +360,6 @@ export const ViewPost = () => {
               <button
                 onClick={() => {
                   setShowDialog(false)
-                 
                 }}
                 className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
               >

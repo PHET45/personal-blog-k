@@ -6,6 +6,7 @@ import { ViewPostPage } from '@/page/User/ViewPostPage'
 import ArticleManagementPage from '@/page/Admin/ArticlePage/ArticleManagementPage'
 import { CreateArticlePage } from '@/page/Admin/ArticlePage/CreateArticlePage'
 import CategoryManagementPage from '@/page/Admin/CategoryPage/CategoryManagementPage'
+import { ProfilePage } from '@/page/User/ProfilePage'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 export default function AppRoutes() {
@@ -37,6 +38,14 @@ export default function AppRoutes() {
       element: (
         <ProtectedRoute roles={["admin"]}>
           <CategoryManagementPage />
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/profile',
+      element:(
+        <ProtectedRoute roles={["authenticated"]}>
+          <ProfilePage/>
         </ProtectedRoute>
       )
     },
