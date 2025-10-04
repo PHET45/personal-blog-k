@@ -104,7 +104,7 @@ export const ViewPost = () => {
   return (
     <div className="max-w-[1200px] mx-auto p-4 items-center ">
       {loading && (
-        <div className='flex flex-col items-center  gap-6 lg:py-100'>
+        <div className='flex flex-col items-center  h-screen gap-6 lg:py-100'>
           <MetaBalls
             color="oklch(89.7% 0.196 126.665)"
             cursorBallColor="oklch(89.7% 0.196 126.665)"

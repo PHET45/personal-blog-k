@@ -3,7 +3,7 @@ import { Search, Plus, Edit2, Trash2 } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
 import { Link } from 'react-router-dom'
 import { getCategories } from '@/services/categoriesService.js'
-
+import MetaBalls from '@/components/ui/MetaBalls.jsx'
 const CategoryManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('Category')
@@ -88,36 +88,46 @@ const CategoryManagement = () => {
           </div>
 
           {loading ? (
-  <div className="text-center py-12 text-gray-500">
-    Loading categories...
-  </div>
-) : (
-  filteredArticles.map((article, index) => (
-    <div
-      key={article.id}
-      className={`grid grid-cols-8 gap-4 p-4 border-b border-gray-100 transition-colors
+            <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
+              <MetaBalls
+                color="oklch(89.7% 0.196 126.665)"
+                cursorBallColor="oklch(89.7% 0.196 126.665)"
+                cursorBallSize={5}
+                ballCount={30}
+                animationSize={30}
+                enableMouseInteraction={true}
+                enableTransparency={true}
+                hoverSmoothness={0.05}
+                clumpFactor={2}
+                speed={0.3}
+              />
+            </div>
+          ) : (
+            filteredArticles.map((article, index) => (
+              <div
+                key={article.id}
+                className={`grid grid-cols-8 gap-4 p-4 border-b border-gray-100 transition-colors
         ${index % 2 === 0 ? 'bg-[#F9F8F6]' : 'bg-[#EFEEEB]'}
       `}
-    >
-      <div className="col-span-6">
-        <div className="text-sm text-gray-900 font-medium">
-          {article.name}
-        </div>
-      </div>
-      <div className="col-span-2">
-        <div className="flex items-center space-x-2">
-          <button className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors">
-            <Edit2 className="w-4 h-4" />
-          </button>
-          <button className="p-1.5 text-gray-400 hover:text-red-600 transition-colors">
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-    </div>
-  ))
-)}
-
+              >
+                <div className="col-span-6">
+                  <div className="text-sm text-gray-900 font-medium">
+                    {article.name}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="flex items-center space-x-2">
+                    <button className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors">
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button className="p-1.5 text-gray-400 hover:text-red-600 transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {!loading && filteredArticles.length === 0 && (

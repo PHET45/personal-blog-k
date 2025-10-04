@@ -9,6 +9,7 @@ import {
 import BlogCard from './BlogCard'
 import GooeyNav from './ui/GooeyNav'
 import { useFetch } from '@/hooks/useFetch'
+import MetaBalls from './ui/MetaBalls'
 
 const ArticleSection = () => {
   const {
@@ -126,14 +127,14 @@ const ArticleSection = () => {
 
       {/* Loading */}
       {isLoading && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 w-full max-w-5xl h-[100vh]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 w-full max-w-6xl h-full  ">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="w-full max-w-md animate-pulse">
+            <div key={i} className="w-full animate-pulse">
               <div className="h-[212px] sm:h-[360px] w-full rounded-lg bg-gray-200 mb-4" />
               <div className="h-4 w-24 bg-gray-200 rounded mb-2" />
-              <div className="h-6 w-3/4 bg-gray-200 rounded mb-3" />
+              <div className="h-6 w-4/4 bg-gray-200 rounded mb-3" />
               <div className="h-4 w-full bg-gray-200 rounded mb-2" />
-              <div className="h-4 w-5/6 bg-gray-200 rounded" />
+              <div className="h-4 w-6/6 bg-gray-200 rounded" />
             </div>
           ))}
         </div>
@@ -151,7 +152,24 @@ const ArticleSection = () => {
             disabled={isLoading}
             className="hover:text-muted-foreground font-medium underline disabled:opacity-60 cursor-pointer"
           >
-            {isLoading ? 'Loading...' : 'View more'}
+            {isLoading ? (
+              <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
+                <MetaBalls
+                  color="oklch(89.7% 0.196 126.665)"
+                  cursorBallColor="oklch(89.7% 0.196 126.665)"
+                  cursorBallSize={5}
+                  ballCount={30}
+                  animationSize={30}
+                  enableMouseInteraction={true}
+                  enableTransparency={true}
+                  hoverSmoothness={0.05}
+                  clumpFactor={2}
+                  speed={0.3}
+                />
+              </div>
+            ) : (
+              'View more'
+            )}
           </button>
         </div>
       )}

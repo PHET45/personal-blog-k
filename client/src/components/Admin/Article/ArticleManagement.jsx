@@ -4,6 +4,7 @@ import SideBar from '../SideBar.jsx'
 import { Link } from 'react-router-dom'
 import { useFetch } from '@/hooks/useFetch.jsx'
 import { getStatuses } from '@/services/blogService.js'
+import MetaBalls from '@/components/ui/MetaBalls.jsx'
 
 const ArticleManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -179,7 +180,22 @@ const ArticleManagement = () => {
                   : 'bg-gray-300 animate-pulse'
               }`}
                   ></div>
-                  {article.status || 'Loading...'}
+                  {article.status || (
+                    <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
+                      <MetaBalls
+                        color="oklch(89.7% 0.196 126.665)"
+                        cursorBallColor="oklch(89.7% 0.196 126.665)"
+                        cursorBallSize={5}
+                        ballCount={30}
+                        animationSize={30}
+                        enableMouseInteraction={true}
+                        enableTransparency={true}
+                        hoverSmoothness={0.05}
+                        clumpFactor={2}
+                        speed={0.3}
+                      />
+                    </div>
+                  )}
                 </span>
               </div>
 
