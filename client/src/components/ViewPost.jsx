@@ -19,11 +19,10 @@ export const ViewPost = () => {
   const [post, setPost] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showDialog, setShowDialog] = useState(false)
-  const [likeDisabled, setLikeDisabled] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
   const [isLiked, setIsLiked] = useState(false)
   const [user, setUser] = useState(null)
-
+  
   // ✅ ฟังก์ชันดึง token จาก localStorage
   const getToken = () => {
     return localStorage.getItem('token')
@@ -70,21 +69,30 @@ export const ViewPost = () => {
   // ✅ Like handler ที่เชื่อมกับ API
   const handleLikeClick = async () => {
     const token = getToken()
-    
+  
     if (!token) {
       setShowDialog(true)
       return
     }
-
-    setLikeDisabled(true)
+  
+    // เก็บค่าก่อนหน้าไว้ rollback ได้
+    const prevLiked = isLiked
+    const prevCount = likeCount
+  
+    // ✅ อัปเดต UI ทันที
+    setIsLiked(!isLiked)
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
+  
     try {
+      // ✅ เรียก API เบื้องหลัง
       const res = await toggleLike(postid, token)
       setIsLiked(res.liked)
       setLikeCount(res.likes_count)
     } catch (err) {
       console.error('Error toggling like:', err)
-    } finally {
-      setLikeDisabled(false)
+      // ❌ rollback ถ้า error
+      setIsLiked(prevLiked)
+      setLikeCount(prevCount)
     }
   }
 
@@ -189,11 +197,7 @@ export const ViewPost = () => {
                       {
                         label: (
                           <div
-                            className={`flex items-center cursor-pointer  ${
-                              likeDisabled
-                                ? 'opacity-50 cursor-not-allowed'
-                                : ''
-                            } `}
+                            className={`flex items-center cursor-pointer  `}
                             onClick={handleLikeClick}
                           >
                             <CiFaceSmile />
@@ -243,11 +247,9 @@ export const ViewPost = () => {
                 {/* Like and Share mob*/}
                 <div className="w-full rounded-3xl bg-stone-100 p-3 flex flex-col items-center gap-3 shadow-sm mt-ex-wrap lg:hidden mb-5">
                   <button
-                    className={`flex items-center justify-center w-full border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 ${
-                      likeDisabled ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
+                    className={`flex items-center justify-center w-full border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 `}
                     onClick={handleLikeClick}
-                    disabled={likeDisabled}
+                    
                   >
                     <CiFaceSmile className="text-xl mr-2" />
                     <span>{likeCount}</span>
@@ -338,7 +340,7 @@ export const ViewPost = () => {
             style={{ pointerEvents: 'auto' }}
             onClick={() => {
               setShowDialog(false)
-              setLikeDisabled(false)
+              
             }}
           >
             <div
@@ -348,7 +350,7 @@ export const ViewPost = () => {
               <button
                 onClick={() => {
                   setShowDialog(false)
-                  setLikeDisabled(false)
+                 
                 }}
                 className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
