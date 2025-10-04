@@ -92,9 +92,9 @@ const CategoryManagement = () => {
               <MetaBalls
                 color="oklch(89.7% 0.196 126.665)"
                 cursorBallColor="oklch(89.7% 0.196 126.665)"
-                cursorBallSize={5}
+                cursorBallSize={4}
                 ballCount={30}
-                animationSize={30}
+                animationSize={60}
                 enableMouseInteraction={true}
                 enableTransparency={true}
                 hoverSmoothness={0.05}
@@ -131,8 +131,19 @@ const CategoryManagement = () => {
         </div>
 
         {!loading && filteredArticles.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            No articles found matching your criteria.
+          <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
+            <MetaBalls
+              color="oklch(89.7% 0.196 126.665)"
+              cursorBallColor="oklch(89.7% 0.196 126.665)"
+              cursorBallSize={4}
+              ballCount={30}
+              animationSize={60}
+              enableMouseInteraction={true}
+              enableTransparency={true}
+              hoverSmoothness={0.05}
+              clumpFactor={2}
+              speed={0.3}
+            />
           </div>
         )}
       </div>

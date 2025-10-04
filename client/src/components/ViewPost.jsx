@@ -108,9 +108,9 @@ export const ViewPost = () => {
           <MetaBalls
             color="oklch(89.7% 0.196 126.665)"
             cursorBallColor="oklch(89.7% 0.196 126.665)"
-            cursorBallSize={5}
+            cursorBallSize={4}
             ballCount={30}
-            animationSize={30}
+            animationSize={60}
             enableMouseInteraction={true}
             enableTransparency={true}
             hoverSmoothness={0.05}
