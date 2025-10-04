@@ -22,7 +22,7 @@ export const AuthService = {
 
       const user = res.data?.user || res.data;
 
-      // เติม avatar_url เข้าไปใน user.user_metadata
+      
       const avatar_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(
         user.user_metadata?.name || user.user_metadata?.username || user.email
       )}&background=random&color=fff`;

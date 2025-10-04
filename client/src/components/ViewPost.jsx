@@ -1,8 +1,8 @@
-'use client'
 
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getBlogById } from '@/services/blogService'
+import { AuthService } from '@/services/auth'
 import ReactMarkdown from 'react-markdown'
 import FuzzyText from './ui/FuzzyText'
 import PillNav from './ui/PillNav'
@@ -15,7 +15,7 @@ import { Textarea } from './ui/textarea'
 import { Label } from './ui/label'
 import { X } from 'lucide-react'
 
-export const ViewPost = ({ isLoggedIn }) => {
+export const ViewPost = () => {
   const { postid } = useParams()
   const [post, setPost] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -23,53 +23,54 @@ export const ViewPost = ({ isLoggedIn }) => {
   const [likeDisabled, setLikeDisabled] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
   const [isLiked, setIsLiked] = useState(false)
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const run = async () => {
+    const fetchData = async () => {
       try {
+        // โหลดโพสต์
         const data = await getBlogById(postid)
         setPost(data)
+        // โหลด user profile
+        try {
+          const profile = await AuthService.getProfile()
+          setUser(profile.user)
+        } catch {
+          setUser(null)
+        }
       } finally {
         setLoading(false)
       }
     }
-    run()
-  }, [postid])
-
-  useEffect(() => {
+  
+    fetchData()
+    // จัดการ overflow ถ้ามี dialog เปิด
     const originalOverflow = document.body.style.overflow
-    if (showDialog) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = originalOverflow
-    }
-
+    if (showDialog) document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = originalOverflow
     }
-  }, [showDialog])
+  }, [postid, showDialog])
 
-  const handleClick = () => {
-    if (likeDisabled) return
+  // Like handler
+  const handleLikeClick = () => {
+    if (!user) {
+      setShowDialog(true)
+      return
+    }
 
-    if (!isLoggedIn) {
-      setLikeDisabled(true)
-      setTimeout(() => {
-        setShowDialog(true)
-      }, 100)
+    if (isLiked) {
+      setLikeCount(prev => prev - 1)
+      setIsLiked(false)
     } else {
-      handleLike()
+      setLikeCount(prev => prev + 1)
+      setIsLiked(true)
     }
   }
 
-  const handleLike = () => {
-    if (isLiked) {
-      setLikeCount((prev) => prev - 1)
-      setIsLiked(false)
-    } else {
-      setLikeCount((prev) => prev + 1)
-      setIsLiked(true)
-    }
+  // Comment click (แค่เปิด dialog ถ้ายังไม่ได้ login)
+  const handleCommentClick = () => {
+    if (!user) setShowDialog(true)
   }
 
   return (
@@ -131,6 +132,7 @@ export const ViewPost = ({ isLoggedIn }) => {
                     <ReactMarkdown>{post.content}</ReactMarkdown>
                   )}
                 </div>
+                
                 <div className="rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full mt-6 block lg:hidden">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="">
@@ -160,6 +162,7 @@ export const ViewPost = ({ isLoggedIn }) => {
                     animal shelter, helping cats find loving homes.
                   </p>
                 </div>
+                {/* Like and Share desktop*/}
                 <div className="w-full rounded-3xl bg-stone-100 p-4 mb-5 justify-between items-center shadow-sm mt-4 hidden lg:flex ">
                   <PillNav
                     items={[
@@ -170,8 +173,8 @@ export const ViewPost = ({ isLoggedIn }) => {
                               likeDisabled
                                 ? 'opacity-50 cursor-not-allowed'
                                 : ''
-                            } ${isLiked ? 'text-red-500' : ''}`}
-                            onClick={handleClick}
+                            } `}
+                            onClick={handleLikeClick}
                           >
                             <CiFaceSmile />
                             <span style={{ marginLeft: 4 }}>{likeCount}</span>
@@ -217,12 +220,13 @@ export const ViewPost = ({ isLoggedIn }) => {
                     />
                   </div>
                 </div>
+                {/* Like and Share mobile*/}
                 <div className="w-full rounded-3xl bg-stone-100 p-3 flex flex-col items-center gap-3 shadow-sm mt-ex-wrap lg:hidden mb-5">
                   <button
                     className={`flex items-center justify-center w-full border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 ${
                       likeDisabled ? 'opacity-50 cursor-not-allowed' : ''
-                    } ${isLiked ? 'text-red-500 border-red-300' : ''}`}
-                    onClick={handleClick}
+                    }`}
+                    onClick={handleLikeClick}
                     disabled={likeDisabled}
                   >
                     <CiFaceSmile className="text-xl mr-2" />
@@ -250,27 +254,27 @@ export const ViewPost = ({ isLoggedIn }) => {
                   <Label htmlFor="message">Comment</Label>
                   <Textarea
                     placeholder={
-                      isLoggedIn
+                      user
                         ? 'What are your thoughts?'
                         : 'Please login to comment'
                     }
                     id="message"
-                    onClick={handleClick}
-                    disabled={!isLoggedIn}
-                    readOnly={!isLoggedIn}
+                    onClick={handleCommentClick }
+                    disabled={!user}
+                    readOnly={!user}
                     className={
-                      !isLoggedIn
+                      !user
                         ? 'cursor-not-allowed opacity-50'
                         : 'cursor-text'
                     }
                   />
                   <button
                     className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm me-2 mb-2 dark:bg-gray-800 dark:hover:bg-[hsla(36,4%,44%,1)] dark:focus:ring-gray-700 dark:border-stone-400 px-[40px] py-[12px] border-1 w-fit lg:ml-auto ${
-                      !isLoggedIn
+                      !user
                         ? 'opacity-50 cursor-not-allowed'
                         : 'cursor-pointer'
                     }`}
-                    onClick={!isLoggedIn ? handleClick : undefined}
+                    onClick={!user? handleCommentClick : undefined}
                   >
                     Send
                   </button>
