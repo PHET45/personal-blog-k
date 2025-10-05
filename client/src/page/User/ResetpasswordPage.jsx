@@ -1,11 +1,12 @@
-import Profile from '@/components/Profile/Profile'
 import Navbar from '@/components/Nav'
-
-export const ProfilePage = () => {
+import ResetPassword from '@/components/Profile/ResetPassword'
+const ResetpasswordPage = () => {
   return (
     <div className="flex flex-col w-full min-h-screen overflow-x-hidden">
       <Navbar />
-      <Profile />
+      <ResetPassword />
     </div>
   )
 }
+
+export default ResetpasswordPage

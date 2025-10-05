@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { AuthService } from '@/services/auth'
 import { FaBell, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa'
 
+
 const Navbar = () => {
   const [user, setUser] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)

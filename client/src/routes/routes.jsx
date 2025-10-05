@@ -8,6 +8,7 @@ import { CreateArticlePage } from '@/page/Admin/ArticlePage/CreateArticlePage'
 import CategoryManagementPage from '@/page/Admin/CategoryPage/CategoryManagementPage'
 import { ProfilePage } from '@/page/User/ProfilePage'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import ResetpasswordPage from '@/page/User/ResetpasswordPage'
 
 export default function AppRoutes() {
   return useRoutes([
@@ -46,6 +47,14 @@ export default function AppRoutes() {
       element:(
         <ProtectedRoute roles={["authenticated"]}>
           <ProfilePage/>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/reset-password',
+      element:(
+        <ProtectedRoute roles={["authenticated"]}>
+          <ResetpasswordPage/>
         </ProtectedRoute>
       )
     },
