@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getBlogById, toggleLike, getLikes } from '@/services/blogService'
 import { AuthService } from '@/services/auth'
@@ -20,6 +20,7 @@ import {
   createComment,
   deleteComment,
 } from '@/services/commentService'
+import { toast } from 'react-toast'
 
 export const ViewPost = () => {
   const { postid } = useParams()
@@ -32,68 +33,29 @@ export const ViewPost = () => {
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
 
-  const getToken = () => {
-    return localStorage.getItem('token')
-  }
+  const getToken = () => localStorage.getItem('token')
 
+  // ✅ Fetch post, user, likes, comments
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       try {
-        // โหลดโพสต์
-        const data = await getBlogById(postid)
-        setPost(data)
-
-        // โหลด user profile
-        try {
-          const profile = await AuthService.getProfile()
-          setUser(profile.user)
-        } catch {
-          setUser(null)
-        }
-
-        // ✅ โหลดข้อมูล likes
-        const token = getToken()
-        try {
-          const likes = await getLikes(postid, token)
-          setLikeCount(likes.likes_count)
-          setIsLiked(likes.liked || false)
-        } catch (err) {
-          console.error('Error fetching likes:', err)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-    // จัดการ overflow ถ้ามี dialog เปิด
-    const originalOverflow = document.body.style.overflow
-    if (showDialog) document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = originalOverflow
-    }
-  }, [postid, showDialog])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getBlogById(postid)
-        console.log('blog', data)
-        setPost(data)
-
-        const profile = await AuthService.getProfile().catch(() => null)
-        console.log('profile', profile)
+        const [postData, profile, likesData, commentData] = await Promise.all([
+          getBlogById(postid),
+          AuthService.getProfile().catch(() => null),
+          getLikes(postid, getToken()).catch(() => ({
+            likes_count: 0,
+            liked: false,
+          })),
+          getCommentsByPost(postid).catch(() => []),
+        ])
+        setPost(postData)
         setUser(profile?.user || null)
-
-        const token = getToken()
-        const likes = await getLikes(postid, token).catch(() => ({}))
-        setLikeCount(likes.likes_count || 0)
-        setIsLiked(likes.liked || false)
-
-        // ✅ โหลดคอมเมนต์
-        const fetchedComments = await getCommentsByPost(postid)
-        console.log('comment', fetchedComments)
-        setComments(fetchedComments)
+        setLikeCount(likesData.likes_count || 0)
+        setIsLiked(likesData.liked || false)
+        setComments(commentData)
+      } catch (err) {
+        console.error(err)
       } finally {
         setLoading(false)
       }
@@ -102,61 +64,62 @@ export const ViewPost = () => {
     fetchData()
   }, [postid])
 
-  // ✅ Like handler ที่เชื่อมกับ API
-  const handleLikeClick = async () => {
+  useEffect(() => {
+    // overflow control for dialog
+    document.body.style.overflow = showDialog ? 'hidden' : ''
+  }, [showDialog])
+
+  const handleCopyLink = useCallback((e) => {
+    e.preventDefault()
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => toast.success('Link copied to clipboard!'))
+      .catch(() => toast.error('Failed to copy link'))
+  }, [])
+
+  const handleLikeClick = useCallback(async () => {
     const token = getToken()
+    if (!token) return setShowDialog(true)
 
-    if (!token) {
-      setShowDialog(true)
-      return
-    }
-
-    // เก็บค่าก่อนหน้าไว้ rollback ได้
     const prevLiked = isLiked
     const prevCount = likeCount
-
-    // ✅ อัปเดต UI ทันที
-    setIsLiked(!isLiked)
-    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
+    const newLiked = !isLiked
+    setIsLiked(newLiked)
+    setLikeCount(newLiked ? likeCount + 1 : likeCount - 1)
 
     try {
-      // ✅ เรียก API เบื้องหลัง
       const res = await toggleLike(postid, token)
+
       setIsLiked(res.liked)
       setLikeCount(res.likes_count)
     } catch (err) {
       console.error('Error toggling like:', err)
-      // ❌ rollback ถ้า error
+
       setIsLiked(prevLiked)
       setLikeCount(prevCount)
     }
-  }
+  }, [isLiked, likeCount, postid])
 
-  // Comment click (แค่เปิด dialog ถ้ายังไม่ได้ login)
   const handleSendComment = async () => {
-    if (!user) {
-      setShowDialog(true)
-      return
-    }
+    if (!user) return setShowDialog(true)
     if (!commentText.trim()) return
-
     try {
       const newComment = await createComment(postid, commentText)
-      setComments((prev) => [newComment, ...prev]) // ✅ แสดงทันที
+      setComments((prev) => [newComment, ...prev])
       setCommentText('')
     } catch (err) {
-      console.error('Error sending comment:', err)
+      console.error(err)
     }
   }
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteComment = useCallback(async (commentId) => {
     try {
       await deleteComment(commentId)
       setComments((prev) => prev.filter((c) => c.id !== commentId))
     } catch (err) {
-      console.error('Error deleting comment:', err)
+      console.error(err)
     }
-  }
+  }, [])
 
   return (
     <div className="max-w-[1200px] mx-auto p-4 items-center ">
@@ -297,17 +260,34 @@ export const ViewPost = () => {
                           label: (
                             <div className="flex items-center ">
                               <IoCopyOutline />
-                              <span style={{ marginLeft: 4 }}>Copy link</span>
+                              <span
+                                style={{ marginLeft: 4 }}
+                                onClick={handleCopyLink}
+                              >
+                                Copy link
+                              </span>
                             </div>
                           ),
                           href: '',
                         },
-                        { label: <FaFacebook />, href: 'www.facebook.com' },
+                        {
+                          label: <FaFacebook />,
+                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                            window.location.href
+                          )}`,
+                        },
                         {
                           label: <SlSocialLinkedin />,
-                          href: 'www.linkedin.com',
+                          href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                            window.location.href
+                          )}`,
                         },
-                        { label: <CiTwitter />, href: 'www.twitter.com' },
+                        {
+                          label: <CiTwitter />,
+                          href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                            window.location.href
+                          )}&text=${encodeURIComponent(post?.title || '')}`,
+                        },
                       ]}
                       activeHref="/"
                       className="custom-nav "
@@ -367,7 +347,7 @@ export const ViewPost = () => {
                     className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm me-2 mb-2 dark:bg-gray-800 dark:hover:bg-[hsla(36,4%,44%,1)] dark:focus:ring-gray-700 dark:border-stone-400 px-[40px] py-[12px] border-1 w-fit lg:ml-auto ${
                       !user ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                     }`}
-                    onClick={handleSendComment} 
+                    onClick={handleSendComment}
                   >
                     Send
                   </button>
@@ -378,8 +358,8 @@ export const ViewPost = () => {
                   onDelete={handleDeleteComment}
                 />
               </div>
-              <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:col-span-1 lg:sticky top-5  self-start hidden lg:block">
-                <div className="flex items-center gap-3 mb-4">
+              <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:col-span-1  self-start hidden lg:block">
+                <div className="flex items-center gap-3 mb-4 ">
                   <div className="">
                     <img
                       src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"

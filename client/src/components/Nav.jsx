@@ -55,7 +55,7 @@ const Navbar = () => {
           ref={dropdownRef}
         >
           {user ? (
-            <div className="flex items-center gap-2 cursor-pointer">
+            <div className="flex items-center gap-5 cursor-pointer">
               {/* Notification bell */}
               <button className="relative">
                 <FaBell className="text-xl text-gray-700" />
