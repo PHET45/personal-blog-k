@@ -14,6 +14,12 @@ import { Textarea } from './ui/textarea'
 import { Label } from './ui/label'
 import { X } from 'lucide-react'
 import MetaBalls from '@/components/ui/MetaBalls'
+import { CommentSection } from '@/components/CommentSection'
+import {
+  getCommentsByPost,
+  createComment,
+  deleteComment,
+} from '@/services/commentService'
 
 export const ViewPost = () => {
   const { postid } = useParams()
@@ -23,6 +29,8 @@ export const ViewPost = () => {
   const [likeCount, setLikeCount] = useState(0)
   const [isLiked, setIsLiked] = useState(false)
   const [user, setUser] = useState(null)
+  const [comments, setComments] = useState([])
+  const [commentText, setCommentText] = useState('')
 
   const getToken = () => {
     return localStorage.getItem('token')
@@ -66,6 +74,34 @@ export const ViewPost = () => {
     }
   }, [postid, showDialog])
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getBlogById(postid)
+        console.log('blog', data)
+        setPost(data)
+
+        const profile = await AuthService.getProfile().catch(() => null)
+        console.log('profile', profile)
+        setUser(profile?.user || null)
+
+        const token = getToken()
+        const likes = await getLikes(postid, token).catch(() => ({}))
+        setLikeCount(likes.likes_count || 0)
+        setIsLiked(likes.liked || false)
+
+        // ✅ โหลดคอมเมนต์
+        const fetchedComments = await getCommentsByPost(postid)
+        console.log('comment', fetchedComments)
+        setComments(fetchedComments)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [postid])
+
   // ✅ Like handler ที่เชื่อมกับ API
   const handleLikeClick = async () => {
     const token = getToken()
@@ -97,14 +133,35 @@ export const ViewPost = () => {
   }
 
   // Comment click (แค่เปิด dialog ถ้ายังไม่ได้ login)
-  const handleCommentClick = () => {
-    if (!user) setShowDialog(true)
+  const handleSendComment = async () => {
+    if (!user) {
+      setShowDialog(true)
+      return
+    }
+    if (!commentText.trim()) return
+
+    try {
+      const newComment = await createComment(postid, commentText)
+      setComments((prev) => [newComment, ...prev]) // ✅ แสดงทันที
+      setCommentText('')
+    } catch (err) {
+      console.error('Error sending comment:', err)
+    }
+  }
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(commentId)
+      setComments((prev) => prev.filter((c) => c.id !== commentId))
+    } catch (err) {
+      console.error('Error deleting comment:', err)
+    }
   }
 
   return (
     <div className="max-w-[1200px] mx-auto p-4 items-center ">
       {loading && (
-        <div className='flex flex-col items-center  h-screen gap-6 lg:py-100'>
+        <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
           <MetaBalls
             color="oklch(89.7% 0.196 126.665)"
             cursorBallColor="oklch(89.7% 0.196 126.665)"
@@ -175,35 +232,37 @@ export const ViewPost = () => {
                     <ReactMarkdown>{post.content}</ReactMarkdown>
                   )}
                 </div>
-
-                <div className="rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full mt-6 block lg:hidden">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="">
-                      <img
-                        src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
-                        alt="Author avatar"
-                        className="w-1/2 h-10 rounded-full object-cover"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <div className="text-xs text-gray-500 leading-none mb-1">
-                        Author
+                <div>
+                  <div className="rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full mt-6 block lg:hidden ">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="">
+                        <img
+                          src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
+                          alt="Author avatar"
+                          className="w-1/2 h-10 rounded-full object-cover"
+                        />
                       </div>
-                      <div className="text-lg font-extrabold text-gray-900 leading-none">
-                        {post.author}
+                      <div className="w-1/2">
+                        <div className="text-xs text-gray-500 leading-none mb-1">
+                          Author
+                        </div>
+                        <div className="text-lg font-extrabold text-gray-900 leading-none">
+                          {post.author}
+                        </div>
                       </div>
                     </div>
+                    <hr className="border-t-2 border-gray-200 mb-4" />
+                    <p className="text-sm text-gray-600 mb-4">
+                      I am a pet enthusiast and freelance writer who specializes
+                      in animal behavior and care. With a deep love for cats, I
+                      enjoy sharing insights on feline companionship and
+                      wellness.
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      When I'm not writing, I spend time volunteering at my
+                      local animal shelter, helping cats find loving homes.
+                    </p>
                   </div>
-                  <hr className="border-t-2 border-gray-200 mb-4" />
-                  <p className="text-sm text-gray-600 mb-4">
-                    I am a pet enthusiast and freelance writer who specializes
-                    in animal behavior and care. With a deep love for cats, I
-                    enjoy sharing insights on feline companionship and wellness.
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    When I'm not writing, I spend time volunteering at my local
-                    animal shelter, helping cats find loving homes.
-                  </p>
                 </div>
                 {/* Like and Share desktop*/}
                 <div className="w-full rounded-3xl bg-stone-100 p-4 mb-5 justify-between items-center shadow-sm mt-4 hidden lg:flex ">
@@ -296,24 +355,30 @@ export const ViewPost = () => {
                         : 'Please login to comment'
                     }
                     id="message"
-                    onClick={handleCommentClick}
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
                     disabled={!user}
-                    readOnly={!user}
                     className={
                       !user ? 'cursor-not-allowed opacity-50' : 'cursor-text'
                     }
                   />
+
                   <button
                     className={`text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm me-2 mb-2 dark:bg-gray-800 dark:hover:bg-[hsla(36,4%,44%,1)] dark:focus:ring-gray-700 dark:border-stone-400 px-[40px] py-[12px] border-1 w-fit lg:ml-auto ${
                       !user ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                     }`}
-                    onClick={!user ? handleCommentClick : undefined}
+                    onClick={handleSendComment} 
                   >
                     Send
                   </button>
                 </div>
+                <CommentSection
+                  comments={comments}
+                  currentUser={user}
+                  onDelete={handleDeleteComment}
+                />
               </div>
-              <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:col-span-1 lg:sticky top-5 self-start hidden lg:block">
+              <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:col-span-1 lg:sticky top-5  self-start hidden lg:block">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="">
                     <img
