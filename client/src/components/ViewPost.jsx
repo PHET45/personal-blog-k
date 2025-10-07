@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link , useLocation} from 'react-router-dom'
 import { getBlogById, toggleLike, getLikes } from '@/services/blogService'
 import { AuthService } from '@/services/auth'
 import ReactMarkdown from 'react-markdown'
@@ -22,6 +22,7 @@ import {
 } from '@/services/commentService'
 import { toast } from 'react-toast'
 
+
 export const ViewPost = () => {
   const { postid } = useParams()
   const [post, setPost] = useState(null)
@@ -32,6 +33,10 @@ export const ViewPost = () => {
   const [user, setUser] = useState(null)
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
+  
+  const location = useLocation() 
+  const shareUrl = window.location.origin + location.pathname 
+
 
   const getToken = () => localStorage.getItem('token')
 
@@ -69,13 +74,11 @@ export const ViewPost = () => {
     document.body.style.overflow = showDialog ? 'hidden' : ''
   }, [showDialog])
 
-  const handleCopyLink = useCallback((e) => {
+  const handleCopyLink = (e) => {
     e.preventDefault()
-    navigator.clipboard
-      .writeText(window.location.href)
-      .then(() => toast.success('Link copied to clipboard!'))
-      .catch(() => toast.error('Failed to copy link'))
-  }, [])
+    navigator.clipboard.writeText(window.location.href)
+    toast.success('Link copied to clipboard!')
+  }
 
   const handleLikeClick = useCallback(async () => {
     const token = getToken()
@@ -168,7 +171,7 @@ export const ViewPost = () => {
                 className="w-full rounded-lg mb-6 object-cover object-center "
               />
             )}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8 top-0">
               <div className="flex flex-col items-start gap-3 mb-3 w-full lg:col-span-3 order-1 lg:order-none">
                 <div className="flex flex-row items-center justify-center gap-3 ">
                   {post.category && (
@@ -195,38 +198,37 @@ export const ViewPost = () => {
                     <ReactMarkdown>{post.content}</ReactMarkdown>
                   )}
                 </div>
-                <div>
-                  <div className="rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full mt-6 block lg:hidden ">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="">
-                        <img
-                          src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
-                          alt="Author avatar"
-                          className="w-1/2 h-10 rounded-full object-cover"
-                        />
+
+                <div className="rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full mt-6 block lg:hidden sticky top-5 ">
+                  <div className="flex items-center gap-3 mb-4 sticky top-5">
+                    <div className="">
+                      <img
+                        src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
+                        alt="Author avatar"
+                        className="w-1/2 h-10 rounded-full object-cover"
+                      />
+                    </div>
+                    <div className="w-1/2">
+                      <div className="text-xs text-gray-500 leading-none mb-1">
+                        Author
                       </div>
-                      <div className="w-1/2">
-                        <div className="text-xs text-gray-500 leading-none mb-1">
-                          Author
-                        </div>
-                        <div className="text-lg font-extrabold text-gray-900 leading-none">
-                          {post.author}
-                        </div>
+                      <div className="text-lg font-extrabold text-gray-900 leading-none">
+                        {post.author}
                       </div>
                     </div>
-                    <hr className="border-t-2 border-gray-200 mb-4" />
-                    <p className="text-sm text-gray-600 mb-4">
-                      I am a pet enthusiast and freelance writer who specializes
-                      in animal behavior and care. With a deep love for cats, I
-                      enjoy sharing insights on feline companionship and
-                      wellness.
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      When I'm not writing, I spend time volunteering at my
-                      local animal shelter, helping cats find loving homes.
-                    </p>
                   </div>
+                  <hr className="border-t-2 border-gray-200 mb-4" />
+                  <p className="text-sm text-gray-600 mb-4">
+                    I am a pet enthusiast and freelance writer who specializes
+                    in animal behavior and care. With a deep love for cats, I
+                    enjoy sharing insights on feline companionship and wellness.
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    When I'm not writing, I spend time volunteering at my local
+                    animal shelter, helping cats find loving homes.
+                  </p>
                 </div>
+
                 {/* Like and Share desktop*/}
                 <div className="w-full rounded-3xl bg-stone-100 p-4 mb-5 justify-between items-center shadow-sm mt-4 hidden lg:flex ">
                   <PillNav
@@ -258,34 +260,30 @@ export const ViewPost = () => {
                       items={[
                         {
                           label: (
-                            <div className="flex items-center ">
+                            <div
+                              className="flex items-center "
+                              onClick={handleCopyLink}
+                            >
                               <IoCopyOutline />
-                              <span
-                                style={{ marginLeft: 4 }}
-                                onClick={handleCopyLink}
-                              >
-                                Copy link
-                              </span>
+                              <span style={{ marginLeft: 4 }}>Copy link</span>
                             </div>
                           ),
                           href: '',
                         },
                         {
                           label: <FaFacebook />,
-                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                            window.location.href
-                          )}`,
+                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
                         },
                         {
                           label: <SlSocialLinkedin />,
                           href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                            window.location.href
+                            shareUrl
                           )}`,
                         },
                         {
                           label: <CiTwitter />,
                           href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                            window.location.href
+                            shareUrl
                           )}&text=${encodeURIComponent(post?.title || '')}`,
                         },
                       ]}
@@ -358,7 +356,7 @@ export const ViewPost = () => {
                   onDelete={handleDeleteComment}
                 />
               </div>
-              <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:col-span-1  self-start hidden lg:block">
+              <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:col-span-1 self-start sticky top-5 hidden lg:block">
                 <div className="flex items-center gap-3 mb-4 ">
                   <div className="">
                     <img
