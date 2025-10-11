@@ -1,8 +1,13 @@
+//service/auth.js
 import axios from "axios";
 import { API_URL } from "./config";
 
 const base = (API_URL || "").replace(/\/$/, "");
 const API = `${base}/api`;
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return { Authorization: `Bearer ${token}` };
+};
 
 export const AuthService = {
   login: async (email, password) => {
@@ -11,22 +16,37 @@ export const AuthService = {
     return res.data;
   },
 
+  changePassword: async (currentPassword, newPassword) => {
+    const res = await axios.post(
+      `${API}/auth/change-password`,
+      { currentPassword, newPassword },
+      {
+        headers: getAuthHeader(),
+      }
+    );
+
+    return res.data;
+  },
+
   getProfile: async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
-
+  
       const res = await axios.get(`${API}/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       const user = res.data?.user || res.data;
-
-      
-      const avatar_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-        user.user_metadata?.name || user.user_metadata?.username || user.email
-      )}&background=random&color=fff`;
-
+  
+      // ✅ ใช้รูปจากฐานข้อมูลก่อน ถ้าไม่มีค่อย fallback ไปใช้ ui-avatar
+      const avatar_url =
+        user.profile_pic ||
+        user.user_metadata?.avatar_url ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          user.user_metadata?.name || user.user_metadata?.username || user.email
+        )}&background=random&color=fff`;
+  
       return {
         ...res.data,
         user: {
@@ -43,6 +63,9 @@ export const AuthService = {
       throw new Error(message);
     }
   },
+  
+
+  
 
   logout: () => localStorage.removeItem("token"),
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthService } from '@/services/auth'
+import { UploadService } from '@/services/upload'
 import { FaBell, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa'
-
 
 const Navbar = () => {
   const [user, setUser] = useState(null)
@@ -14,8 +14,9 @@ const Navbar = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const profile = await AuthService.getProfile()
-        setUser(profile.user)
+        const profile = await UploadService.getProfile()
+        console.log(profile.profile)
+        setUser(profile.profile)
       } catch (err) {
         console.error('Error fetching profile:', err)
       }
@@ -46,7 +47,9 @@ const Navbar = () => {
       <nav className="flex justify-between items-center h-[80px] lg:px-88 px-20 border-b border-gray-200 bg-white ">
         {/* Logo */}
         <div>
-          <Link to='/'><img src="/logo.svg" alt="logo" /></Link>
+          <Link to="/">
+            <img src="/logo.svg" alt="logo" />
+          </Link>
         </div>
 
         {/* Right side - Desktop */}
@@ -61,20 +64,21 @@ const Navbar = () => {
                 <FaBell className="text-xl text-gray-700" />
                 <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
               </button>
-              {/* Avatar */}
-              <img
-                src={user.user_metadata?.avatar_url}
-                alt="avatar"
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              {/* Username */}
-              <span className="font-medium text-gray-800">
-                {user.user_metadata?.name}
-              </span>
-              <FaChevronDown
-                className="text-sm text-gray-500"
-                onClick={() => setMenuOpen((v) => !v)}
-              />
+              <div className='flex  gap-5 items-center '
+              onClick={() => setMenuOpen((v) => !v)}
+              >
+                {/* Avatar */}
+                <img
+                  src={user.profile_pic}
+                  alt="avatar"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+                {/* Username */}
+                <span className="font-medium text-gray-800">
+                  {user.name}
+                </span>
+                <FaChevronDown className="text-sm text-gray-500" />
+              </div>
             </div>
           ) : (
             <div className="flex gap-3">
@@ -143,7 +147,9 @@ const Navbar = () => {
               user ? 'h-[288px]' : 'h-[200px]'
             }`}
           >
-            <div className={`flex flex-col px-10 ${user ? 'py-7' : 'py-10'} gap-4`}>
+            <div
+              className={`flex flex-col px-10 ${user ? 'py-7' : 'py-10'} gap-4`}
+            >
               {user ? (
                 <>
                   {/* User Logged In Menu */}
