@@ -160,13 +160,13 @@ const Profile = () => {
             to="/profile"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            👤 Profile
+            <img src='User_duotone' alt='profile'/> Profile
           </Link>
           <Link
             to="/reset-password"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            🔄 Reset password
+            <img src='Refresh_light.svg' alt='reset-pass'/> Reset password
           </Link>
         </nav>
 
@@ -192,13 +192,13 @@ const Profile = () => {
             to="/profile"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            👤 Profile
+            <img src='User_duotone.svg' alt='profile'/> Profile
           </Link>
           <Link
             to="/reset-password"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            🔄 Reset password
+            <img src='Refresh_light.svg' alt='reset-pass'/> Reset password
           </Link>
         </nav>
       </div>

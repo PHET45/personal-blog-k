@@ -1,8 +1,8 @@
 //components/Profile/ResetPassword.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthService } from '@/services/auth';
 import { Link } from 'react-router-dom';
-
+import { UploadService } from '@/services/upload';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -10,10 +10,39 @@ const ResetPassword = () => {
     newPassword: '',
     confirmPassword: ''
   });
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [profileData, setProfileData] = useState(null);
 
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+  const fetchProfile = async () => {
+    try {
+      const authProfile = await AuthService.getProfile();
+      setUser(authProfile.user);
+      
+      try {
+        const customProfile = await UploadService.getProfile();
+        setProfileData(customProfile.profile);
+        
+        setFormData({
+          name: customProfile.profile?.name || authProfile.user.user_metadata?.name || '',
+          username: customProfile.profile?.username || authProfile.user.user_metadata?.username || '',
+        });
+      } catch  {
+        setFormData({
+          name: authProfile.user.user_metadata?.name || '',
+          username: authProfile.user.user_metadata?.username || '',
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      setError(err.message);
+    }
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -78,6 +107,10 @@ const ResetPassword = () => {
     }
   };
 
+  const avatarUrl = profileData?.profile_pic || user?.user_metadata?.avatar_url || '/default-avatar.png' ;
+  const displayName = profileData?.name ;
+
+
   return (
     <div className="flex flex-col lg:flex-row lg:items-start lg:gap-10 w-full bg-white px-6 lg:px-120 py-8">
       {/* Sidebar */}
@@ -87,20 +120,27 @@ const ResetPassword = () => {
             to="/profile"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            👤 Profile
+            <img src='User_duotone.svg' alt='profile'/> Profile
           </Link>
           <Link
             to="/reset-password"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            🔄 Reset password
+            <img src='Refresh_light.svg' alt='reset-pass'/> Reset password
           </Link>
         </nav>
 
-        <div className="flex flex-row items-center gap-3 mb-6">
+         {/* Avatar + name */}
+         <div className="flex flex-row items-center gap-3 mb-6">
+          <img
+            src={avatarUrl}
+            alt="avatar"
+            className="w-10 h-10 rounded-full object-cover"
+          />
           <span className="font-semibold text-gray-800 text-base lg:text-lg">
-            Reset Password
+            {displayName}
           </span>
+          <div className="lg:hidden text-[#DAD6D1]">|</div>
         </div>
 
         <nav className="hidden lg:flex lg:flex-col gap-2">
@@ -108,13 +148,13 @@ const ResetPassword = () => {
             to="/profile"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            👤 Profile
+            <img src='User_duotone.svg' alt='profile'/> Profile
           </Link>
           <Link
             to="/reset-password"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 bg-gray-100"
           >
-            🔄 Reset password
+            <img src='Refresh_light.svg' alt='reset-pass'/> Reset password
           </Link>
         </nav>
       </div>

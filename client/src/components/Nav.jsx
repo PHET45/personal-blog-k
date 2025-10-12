@@ -103,14 +103,14 @@ const Navbar = () => {
                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 onClick={() => setMenuOpen(false)}
               >
-                <span>👤</span> Profile
+                <img src='User_duotone.svg' alt='profile'/> Profile
               </Link>
               <Link
                 to="/reset-password"
                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 onClick={() => setMenuOpen(false)}
               >
-                <span>🔄</span> Reset password
+                <img src='Refresh_light.svg' alt='reset-pass'/> Reset password
               </Link>
               <button
                 onClick={handleLogout}

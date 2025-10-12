@@ -45,7 +45,7 @@ export default function AppRoutes() {
     {
       path: '/profile',
       element:(
-        <ProtectedRoute roles={["authenticated"]}>
+        <ProtectedRoute roles={["authenticated","admin"]}>
           <ProfilePage/>
         </ProtectedRoute>
       )
@@ -53,7 +53,7 @@ export default function AppRoutes() {
     {
       path: '/reset-password',
       element:(
-        <ProtectedRoute roles={["authenticated"]}>
+        <ProtectedRoute roles={["authenticated", "admin"]}>
           <ResetpasswordPage/>
         </ProtectedRoute>
       )

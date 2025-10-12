@@ -49,10 +49,7 @@ export const UploadService = {
 
   // ✅ เพิ่ม: Get other user's profile
   getUserProfile: async (userId) => {
-    const res = await axios.get(`${API}/upload/profile/${userId}`, {
-      headers: getAuthHeader(),
-    });
-
+    const res = await axios.get(`${API}/upload/profile/${userId}`);
     return res.data;
   },
 };
