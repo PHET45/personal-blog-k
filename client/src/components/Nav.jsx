@@ -103,20 +103,20 @@ const Navbar = () => {
                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 onClick={() => setMenuOpen(false)}
               >
-                <img src='User_duotone.svg' alt='profile'/> Profile
+                <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/> Profile
               </Link>
               <Link
                 to="/reset-password"
                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 onClick={() => setMenuOpen(false)}
               >
-                <img src='Refresh_light.svg' alt='reset-pass'/> Reset password
+                <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg' alt='reset-pass'/> Reset password
               </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left"
               >
-                <span>↩️</span> Log out
+                <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Sign_out_squre_light.svg' alt='logout'/> Log out
               </button>
             </div>
           )}
@@ -175,7 +175,7 @@ const Navbar = () => {
                     className="flex items-center gap-3 py-2 text-gray-700 border-b border-gray-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="text-xl">👤</span>
+                    <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/>
                     <span className="text-base">Profile</span>
                   </Link>
 
@@ -184,7 +184,7 @@ const Navbar = () => {
                     className="flex items-center gap-3 py-2 text-gray-700 border-b border-gray-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="text-xl">🔄</span>
+                    <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg' alt='reset-pass'/>
                     <span className="text-base">Reset password</span>
                   </Link>
 
@@ -192,7 +192,7 @@ const Navbar = () => {
                     onClick={handleLogout}
                     className="flex items-center gap-3 py-2 text-gray-700 border-b border-gray-100 text-left"
                   >
-                    <span className="text-xl">↩️</span>
+                    <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Sign_out_squre_light.svg' alt='logout'/>
                     <span className="text-base">Log out</span>
                   </button>
                 </>

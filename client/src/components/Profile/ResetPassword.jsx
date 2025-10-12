@@ -120,13 +120,13 @@ const ResetPassword = () => {
             to="/profile"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            <img src='User_duotone.svg' alt='profile'/> Profile
+            <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/> Profile
           </Link>
           <Link
             to="/reset-password"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            <img src='Refresh_light.svg' alt='reset-pass'/> Reset password
+            <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg' alt='reset-pass'/> Reset password
           </Link>
         </nav>
 
@@ -148,13 +148,13 @@ const ResetPassword = () => {
             to="/profile"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            <img src='User_duotone.svg' alt='profile'/> Profile
+            <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/> Profile
           </Link>
           <Link
             to="/reset-password"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 bg-gray-100"
           >
-            <img src='Refresh_light.svg' alt='reset-pass'/> Reset password
+            <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg' alt='reset-pass'/> Reset password
           </Link>
         </nav>
       </div>
