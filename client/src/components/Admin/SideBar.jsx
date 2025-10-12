@@ -22,7 +22,7 @@ const SideBar = () => {
     {
       name: 'Profile',
       path: '/admin/profile',
-      icon: '👤',
+      icon: <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/>,
     },
     {
       name: 'Notification',

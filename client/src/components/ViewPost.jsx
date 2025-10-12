@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useParams, Link , useLocation} from 'react-router-dom'
+import { useParams, Link, useLocation } from 'react-router-dom'
 import { getBlogById, toggleLike, getLikes } from '@/services/blogService'
 import { AuthService } from '@/services/auth'
 import ReactMarkdown from 'react-markdown'
@@ -22,7 +22,6 @@ import {
 } from '@/services/commentService'
 import { toast } from 'react-toast'
 
-
 export const ViewPost = () => {
   const { postid } = useParams()
   const [post, setPost] = useState(null)
@@ -33,10 +32,9 @@ export const ViewPost = () => {
   const [user, setUser] = useState(null)
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
-  
-  const location = useLocation() 
-  const shareUrl = window.location.origin + location.pathname 
 
+  const location = useLocation()
+  const shareUrl = window.location.origin + location.pathname
 
   const getToken = () => localStorage.getItem('token')
 
@@ -164,13 +162,18 @@ export const ViewPost = () => {
       <div>
         {!loading && post && (
           <article className="max-w-auto markdown">
-            {post.image && (
-              <img
-                src={post.image || '/placeholder.svg'}
-                alt={post.title}
-                className="w-full rounded-lg mb-6 object-cover object-center "
-              />
-            )}
+            <div className="flex items-center justify-center w-full box-border lg:mb-8">
+              <div className='lg:max-w-[1200px] w-full lg:aspect-[1200/587] overflow-hidden md:rounded-md md:mt-[60px]'>
+              {post.image && (
+                <img
+                  src={post.image || '/placeholder.svg'}
+                  alt={post.title}
+                  className="w-full h-full object-cover object-center"
+                />
+              )}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8 top-0">
               <div className="flex flex-col items-start gap-3 mb-3 w-full lg:col-span-3 order-1 lg:order-none">
                 <div className="flex flex-row items-center justify-center gap-3 ">
@@ -272,7 +275,9 @@ export const ViewPost = () => {
                         },
                         {
                           label: <FaFacebook />,
-                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                            shareUrl
+                          )}`,
                         },
                         {
                           label: <SlSocialLinkedin />,
@@ -356,7 +361,7 @@ export const ViewPost = () => {
                   onDelete={handleDeleteComment}
                 />
               </div>
-              <div className="mt-8 rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full lg:col-span-1 self-start sticky top-5 hidden lg:block">
+              <div className="rounded-2xl bg-stone-100 p-5 shadow-sm border border-gray-200 w-full  self-start sticky top-0 hidden lg:block">
                 <div className="flex items-center gap-3 mb-4 ">
                   <div className="">
                     <img
