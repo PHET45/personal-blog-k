@@ -4,10 +4,7 @@ import { API_URL } from "./config";
 
 const base = (API_URL || "").replace(/\/$/, "");
 const API = `${base}/api`;
-const getAuthHeader = () => {
-  const token = localStorage.getItem("token");
-  return { Authorization: `Bearer ${token}` };
-};
+
 
 export const AuthService = {
   login: async (email, password) => {
@@ -16,16 +13,31 @@ export const AuthService = {
     return res.data;
   },
 
+  // ✅ เพิ่ม: Change Password
   changePassword: async (currentPassword, newPassword) => {
-    const res = await axios.post(
-      `${API}/auth/change-password`,
-      { currentPassword, newPassword },
-      {
-        headers: getAuthHeader(),
-      }
-    );
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found. Please login again.");
 
-    return res.data;
+      const res = await axios.post(
+        `${API}/auth/change-password`,
+        { 
+          currentPassword,
+          newPassword
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      return res.data;
+    } catch (err) {
+      const message =
+        err.response?.data?.message || 
+        err.response?.data?.error || 
+        err.message;
+      throw new Error(message);
+    }
   },
 
   getProfile: async () => {
