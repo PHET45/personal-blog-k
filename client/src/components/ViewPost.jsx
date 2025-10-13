@@ -263,33 +263,31 @@ export const ViewPost = () => {
                       items={[
                         {
                           label: (
-                            <div
-                              className="flex items-center "
-                              onClick={handleCopyLink}
-                            >
+                            <div className="flex items-center">
                               <IoCopyOutline />
                               <span style={{ marginLeft: 4 }}>Copy link</span>
                             </div>
                           ),
-                          href: '',
+                          href: '#',
+                          onClick: handleCopyLink,
                         },
                         {
                           label: <FaFacebook />,
-                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                            shareUrl
-                          )}`,
+                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+                          target: '_blank',
+                          rel: 'noopener noreferrer',
                         },
                         {
                           label: <SlSocialLinkedin />,
-                          href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                            shareUrl
-                          )}`,
+                          href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+                          target: '_blank',
+                          rel: 'noopener noreferrer',
                         },
                         {
                           label: <CiTwitter />,
-                          href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                            shareUrl
-                          )}&text=${encodeURIComponent(post?.title || '')}`,
+                          href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post?.title || '')}`,
+                          target: '_blank',
+                          rel: 'noopener noreferrer',
                         },
                       ]}
                       activeHref="/"
@@ -313,19 +311,37 @@ export const ViewPost = () => {
                   </button>
 
                   <div className="flex flex-row flex-wrap gap-2 w-full justify-center">
-                    <button className="flex items-center justify-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    <button 
+                      className="flex items-center justify-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                      onClick={handleCopyLink}
+                    >
                       <IoCopyOutline className="text-xl mr-2" />
                       <span>Copy link</span>
                     </button>
-                    <button className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    <a 
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    >
                       <FaFacebook />
-                    </button>
-                    <button className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    </a>
+                    <a 
+                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    >
                       <SlSocialLinkedin />
-                    </button>
-                    <button className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    </a>
+                    <a 
+                      href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post?.title || '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    >
                       <CiTwitter />
-                    </button>
+                    </a>
                   </div>
                 </div>
 

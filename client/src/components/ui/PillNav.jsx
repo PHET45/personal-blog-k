@@ -304,6 +304,17 @@ const PillNav = ({
                     >
                       {PillContent}
                     </Link>
+                  ) : item.key === 'like-button' ? (
+                    <span
+                      role="menuitem"
+                      className={basePillClasses}
+                      style={pillStyle}
+                      aria-label={item.ariaLabel || item.label}
+                      onMouseEnter={() => handleEnter(i)}
+                      onMouseLeave={() => handleLeave(i)}
+                    >
+                      {PillContent}
+                    </span>
                   ) : (
                     <a
                       role="menuitem"
@@ -311,6 +322,13 @@ const PillNav = ({
                       className={basePillClasses}
                       style={pillStyle}
                       aria-label={item.ariaLabel || item.label}
+                      target={item.target}
+                      rel={item.rel}
+                      onClick={(e) => {
+                        if (item.onClick) {
+                          item.onClick(e)
+                        }
+                      }}
                       onMouseEnter={() => handleEnter(i)}
                       onMouseLeave={() => handleLeave(i)}
                     >
@@ -390,9 +408,16 @@ const PillNav = ({
                     href={item.href}
                     className={linkClasses}
                     style={defaultStyle}
+                    target={item.target}
+                    rel={item.rel}
                     onMouseEnter={hoverIn}
                     onMouseLeave={hoverOut}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={(e) => {
+                      if (item.onClick) {
+                        item.onClick(e)
+                      }
+                      setIsMobileMenuOpen(false)
+                    }}
                   >
                     {item.label}
                   </a>
