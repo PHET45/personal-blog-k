@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { Search, Plus, Edit2, Trash2 } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useFetch } from '@/hooks/useFetch.jsx'
-import { getStatuses } from '@/services/blogService.js'
+import { getStatuses, deletePost } from '@/services/blogService.js'
 import MetaBalls from '@/components/ui/MetaBalls.jsx'
 
 const ArticleManagement = () => {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('Status')
   const [categoryFilter, setCategoryFilter] = useState('Category')
   const [statuses, setStatuses] = useState([])
-  const { blogs } = useFetch()
+  const [deleteLoading, setDeleteLoading] = useState(null)
+  const [error, setError] = useState(null)
+  const { blogs, refetch } = useFetch()
 
   // Fetch statuses once
   useEffect(() => {
@@ -65,6 +68,37 @@ const ArticleManagement = () => {
     ...new Set(blogs?.map((b) => b.category?.name || 'Uncategorized')),
   ]
 
+  // Handle Delete
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this article?')) {
+      return
+    }
+
+    setDeleteLoading(id)
+    setError(null)
+
+    try {
+      await deletePost(id)
+      // Refresh the list
+      if (refetch) {
+        refetch()
+      } else {
+        // ถ้าไม่มี refetch ให้ reload page
+        window.location.reload()
+      }
+    } catch (err) {
+      console.error('Failed to delete post:', err)
+      setError(err.message || 'Failed to delete article')
+    } finally {
+      setDeleteLoading(null)
+    }
+  }
+
+  // Handle Edit
+  const handleEdit = (id) => {
+    navigate(`/admin/article-management/edit/${id}`)
+  }
+
   return (
     <div className="min-h-screen ml-[280px] max-w-screen mx-auto bg-[#F9F8F6]">
       <SideBar />
@@ -81,6 +115,19 @@ const ArticleManagement = () => {
           </Link>
         </button>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mx-15 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          {error}
+          <button
+            onClick={() => setError(null)}
+            className="ml-2 text-red-900 underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 p-15 w-full">
@@ -136,6 +183,7 @@ const ArticleManagement = () => {
             <div className="col-span-6">Article title</div>
             <div className="col-span-2">Category</div>
             <div className="col-span-2">Status</div>
+            <div className="col-span-2">Actions</div>
           </div>
 
           {filteredArticles.map((article, index) => (
@@ -165,7 +213,7 @@ const ArticleManagement = () => {
                 ? 'bg-yellow-100 text-yellow-800'
                 : article.status === 'archived'
                 ? 'bg-gray-100 text-gray-800'
-                : 'bg-gray-100 text-gray-400 animate-pulse'
+                : 'bg-gray-100 text-gray-400'
             }`}
                 >
                   <div
@@ -177,35 +225,33 @@ const ArticleManagement = () => {
                   ? 'bg-yellow-500'
                   : article.status === 'archived'
                   ? 'bg-gray-500'
-                  : 'bg-gray-300 animate-pulse'
+                  : 'bg-gray-300'
               }`}
                   ></div>
-                  {article.status || (
-                    <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
-                      <MetaBalls
-                        color="oklch(89.7% 0.196 126.665)"
-                        cursorBallColor="oklch(89.7% 0.196 126.665)"
-                        cursorBallSize={5}
-                        ballCount={30}
-                        animationSize={30}
-                        enableMouseInteraction={true}
-                        enableTransparency={true}
-                        hoverSmoothness={0.05}
-                        clumpFactor={2}
-                        speed={0.3}
-                      />
-                    </div>
-                  )}
+                  {article.status || 'Unknown'}
                 </span>
               </div>
 
               <div className="col-span-2">
                 <div className="flex items-center space-x-2">
-                  <button className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors">
+                  <button
+                    onClick={() => handleEdit(article.id)}
+                    className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
+                    title="Edit article"
+                  >
                     <Edit2 className="w-4 h-4" />
                   </button>
-                  <button className="p-1.5 text-gray-400 hover:text-red-600 transition-colors">
-                    <Trash2 className="w-4 h-4" />
+                  <button
+                    onClick={() => handleDelete(article.id)}
+                    disabled={deleteLoading === article.id}
+                    className="p-1.5 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                    title="Delete article"
+                  >
+                    {deleteLoading === article.id ? (
+                      <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -213,7 +259,7 @@ const ArticleManagement = () => {
           ))}
 
           {filteredArticles.length === 0 && (
-            <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
+            <div className="flex flex-col items-center h-screen gap-6 lg:py-100">
               <MetaBalls
                 color="oklch(89.7% 0.196 126.665)"
                 cursorBallColor="oklch(89.7% 0.196 126.665)"
