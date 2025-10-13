@@ -12,12 +12,12 @@ const SideBar = () => {
     {
       name: 'Article management',
       path: '/admin/article-management',
-      icon: '📄',
+      icon: <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/notebook_light.svg' alt='note'/ >,
     },
     {
       name: 'Category management',
       path: '/admin/category-management',
-      icon: '📁',
+      icon: <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/File_light.svg' alt='file'/>,
     },
     {
       name: 'Profile',
@@ -27,12 +27,12 @@ const SideBar = () => {
     {
       name: 'Notification',
       path: '/admin/notification',
-      icon: '🔔',
+      icon: <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Bell_light.svg' alt='bell'/>,
     },
     {
       name: 'Reset password',
       path: '/admin/reset-password',
-      icon: '🔑',
+      icon: <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Bell_light.svg' alt='bell'/>,
     },
   ]
 
@@ -48,7 +48,7 @@ const SideBar = () => {
   return (
     <div className="fixed top-0 left-0 h-screen w-[280px] bg-[#EFEEEB] shadow-sm">
       <div className="h-[212px] flex flex-col items-start justify-center px-7">
-        <img src='/logo.svg' alt='logo'/>
+        <Link to='/'><img src='/logo.svg' alt='logo'/></Link>
         <div className="text-sm text-orange-400 font-medium">Admin panel</div>
       </div>
 
@@ -74,8 +74,9 @@ const SideBar = () => {
 
       <div className="absolute bottom-0 left-0 w-[280px] p-6  border-gray-200">
         <div className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800 mb-3 border-b border-gray-200 pb-3">
-          <ExternalLink className="w-4 h-4 mr-3" />
-          <Link to="/">hh. website</Link>hh. website
+        <Link to="/">
+        <div className='flex items-center'><ExternalLink className="w-4 h-4 mr-3" /> hh. website</div>
+        </Link>
         </div>
         <div
           className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800"

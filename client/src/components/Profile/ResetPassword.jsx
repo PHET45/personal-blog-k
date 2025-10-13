@@ -139,8 +139,9 @@ const ResetPassword = () => {
           />
           <span className="font-semibold text-gray-800 text-base lg:text-lg">
             {displayName}
-          </span>
+          </span> 
           <div className="lg:hidden text-[#DAD6D1]">|</div>
+          <div className='lg:hidden font-semibold text-gray-800 text-base '>Reset password</div>
         </div>
 
         <nav className="hidden lg:flex lg:flex-col gap-2">

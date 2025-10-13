@@ -42,6 +42,9 @@ const Navbar = () => {
     navigate('/login')
   }
 
+  const avatarUrl = user?.profile_pic ||  '/default-avatar.png';
+  const displayName = user?.name ||  'User';
+
   return (
     <>
       <nav className="flex justify-between items-center h-[80px] lg:px-88 px-20 border-b border-gray-200 bg-white ">
@@ -156,12 +159,12 @@ const Navbar = () => {
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex flex-row gap-3 items-center">
                       <img
-                        src={user.user_metadata?.avatar_url}
+                        src={avatarUrl }
                         alt="avatar"
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <span className="font-medium text-gray-800 text-lg">
-                        {user.user_metadata?.name}
+                        {displayName }
                       </span>
                     </div>
                     <button className="relative">

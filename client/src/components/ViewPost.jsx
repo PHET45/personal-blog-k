@@ -123,7 +123,7 @@ export const ViewPost = () => {
   }, [])
 
   return (
-    <div className="max-w-[1200px] mx-auto p-4 items-center ">
+    <div className="max-w-[1200px] mx-auto p-4 items-center overflow-x-hidden  lg:overflow-x-visible ">
       {loading && (
         <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
           <MetaBalls
