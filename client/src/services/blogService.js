@@ -5,6 +5,10 @@ import { API_URL } from './config'
 // ✅ แก้ไข: ใช้ /api เป็น base แล้วเพิ่ม /likes ตอนเรียก
 const base = API_URL.replace(/\/$/, "")
 const API = `${base}/api`
+// Helper: get token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('token') // หรือชื่อที่คุณเก็บ token
+}
 
 export const getBlogs = async (params = {}) => {
   try {
@@ -74,5 +78,109 @@ export const toggleLike = async (postId, token) => {
       message: err.message
     })
     throw err
+  }
+}
+
+// POST create new post
+export const createPost = async (postData) => {
+  try {
+    const token = getAuthToken()
+    if (!token) throw new Error('No authentication token found')
+
+    const response = await fetch(`${API_URL}/posts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(postData)
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to create post')
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Error creating post:', error)
+    throw error
+  }
+}
+
+// PUT update post
+export const updatePost = async (id, postData) => {
+  try {
+    const token = getAuthToken()
+    if (!token) throw new Error('No authentication token found')
+
+    const response = await fetch(`${API_URL}/posts/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(postData)
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to update post')
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Error updating post:', error)
+    throw error
+  }
+}
+
+// DELETE post
+export const deletePost = async (id) => {
+  try {
+    const token = getAuthToken()
+    if (!token) throw new Error('No authentication token found')
+
+    const response = await fetch(`${API_URL}/posts/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to delete post')
+    }
+
+    return true
+  } catch (error) {
+    console.error('Error deleting post:', error)
+    throw error
+  }
+}
+
+// Upload image 
+export const uploadImage = async (file) => {
+  try {
+    const token = getAuthToken()
+    if (!token) throw new Error('No authentication token found')
+
+    const formData = new FormData()
+    formData.append('image', file)
+
+    const response = await fetch(`${API_URL}/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    })
+
+    if (!response.ok) throw new Error('Failed to upload image')
+    return await response.json()
+  } catch (error) {
+    console.error('Error uploading image:', error)
+    throw error
   }
 }
