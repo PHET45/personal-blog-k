@@ -22,6 +22,8 @@ const ArticleSection = () => {
     hasMore,
     isLoading,
     loadMore,
+    setPage,
+    fetchBlog,
   } = useFetch()
 
   const categories = [
@@ -36,20 +38,25 @@ const ArticleSection = () => {
 
   const handleCategoryChange = (val) => {
     setCategory(val)
+    setPage(1) // reset page
+    fetchBlog({ append: false, selectedCategory: val })
   }
 
   // Filter frontend: search + category
-  const filteredBlogs = blogs.filter((b) => {
-    const matchText =
-      !text ||
-      b.title.toLowerCase().includes(text.toLowerCase()) ||
-      b.description?.toLowerCase().includes(text.toLowerCase())
-  
-    if (!category || category === 'Highlight') return matchText
-  
-    return matchText && b.category?.name === category
-  })
-  
+  const filteredBlogs = text
+    ? allBlogs.filter((b) => {
+        const matchText =
+          b.title.toLowerCase().includes(text.toLowerCase()) ||
+          b.description?.toLowerCase().includes(text.toLowerCase())
+
+        if (!category || category === 'Highlight') return matchText
+
+        return matchText && b.category?.name === category
+      })
+    : blogs.filter((b) => {
+        if (!category || category === 'Highlight') return true
+        return b.category?.name === category
+      })
 
   return (
     <div className="flex flex-col gap-10 justify-center items-center p-4 md:p-4 w-full">
@@ -144,7 +151,25 @@ const ArticleSection = () => {
       )}
 
       {/* Blog Cards */}
-      {!isLoading && <BlogCard blogs={filteredBlogs} />}
+      {!isLoading &&
+        (filteredBlogs.length > 0 ? (
+          <BlogCard blogs={filteredBlogs} />
+        ) : (
+          <div className="flex justify-center items-center w-full max-w-6xl h-[600px] text-gray-500 text-lg">
+           <MetaBalls
+                  color="oklch(89.7% 0.196 126.665)"
+                  cursorBallColor="oklch(89.7% 0.196 126.665)"
+                  cursorBallSize={5}
+                  ballCount={30}
+                  animationSize={30}
+                  enableMouseInteraction={true}
+                  enableTransparency={true}
+                  hoverSmoothness={0.05}
+                  clumpFactor={2}
+                  speed={0.3}
+                />
+          </div>
+        ))}
 
       {/* Load More */}
       {hasMore && (

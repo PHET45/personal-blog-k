@@ -28,32 +28,31 @@ export const useFetch = () => {
     }
   }, [])
 
-  const fetchBlog = useCallback(
-    async ({ append = false } = {}) => {
-      try {
-        setIsLoading(true)
+ const fetchBlog = useCallback(
+  async ({ append = false, selectedCategory } = {}) => {
+    try {
+      setIsLoading(true)
+      const params = { page, limit }
 
-        const params = { page, limit }
-        if (category && category !== 'Highlight') params.category = category
+      // ถ้าเลือก category เฉพาะ ให้ใช้ param
+      const cat = selectedCategory ?? category
+      if (cat && cat !== 'Highlight') params.category = cat
 
-        const res = await  getPublishedPosts(params)
+      const res = await getPublishedPosts(params)
+      const list = Array.isArray(res) ? res : res?.data || res?.blogs || []
 
-        // ✅ รองรับ backend ที่ return data ไม่ตรง
-        const list = Array.isArray(res)
-          ? res
-          : res?.data || res?.blogs || []
+      setBlogs(prev => (append ? [...prev, ...list] : list))
+      setHasMore(list.length === limit)
+    } catch (err) {
+      console.error('Error fetching blogs:', err)
+      setHasMore(false)
+    } finally {
+      setIsLoading(false)
+    }
+  },
+  [category, page]
+)
 
-        setBlogs(prev => (append ? [...prev, ...list] : list))
-        setHasMore(list.length === limit)
-      } catch (err) {
-        console.error('Error fetching blogs:', err)
-        setHasMore(false)
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [category, page]
-  )
 
   // 🆕 เพิ่ม useEffect นี้ - โหลดข้อมูลทั้งหมดครั้งแรก
   useEffect(() => {
