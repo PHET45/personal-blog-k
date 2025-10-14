@@ -1,98 +1,30 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Search, Plus, Edit2, Trash2 } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
 import { Link, useNavigate } from 'react-router-dom'
-import { useFetch } from '@/hooks/useFetch.jsx'
-import { getStatuses, deletePost } from '@/services/blogService.js'
+import { useAdminBlogs } from '@/hooks/useAdminBlogs.jsx'
 import MetaBalls from '@/components/ui/MetaBalls.jsx'
 
 const ArticleManagement = () => {
   const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('Status')
-  const [categoryFilter, setCategoryFilter] = useState('Category')
-  const [statuses, setStatuses] = useState([])
-  const [deleteLoading, setDeleteLoading] = useState(null)
-  const [error, setError] = useState(null)
-  const { blogs, refetch } = useFetch()
-
-  // Fetch statuses once
-  useEffect(() => {
-    const fetchStatuses = async () => {
-      try {
-        const data = await getStatuses()
-        setStatuses(data)
-      } catch (err) {
-        console.error('Failed to fetch statuses', err)
-      }
-    }
-    fetchStatuses()
-  }, [])
-
-  // Map articles
-  const articles =
-    blogs?.map((b) => {
-      const statusObj = statuses.find((s) => s.status === b.status?.status)
-      let status = statusObj?.status || null
-
-      // แปลง publish → Published
-      if (status === 'publish') status = 'Published'
-
-      return {
-        id: b.id,
-        title: b.title || 'Untitled',
-        category: b.category?.name || 'Uncategorized',
-        status,
-      }
-    }) || []
-
-  // Filter articles
-  const filteredArticles = articles.filter((article) => {
-    const matchesSearch = article.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-
-    const matchesStatus =
-      statusFilter === 'Status' ||
-      (article.status &&
-        article.status.toLowerCase() === statusFilter.toLowerCase())
-
-    const matchesCategory =
-      categoryFilter === 'Category' || article.category === categoryFilter
-
-    return matchesSearch && matchesStatus && matchesCategory
-  })
-
-  // Unique categories for dropdown
-  const uniqueCategories = [
-    ...new Set(blogs?.map((b) => b.category?.name || 'Uncategorized')),
-  ]
-
-  // Handle Delete
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this article?')) {
-      return
-    }
-
-    setDeleteLoading(id)
-    setError(null)
-
-    try {
-      await deletePost(id)
-      // Refresh the list
-      if (refetch) {
-        refetch()
-      } else {
-        // ถ้าไม่มี refetch ให้ reload page
-        window.location.reload()
-      }
-    } catch (err) {
-      console.error('Failed to delete post:', err)
-      setError(err.message || 'Failed to delete article')
-    } finally {
-      setDeleteLoading(null)
-    }
-  }
+  
+  // ✅ ทุกอย่างมาจาก hook แล้ว
+  const {
+    filteredArticles,
+    statuses,
+    uniqueCategories,
+    isLoading,
+    deleteLoading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    categoryFilter,
+    setCategoryFilter,
+    handleDelete,
+    setError,
+  } = useAdminBlogs()
 
   // Handle Edit
   const handleEdit = (id) => {
@@ -177,104 +109,113 @@ const ArticleManagement = () => {
           </select>
         </div>
 
-        {/* Articles Table */}
-        <div className="bg-[#F9F8F6] rounded-lg shadow-sm border-1 border-[#DAD6D1]">
-          <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 text-sm font-medium text-gray-600">
-            <div className="col-span-6">Article title</div>
-            <div className="col-span-2">Category</div>
-            <div className="col-span-2">Status</div>
-            <div className="col-span-2">Actions</div>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-20">
+            <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-800 rounded-full animate-spin"></div>
           </div>
+        )}
 
-          {filteredArticles.map((article, index) => (
-            <div
-              key={article.id}
-              className={`grid grid-cols-12 gap-4 p-4 border-b border-gray-100 transition-colors shadow-[0_2px_12px_rgba(0,0,0,0.1)]
-        ${index % 2 === 0 ? 'bg-[#F9F8F6]' : 'bg-[#EFEEEB]'}`}
-            >
-              <div className="col-span-6">
-                <div className="text-sm text-gray-900 font-medium">
-                  {article.title}
+        {/* Articles Table */}
+        {!isLoading && (
+          <div className="bg-[#F9F8F6] rounded-lg shadow-sm border-1 border-[#DAD6D1]">
+            <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 text-sm font-medium text-gray-600">
+              <div className="col-span-6">Article title</div>
+              <div className="col-span-2">Category</div>
+              <div className="col-span-2">Status</div>
+              <div className="col-span-2">Actions</div>
+            </div>
+
+            {filteredArticles.map((article, index) => (
+              <div
+                key={article.id}
+                className={`grid grid-cols-12 gap-4 p-4 border-b border-gray-100 transition-colors shadow-[0_2px_12px_rgba(0,0,0,0.1)]
+          ${index % 2 === 0 ? 'bg-[#F9F8F6]' : 'bg-[#EFEEEB]'}`}
+              >
+                <div className="col-span-6">
+                  <div className="text-sm text-gray-900 font-medium">
+                    {article.title}
+                  </div>
                 </div>
-              </div>
 
-              <div className="col-span-2">
-                <div className="text-sm text-gray-600">{article.category}</div>
-              </div>
+                <div className="col-span-2">
+                  <div className="text-sm text-gray-600">{article.category}</div>
+                </div>
 
-              <div className="col-span-2">
-                {/* Status with color */}
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-            ${
-              article.status === 'Published'
-                ? 'bg-green-100 text-green-800'
-                : article.status === 'draft'
-                ? 'bg-yellow-100 text-yellow-800'
-                : article.status === 'archived'
-                ? 'bg-gray-100 text-gray-800'
-                : 'bg-gray-100 text-gray-400'
-            }`}
-                >
-                  <div
-                    className={`w-1.5 h-1.5 rounded-full mr-1.5
+                <div className="col-span-2">
+                  {/* Status with color */}
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
               ${
                 article.status === 'Published'
-                  ? 'bg-green-500'
+                  ? 'bg-green-100 text-green-800'
                   : article.status === 'draft'
-                  ? 'bg-yellow-500'
+                  ? 'bg-yellow-100 text-yellow-800'
                   : article.status === 'archived'
-                  ? 'bg-gray-500'
-                  : 'bg-gray-300'
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'bg-gray-100 text-gray-400'
               }`}
-                  ></div>
-                  {article.status || 'Unknown'}
-                </span>
-              </div>
+                  >
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full mr-1.5
+                ${
+                  article.status === 'Published'
+                    ? 'bg-green-500'
+                    : article.status === 'draft'
+                    ? 'bg-yellow-500'
+                    : article.status === 'archived'
+                    ? 'bg-gray-500'
+                    : 'bg-gray-300'
+                }`}
+                    ></div>
+                    {article.status || 'Unknown'}
+                  </span>
+                </div>
 
-              <div className="col-span-2">
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handleEdit(article.id)}
-                    className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
-                    title="Edit article"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(article.id)}
-                    disabled={deleteLoading === article.id}
-                    className="p-1.5 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
-                    title="Delete article"
-                  >
-                    {deleteLoading === article.id ? (
-                      <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <Trash2 className="w-4 h-4" />
-                    )}
-                  </button>
+                <div className="col-span-2">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleEdit(article.id)}
+                      className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
+                      title="Edit article"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(article.id)}
+                      disabled={deleteLoading === article.id}
+                      className="p-1.5 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                      title="Delete article"
+                    >
+                      {deleteLoading === article.id ? (
+                        <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          {filteredArticles.length === 0 && (
-            <div className="flex flex-col items-center h-screen gap-6 lg:py-100">
-              <MetaBalls
-                color="oklch(89.7% 0.196 126.665)"
-                cursorBallColor="oklch(89.7% 0.196 126.665)"
-                cursorBallSize={4}
-                ballCount={30}
-                animationSize={60}
-                enableMouseInteraction={true}
-                enableTransparency={true}
-                hoverSmoothness={0.05}
-                clumpFactor={2}
-                speed={0.3}
-              />
-            </div>
-          )}
-        </div>
+            {filteredArticles.length === 0 && (
+              <div className="flex flex-col items-center h-screen gap-6 lg:py-100">
+                <MetaBalls
+                  color="oklch(89.7% 0.196 126.665)"
+                  cursorBallColor="oklch(89.7% 0.196 126.665)"
+                  cursorBallSize={4}
+                  ballCount={30}
+                  animationSize={60}
+                  enableMouseInteraction={true}
+                  enableTransparency={true}
+                  hoverSmoothness={0.05}
+                  clumpFactor={2}
+                  speed={0.3}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -10,6 +10,15 @@ const getAuthToken = () => {
   return localStorage.getItem('token') // หรือชื่อที่คุณเก็บ token
 }
 
+export const getPublishedPosts = async (params = {}) => {
+  const response = await axios.get(`${base}/posts/public`, { params })
+  return response.data 
+}
+
+export const getPublishedPostById = async (id) => {
+    const response = await axios.get(`${API_URL}/posts/public/${id}`)
+    return response.data 
+}
 export const getBlogs = async (params = {}) => {
   try {
     const res = await axios.get(`${base}/posts`, { params })

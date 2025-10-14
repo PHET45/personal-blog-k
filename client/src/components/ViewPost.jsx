@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
-import { getBlogById, toggleLike, getLikes } from '@/services/blogService'
+import { getPublishedPostById , toggleLike, getLikes } from '@/services/blogService'
 import { AuthService } from '@/services/auth'
 import ReactMarkdown from 'react-markdown'
 import FuzzyText from './ui/FuzzyText'
@@ -44,7 +44,7 @@ export const ViewPost = () => {
       setLoading(true)
       try {
         const [postData, profile, likesData, commentData] = await Promise.all([
-          getBlogById(postid),
+          getPublishedPostById (postid),
           AuthService.getProfile().catch(() => null),
           getLikes(postid, getToken()).catch(() => ({
             likes_count: 0,
