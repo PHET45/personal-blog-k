@@ -28,6 +28,7 @@ export const getBlogById = async (id) => {
   }
 }
 
+
 export const getStatuses = async (params = {}) => {
   try {
     const res = await axios.get(`${base}/statuses`, { params })

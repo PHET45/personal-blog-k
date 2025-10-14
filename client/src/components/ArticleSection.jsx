@@ -10,10 +10,11 @@ import BlogCard from './BlogCard'
 import GooeyNav from './ui/GooeyNav'
 import { useFetch } from '@/hooks/useFetch'
 import MetaBalls from './ui/MetaBalls'
-
+import SearchAutocomplete from './SearchAutocomplete'
 const ArticleSection = () => {
   const {
     blogs,
+    allBlogs,
     text,
     setText,
     category,
@@ -77,12 +78,14 @@ const ArticleSection = () => {
         </div>
 
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-64 px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          <SearchAutocomplete
+            blogs={allBlogs}
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+            onChange={setText}
+            onSelect={(suggestion) => {
+              console.log('Selected:', suggestion)
+            }}
           />
           <svg
             className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -102,12 +105,14 @@ const ArticleSection = () => {
 
       {/* Mobile Filter */}
       <div className="md:hidden flex flex-col gap-4 w-full mx-auto p-4 rounded-lg bg-stone-100 shadow-sm">
-        <input
-          type="text"
-          placeholder="Search"
-          className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        <SearchAutocomplete
+          blogs={allBlogs}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+          onChange={setText}
+          onSelect={(suggestion) => {
+            console.log('Selected:', suggestion)
+          }}
         />
         <Select value={category || 'Highlight'} onValueChange={setCategory}>
           <SelectTrigger className="w-full px-4 py-2 rounded-lg focus:ring-2 appearance-none">
