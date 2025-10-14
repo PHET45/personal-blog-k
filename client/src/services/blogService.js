@@ -171,24 +171,23 @@ export const deletePost = async (id) => {
 }
 
 // Upload image 
-export const uploadImage = async (file) => {
+
+export const uploadImage = async (base64Image) => {
   try {
     const token = getAuthToken()
     if (!token) throw new Error('No authentication token found')
 
-    const formData = new FormData()
-    formData.append('image', file)
-
-    const response = await fetch(`${API_URL}/upload`, {
-      method: 'POST',
+    const response = await axios.post(`${base}/upload`, {
+      image: base64Image,
+      originalName: 'post-image.jpg'
+    }, {
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-      },
-      body: formData
+      }
     })
 
-    if (!response.ok) throw new Error('Failed to upload image')
-    return await response.json()
+    return response.data
   } catch (error) {
     console.error('Error uploading image:', error)
     throw error

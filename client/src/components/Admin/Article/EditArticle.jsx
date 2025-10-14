@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Image } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getStatuses, getBlogById, updatePost } from '@/services/blogService.js'
+import { getStatuses, getBlogById, updatePost, uploadImage } from '@/services/blogService.js'
 import { getCategories } from '@/services/categoriesService.js'
 
 const EditArticle = () => {
@@ -18,9 +18,10 @@ const EditArticle = () => {
   const [thumbnailFile, setThumbnailFile] = useState(null)
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [error, setError] = useState(null)
 
-  // Fetch post data and categories/statuses
+  // 🔹 โหลดข้อมูลบทความ
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,14 +32,11 @@ const EditArticle = () => {
           getStatuses()
         ])
 
-        // Set post data
         setTitle(postData.title || '')
         setIntroduction(postData.description || '')
         setContent(postData.content || '')
         setCategoryId(postData.category_id?.toString() || '')
         setThumbnailPreview(postData.image || null)
-
-        // Set dropdown options
         setCategories(categoriesData)
         setStatuses(statusesData)
       } catch (err) {
@@ -51,6 +49,7 @@ const EditArticle = () => {
     fetchData()
   }, [id])
 
+  // 🔹 อัปโหลดรูปภาพ
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -61,51 +60,59 @@ const EditArticle = () => {
     }
   }
 
+  // 🔹 ฟังก์ชันอัปเดตบทความ
   const handleUpdate = async (status) => {
     setLoading(true)
     setError(null)
 
     try {
-      // Validation
-      if (!title.trim()) {
-        throw new Error('Title is required')
-      }
-      if (!categoryId) {
-        throw new Error('Please select a category')
-      }
-      if (!introduction.trim()) {
-        throw new Error('Introduction is required')
-      }
-      if (!content.trim()) {
-        throw new Error('Content is required')
+      // ✅ Validation
+      if (!title.trim()) throw new Error('Title is required')
+      if (!categoryId) throw new Error('Please select a category')
+      if (!introduction.trim()) throw new Error('Introduction is required')
+      if (!content.trim()) throw new Error('Content is required')
+
+      const statusObj = statuses.find((s) => s.status === status)
+      if (!statusObj) throw new Error('Invalid status')
+
+      // ✅ อัปโหลดรูปภาพใหม่ถ้ามี
+      let imageUrl = thumbnailPreview
+      if (thumbnailFile) {
+        try {
+          setUploadingImage(true)
+          console.log('📤 Uploading image to Supabase...')
+          const uploadResult = await uploadImage(thumbnailPreview)
+          imageUrl = uploadResult.url
+          console.log('✅ Uploaded image URL:', imageUrl)
+        } catch (uploadErr) {
+          console.error('❌ Upload failed:', uploadErr)
+          throw new Error('Failed to upload image: ' + uploadErr.message)
+        } finally {
+          setUploadingImage(false)
+        }
       }
 
-      // Find status ID based on status name
-      const statusObj = statuses.find(s => s.status === status)
-      if (!statusObj) {
-        throw new Error('Invalid status')
-      }
-
-      // Prepare update data
+      // ✅ เตรียมข้อมูลอัปเดต
       const updateData = {
         title: title.trim(),
         description: introduction.trim(),
         content: content.trim(),
         category_id: parseInt(categoryId),
         status_id: statusObj.id,
-        image: thumbnailPreview || null,
+        image: imageUrl,
       }
 
-      // Update post
+      // ✅ ส่งไปอัปเดต
       await updatePost(id, updateData)
-      
-      // Navigate back to article management
+      console.log('✅ Post updated successfully')
+
       navigate('/admin/article-management')
     } catch (err) {
       console.error('Error updating post:', err)
       setError(err.message || 'Failed to update article')
     } finally {
       setLoading(false)
+      setUploadingImage(false)
     }
   }
 
@@ -136,17 +143,17 @@ const EditArticle = () => {
           </button>
           <button
             onClick={handleSaveAsDraft}
-            disabled={loading}
+            disabled={loading || uploadingImage}
             className="px-6 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             {loading ? 'Saving...' : 'Save as draft'}
           </button>
           <button
             onClick={handleSaveAndPublish}
-            disabled={loading}
+            disabled={loading || uploadingImage}
             className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors disabled:opacity-50"
           >
-            {loading ? 'Publishing...' : 'Save and publish'}
+            {uploadingImage ? 'Uploading image...' : loading ? 'Publishing...' : 'Save and publish'}
           </button>
         </div>
       </div>
@@ -155,13 +162,29 @@ const EditArticle = () => {
       {error && (
         <div className="mx-15 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
           {error}
+          <button
+            onClick={() => setError(null)}
+            className="ml-2 text-red-900 underline"
+          >
+            Dismiss
+          </button>
         </div>
       )}
 
-      {/* Main Content */}
+      {/* Uploading Notice */}
+      {uploadingImage && (
+        <div className="mx-15 mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span>Uploading image to cloud storage...</span>
+          </div>
+        </div>
+      )}
+
+      {/* Form */}
       <div className="flex-1 p-15 w-full">
         <div className="space-y-6">
-          {/* Thumbnail Image */}
+          {/* Thumbnail */}
           <div className="bg-[#F9F8F6] w-[771px] h-[300px] flex items-end gap-x-10">
             <div className="flex flex-col">
               <div className="h-[40px] font-poppins font-medium text-[#75716B] leading-6 tracking-normal">
@@ -234,23 +257,9 @@ const EditArticle = () => {
             </select>
           </div>
 
-          {/* Author name */}
-          <div className="flex flex-col w-[480px] h-[76px]">
-            <div className="font-poppins font-medium text-[#75716B] leading-6 tracking-normal">
-              Author name
-            </div>
-            <input
-              type="text"
-              placeholder="Enter author name"
-              className="flex w-full bg-[#EFEEEB] text-base outline-none border rounded-md px-3 py-2 border-gray-300 text-black placeholder-gray-400 h-[48px]"
-            />
-          </div>
-
-          {/* Article Title */}
-          <div className="w-[1,040px] h-[76px]">
-            <label className="font-poppins font-medium text-[#75716B] leading-6 tracking-normal">
-              Title *
-            </label>
+          {/* Title, Intro, Content */}
+          <div className="flex flex-col w-[1040px]">
+            <label className="font-poppins font-medium text-[#75716B]">Title *</label>
             <input
               type="text"
               placeholder="Article title"
@@ -260,9 +269,8 @@ const EditArticle = () => {
             />
           </div>
 
-          {/* Introduction */}
-          <div className="flex flex-col w-[1,040px] h-[171px]">
-            <label className="font-poppins font-medium text-[#75716B] leading-6 tracking-normal">
+          <div className="flex flex-col w-[1040px]">
+            <label className="font-poppins font-medium text-[#75716B]">
               Introduction (max 120 letters) *
             </label>
             <textarea
@@ -278,11 +286,8 @@ const EditArticle = () => {
             </div>
           </div>
 
-          {/* Content */}
-          <div className="flex flex-col w-[1,040px] h-[600px]">
-            <label className="font-poppins font-medium text-[#75716B] leading-6 tracking-normal">
-              Content *
-            </label>
+          <div className="flex flex-col w-[1040px]">
+            <label className="font-poppins font-medium text-[#75716B]">Content *</label>
             <textarea
               placeholder="Content"
               value={content}

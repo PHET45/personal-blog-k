@@ -1,12 +1,12 @@
 // src/hooks/useFetch.jsx
 import { useState, useEffect, useCallback, useContext } from 'react'
-import { getPublishedPosts} from '../services/blogService'
+import {  getPublishedPosts } from '../services/blogService'
 import { AuthContext } from '@/context/AuthContextObject'
 
 export const useFetch = () => {
   const { user } = useContext(AuthContext) // track login/logout
   const [blogs, setBlogs] = useState([])
-  const [allBlogs, setAllBlogs] = useState([]) // 🆕 เพิ่มนี้ - สำหรับ autocomplete
+  const [allBlogs, setAllBlogs] = useState([]) // สำหรับ autocomplete
   const [text, setText] = useState('')
   const [category, setCategory] = useState('Highlight')
   const [page, setPage] = useState(1)
@@ -18,7 +18,7 @@ export const useFetch = () => {
   const fetchAllBlogs = useCallback(async () => {
     try {
       const params = { limit: 1000 } // ดึงมาเยอะๆ สำหรับ search
-      const res = await getPublishedPosts(params)
+      const res = await  getPublishedPosts(params)
       const list = Array.isArray(res)
         ? res
         : res?.data || res?.blogs || []
@@ -36,7 +36,7 @@ export const useFetch = () => {
         const params = { page, limit }
         if (category && category !== 'Highlight') params.category = category
 
-        const res = await getPublishedPosts(params)
+        const res = await  getPublishedPosts(params)
 
         // ✅ รองรับ backend ที่ return data ไม่ตรง
         const list = Array.isArray(res)
@@ -77,7 +77,7 @@ export const useFetch = () => {
 
   return {
     blogs,
-    allBlogs, // 🆕 เพิ่มนี้ - return allBlogs ออกไป
+    allBlogs, 
     text,
     setText,
     category,

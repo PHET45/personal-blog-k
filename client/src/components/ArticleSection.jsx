@@ -24,11 +24,10 @@ const ArticleSection = () => {
     loadMore,
   } = useFetch()
 
-  // ✅ categories list (Highlight + unique category name จาก blogs)
   const categories = [
     { value: 'Highlight', label: 'Highlight' },
     ...Array.from(
-      new Set(blogs.map((b) => b.category?.name).filter(Boolean))
+      new Set(allBlogs.map((b) => b.category?.name).filter(Boolean))
     ).map((name) => ({
       value: name,
       label: name,
@@ -45,13 +44,12 @@ const ArticleSection = () => {
       !text ||
       b.title.toLowerCase().includes(text.toLowerCase()) ||
       b.description?.toLowerCase().includes(text.toLowerCase())
-
-    if (!category || category === 'Highlight') {
-      return matchText
-    }
-
+  
+    if (!category || category === 'Highlight') return matchText
+  
     return matchText && b.category?.name === category
   })
+  
 
   return (
     <div className="flex flex-col gap-10 justify-center items-center p-4 md:p-4 w-full">

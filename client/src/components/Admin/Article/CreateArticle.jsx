@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Image } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
 import { useNavigate } from 'react-router-dom'
-import { getStatuses, createPost } from '@/services/blogService.js'
+import { getStatuses, createPost, uploadImage } from '@/services/blogService.js'
 import { getCategories } from '@/services/categoriesService.js'
+
 const CreateArticle = () => {
   const navigate = useNavigate()
   const [title, setTitle] = useState('')
@@ -13,8 +14,8 @@ const CreateArticle = () => {
   const [categories, setCategories] = useState([])
   const [statuses, setStatuses] = useState([])
   const [thumbnailPreview, setThumbnailPreview] = useState(null)
-  const [thumbnailFile, setThumbnailFile] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false) 
   const [error, setError] = useState(null)
 
   // Fetch categories and statuses
@@ -38,7 +39,6 @@ const CreateArticle = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
-      setThumbnailFile(file)
       const reader = new FileReader()
       reader.onload = (e) => setThumbnailPreview(e.target.result)
       reader.readAsDataURL(file)
@@ -70,6 +70,25 @@ const CreateArticle = () => {
         throw new Error('Invalid status')
       }
 
+      // 🆕 Upload image ถ้ามี
+      let imageUrl = null
+      if (thumbnailPreview) {
+        try {
+          setUploadingImage(true)
+          console.log('📤 Uploading image...')
+          
+          const uploadResult = await uploadImage(thumbnailPreview)
+          imageUrl = uploadResult.url
+          
+          console.log('✅ Image uploaded:', imageUrl)
+        } catch (uploadErr) {
+          console.error('Image upload failed:', uploadErr)
+          throw new Error('Failed to upload image: ' + uploadErr.message)
+        } finally {
+          setUploadingImage(false)
+        }
+      }
+
       // Prepare post data
       const postData = {
         title: title.trim(),
@@ -77,14 +96,16 @@ const CreateArticle = () => {
         content: content.trim(),
         category_id: parseInt(categoryId),
         status_id: statusObj.id,
-        image: thumbnailPreview || null, // Base64 หรือ URL
+        image: imageUrl, // 🆕 ใช้ URL จาก Supabase
         date: new Date().toISOString(),
         likes_count: 0
       }
 
+      console.log('💾 Creating post...', postData)
+
       // Create post
       const result = await createPost(postData)
-      console.log('Post created:', result)
+      console.log('✅ Post created:', result)
 
       // Navigate back to article management
       navigate('/admin/article-management')
@@ -93,6 +114,7 @@ const CreateArticle = () => {
       setError(err.message || 'Failed to save article')
     } finally {
       setLoading(false)
+      setUploadingImage(false)
     }
   }
 
@@ -109,17 +131,17 @@ const CreateArticle = () => {
         <div className="flex gap-3">
           <button
             onClick={handleSaveAsDraft}
-            disabled={loading}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors hover:cursor-pointer disabled:opacity-50"
+            disabled={loading || uploadingImage}
+            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Saving...' : 'Save as draft'}
           </button>
           <button
             onClick={handleSaveAndPublish}
-            disabled={loading}
-            className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors hover:cursor-pointer disabled:opacity-50"
+            disabled={loading || uploadingImage}
+            className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Publishing...' : 'Save and publish'}
+            {uploadingImage ? 'Uploading image...' : loading ? 'Publishing...' : 'Save and publish'}
           </button>
         </div>
       </div>
@@ -128,6 +150,22 @@ const CreateArticle = () => {
       {error && (
         <div className="mx-15 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
           {error}
+          <button
+            onClick={() => setError(null)}
+            className="ml-2 text-red-900 underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {/* Uploading Status */}
+      {uploadingImage && (
+        <div className="mx-15 mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span>Uploading image to cloud storage...</span>
+          </div>
         </div>
       )}
 
@@ -155,7 +193,6 @@ const CreateArticle = () => {
                       onClick={(e) => {
                         e.stopPropagation()
                         setThumbnailPreview(null)
-                        setThumbnailFile(null)
                       }}
                       className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
                     >
@@ -214,8 +251,6 @@ const CreateArticle = () => {
             </div>
             <input
               type="text"
-            
-             
               placeholder="Enter author name"
               className="flex w-full bg-[#EFEEEB] text-base outline-none border rounded-md px-3 py-2 border-gray-300 text-black placeholder-gray-400 h-[48px]"
             />
