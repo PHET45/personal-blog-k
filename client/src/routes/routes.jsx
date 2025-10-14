@@ -9,6 +9,7 @@ import CategoryManagementPage from '@/page/Admin/CategoryPage/CategoryManagement
 import { ProfilePage } from '@/page/User/ProfilePage'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import ResetpasswordPage from '@/page/User/ResetpasswordPage'
+import { EditArticlePage } from '@/page/Admin/ArticlePage/EditArticlePage'
 
 export default function AppRoutes() {
   return useRoutes([
@@ -39,6 +40,14 @@ export default function AppRoutes() {
       element: (
         <ProtectedRoute roles={["admin"]}>
           <CategoryManagementPage />
+        </ProtectedRoute>
+      )
+    },
+    { 
+      path: '/admin/article-management/edit/:id', 
+      element: (
+        <ProtectedRoute roles={["admin"]}>
+          <EditArticlePage />
         </ProtectedRoute>
       )
     },
