@@ -1,4 +1,3 @@
-// src/hooks/useAdminBlogs.jsx
 import { useState, useEffect, useCallback } from 'react'
 import { getBlogs, getStatuses, deletePost } from '../services/blogService'
 
@@ -8,8 +7,10 @@ export const useAdminBlogs = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [deleteLoading, setDeleteLoading] = useState(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [selectedId, setSelectedId] = useState(null)
 
-  // Filter states
+  // Filters
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('Status')
   const [categoryFilter, setCategoryFilter] = useState('Category')
@@ -40,18 +41,16 @@ export const useAdminBlogs = () => {
     }
   }, [])
 
-  // Initial fetch
+  // Initial load
   useEffect(() => {
     fetchBlogs()
     fetchStatuses()
   }, [fetchBlogs, fetchStatuses])
 
-  // Map articles with status normalization
+  // Normalize articles
   const articles = blogs.map((b) => {
     const statusObj = statuses.find((s) => s.status === b.status?.status)
     let status = statusObj?.status || null
-
-    // แปลง publish → Published
     if (status === 'publish') status = 'Published'
 
     return {
@@ -59,55 +58,53 @@ export const useAdminBlogs = () => {
       title: b.title || 'Untitled',
       category: b.category?.name || 'Uncategorized',
       status,
-      rawBlog: b, // เก็บ raw data ไว้ถ้าต้องการใช้
+      rawBlog: b,
     }
   })
 
-  // Filter articles
+  // Filters
   const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
-
     const matchesStatus =
       statusFilter === 'Status' ||
       (article.status &&
         article.status.toLowerCase() === statusFilter.toLowerCase())
-
     const matchesCategory =
       categoryFilter === 'Category' || article.category === categoryFilter
 
     return matchesSearch && matchesStatus && matchesCategory
   })
 
-  // Get unique categories
   const uniqueCategories = [
     ...new Set(blogs.map((b) => b.category?.name || 'Uncategorized')),
   ]
 
-  // Handle delete
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this article?')) {
-      return false
-    }
+  // ✅ แค่เปิด dialog
+  const handleDelete = (id) => {
+    setSelectedId(id)
+    setShowDeleteDialog(true)
+  }
 
-    setDeleteLoading(id)
+  // ✅ ลบจริงตอนยืนยัน
+  const confirmDelete = async () => {
+    if (!selectedId) return
+    setDeleteLoading(selectedId)
     setError(null)
-
     try {
-      await deletePost(id)
-      await fetchBlogs() // Refresh list
-      return true
+      await deletePost(selectedId)
+      await fetchBlogs()
     } catch (err) {
       console.error('Failed to delete post:', err)
       setError(err.message || 'Failed to delete article')
-      return false
     } finally {
       setDeleteLoading(null)
+      setShowDeleteDialog(false)
+      setSelectedId(null)
     }
   }
 
-  // Reset filters
   const resetFilters = () => {
     setSearchTerm('')
     setStatusFilter('Status')
@@ -115,19 +112,16 @@ export const useAdminBlogs = () => {
   }
 
   return {
-    // Data
     blogs,
     articles,
     filteredArticles,
     statuses,
     uniqueCategories,
 
-    // Loading states
     isLoading,
     deleteLoading,
     error,
 
-    // Filter states
     searchTerm,
     setSearchTerm,
     statusFilter,
@@ -135,8 +129,10 @@ export const useAdminBlogs = () => {
     categoryFilter,
     setCategoryFilter,
 
-    // Actions
     handleDelete,
+    confirmDelete,
+    showDeleteDialog,
+    setShowDeleteDialog,
     resetFilters,
     refetch: fetchBlogs,
     setError,

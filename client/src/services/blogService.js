@@ -1,6 +1,7 @@
 // services/blogService.js
 import axios from 'axios'
 import { API_URL } from './config'
+import { toast } from 'react-toast'
 
 // ✅ แก้ไข: ใช้ /api เป็น base แล้วเพิ่ม /likes ตอนเรียก
 const base = API_URL.replace(/\/$/, "")
@@ -67,26 +68,20 @@ export const getLikes = async (postId, token) => {
 export const toggleLike = async (postId, token) => {
   try {
     if (!token) throw new Error('Unauthorized: No token provided')
-    
     const res = await axios.post(
       `${API}/likes/${postId}/toggle`,
-      {}, // empty body
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }
+      {},
+      { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
     )
-    
-    
+    toast.success(res.data.liked ? 'You liked this post!' : 'You unliked this post!')
     return res.data
   } catch (err) {
-    console.error( {
+    console.error({
       status: err.response?.status,
       data: err.response?.data,
       message: err.message
     })
+    toast.error('Failed to toggle like.')
     throw err
   }
 }
@@ -101,19 +96,38 @@ export const createPost = async (postData) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(postData)
+      body: JSON.stringify(postData),
     })
 
+    // ✅ ตรวจ error code
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error || 'Failed to create post')
+      if (response.status === 413) {
+        toast.error('ไฟล์ภาพมีขนาดใหญ่เกินกำหนด (สูงสุด 5MB)')
+        throw new Error('Image too large (413)')
+      }
+
+      const errorData = await response.json().catch(() => ({}))
+      const message = errorData.error || errorData.message || 'Failed to create post'
+      toast.error(`❌ ไม่สามารถสร้างโพสต์ได้: ${message}`)
+      throw new Error(message)
     }
 
-    return await response.json()
+    // ✅ สำเร็จ
+    const data = await response.json()
+    toast.success('สร้างโพสต์สำเร็จ!')
+    return data
   } catch (error) {
     console.error('Error creating post:', error)
+
+    // ✅ handle เผื่อกรณี network ล่ม
+    if (error.message.includes('Failed to fetch')) {
+      toast.error('🚫 ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้')
+    } else if (!error.message.includes('413')) {
+      toast.error('เกิดข้อผิดพลาดขณะสร้างโพสต์')
+    }
+
     throw error
   }
 }
@@ -153,23 +167,22 @@ export const deletePost = async (id) => {
 
     const response = await fetch(`${API_URL}/posts/${id}`, {
       method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     })
 
     if (!response.ok) {
       const errorData = await response.json()
+      toast.error('Failed to delete post.')
       throw new Error(errorData.error || 'Failed to delete post')
     }
 
+    toast.success('Post deleted successfully!')
     return true
   } catch (error) {
     console.error('Error deleting post:', error)
     throw error
   }
 }
-
 // Upload image 
 
 export const uploadImage = async (base64Image) => {
@@ -181,15 +194,14 @@ export const uploadImage = async (base64Image) => {
       image: base64Image,
       originalName: 'post-image.jpg'
     }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
     })
 
+    toast.success('Image uploaded successfully!')
     return response.data
   } catch (error) {
     console.error('Error uploading image:', error)
+    toast.error('Failed to upload image.')
     throw error
   }
 }

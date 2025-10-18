@@ -1,5 +1,5 @@
 import React from 'react'
-import { Search, Plus, Edit2, Trash2 } from 'lucide-react'
+import { Search, Plus, Edit2, Trash2, X } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAdminBlogs } from '@/hooks/useAdminBlogs.jsx'
@@ -7,7 +7,7 @@ import MetaBalls from '@/components/ui/MetaBalls.jsx'
 
 const ArticleManagement = () => {
   const navigate = useNavigate()
-  
+
   // ✅ ทุกอย่างมาจาก hook แล้ว
   const {
     filteredArticles,
@@ -24,6 +24,9 @@ const ArticleManagement = () => {
     setCategoryFilter,
     handleDelete,
     setError,
+    setShowDeleteDialog,
+    confirmDelete,
+    showDeleteDialog,
   } = useAdminBlogs()
 
   // Handle Edit
@@ -139,7 +142,9 @@ const ArticleManagement = () => {
                 </div>
 
                 <div className="col-span-2">
-                  <div className="text-sm text-gray-600">{article.category}</div>
+                  <div className="text-sm text-gray-600">
+                    {article.category}
+                  </div>
                 </div>
 
                 <div className="col-span-2">
@@ -197,6 +202,46 @@ const ArticleManagement = () => {
                 </div>
               </div>
             ))}
+            {showDeleteDialog && (
+              <div
+                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
+                onClick={() => setShowDeleteDialog(false)}
+              >
+                <div
+                  className="bg-white rounded-2xl p-8 shadow-2xl max-w-md w-full text-center relative mx-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    onClick={() => setShowDeleteDialog(false)}
+                    className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-500" />
+                  </button>
+
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                    Delete article
+                  </h2>
+                  <p className="text-gray-600 mb-8">
+                    Do you want to delete this article?
+                  </p>
+
+                  <div className="flex justify-center gap-4">
+                    <button
+                      onClick={() => setShowDeleteDialog(false)}
+                      className="px-6 py-2 border border-gray-300 rounded-full text-gray-700 font-medium hover:bg-gray-100 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmDelete}
+                      className="px-6 py-2 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {filteredArticles.length === 0 && (
               <div className="flex flex-col items-center h-screen gap-6 lg:py-100">

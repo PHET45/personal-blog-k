@@ -1,64 +1,63 @@
 //service/auth.js
-import axios from "axios";
-import { API_URL } from "./config";
+import axios from 'axios'
+import { API_URL } from './config'
+import { toast } from 'react-toast'
 
-const base = (API_URL || "").replace(/\/$/, "");
-const API = `${base}/api`;
-
+const base = (API_URL || '').replace(/\/$/, '')
+const API = `${base}/api`
 
 export const AuthService = {
   login: async (email, password) => {
-    const res = await axios.post(`${API}/auth/login`, { email, password });
-    if (res.data.token) localStorage.setItem("token", res.data.token);
-    return res.data;
+    const res = await axios.post(`${API}/auth/login`, { email, password })
+    if (res.data.token) localStorage.setItem('token', res.data.token)
+    return res.data
   },
 
   // ✅ เพิ่ม: Change Password
   changePassword: async (currentPassword, newPassword) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found. Please login again.");
+      const token = localStorage.getItem('token')
+      if (!token) {
+        toast.error('No token found. Please login again.')
+        throw new Error('No token found. Please login again.')
+      }
 
       const res = await axios.post(
         `${API}/auth/change-password`,
-        { 
-          currentPassword,
-          newPassword
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+        { currentPassword, newPassword },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
 
-      return res.data;
+      toast.success('Password changed successfully!')
+      return res.data
     } catch (err) {
       const message =
-        err.response?.data?.message || 
-        err.response?.data?.error || 
-        err.message;
-      throw new Error(message);
+        err.response?.data?.message || err.response?.data?.error || err.message
+
+      toast.error(`Failed to change password: ${message}`)
+      throw new Error(message)
     }
   },
 
   getProfile: async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
-  
+      const token = localStorage.getItem('token')
+      if (!token) throw new Error('No token found')
+
       const res = await axios.get(`${API}/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      const user = res.data?.user || res.data;
-  
+      })
+
+      const user = res.data?.user || res.data
+
       // ✅ ใช้รูปจากฐานข้อมูลก่อน ถ้าไม่มีค่อย fallback ไปใช้ ui-avatar
       const avatar_url =
         user.profile_pic ||
         user.user_metadata?.avatar_url ||
         `https://ui-avatars.com/api/?name=${encodeURIComponent(
           user.user_metadata?.name || user.user_metadata?.username || user.email
-        )}&background=random&color=fff`;
-  
+        )}&background=random&color=fff`
+
       return {
         ...res.data,
         user: {
@@ -68,18 +67,15 @@ export const AuthService = {
             avatar_url,
           },
         },
-      };
+      }
     } catch (err) {
       const message =
-        err.response?.data?.message || err.response?.data?.error || err.message;
-      throw new Error(message);
+        err.response?.data?.message || err.response?.data?.error || err.message
+      throw new Error(message)
     }
   },
-  
 
-  
-
-  logout: () => localStorage.removeItem("token"),
+  logout: () => localStorage.removeItem('token'),
 
   register: async ({ name, username, email, password }) => {
     try {
@@ -88,12 +84,12 @@ export const AuthService = {
         username,
         email,
         password,
-      });
+      })
 
-      const user = res.data?.user || res.data;
+      const user = res.data?.user || res.data
       const avatar_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(
         user.user_metadata?.name || user.user_metadata?.username || user.email
-      )}&background=random&color=fff`;
+      )}&background=random&color=fff`
 
       return {
         ...res.data,
@@ -104,12 +100,11 @@ export const AuthService = {
             avatar_url,
           },
         },
-      };
+      }
     } catch (err) {
       const message =
-        err.response?.data?.message || err.response?.data?.error || err.message;
-      throw new Error(message);
+        err.response?.data?.message || err.response?.data?.error || err.message
+      throw new Error(message)
     }
   },
-  
-};
+}
