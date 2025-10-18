@@ -5,6 +5,7 @@ import { useRoutes } from 'react-router-dom'
 import { ViewPostPage } from '@/page/User/ViewPostPage'
 import ArticleManagementPage from '@/page/Admin/ArticlePage/ArticleManagementPage'
 import { CreateArticlePage } from '@/page/Admin/ArticlePage/CreateArticlePage'
+import CreateCategory from '@/components/Admin/CategoryManagement/CreateCategory'
 import CategoryManagementPage from '@/page/Admin/CategoryPage/CategoryManagementPage'
 import { ProfilePage } from '@/page/User/ProfilePage'
 import ProtectedRoute from '@/components/ProtectedRoute'
@@ -35,6 +36,15 @@ export default function AppRoutes() {
         </ProtectedRoute>
       )
     },
+   
+    { 
+      path: '/admin/article-management/edit/:id', 
+      element: (
+        <ProtectedRoute roles={["admin"]}>
+          <EditArticlePage />
+        </ProtectedRoute>
+      )
+    },
     { 
       path: '/admin/category-management', 
       element: (
@@ -44,10 +54,10 @@ export default function AppRoutes() {
       )
     },
     { 
-      path: '/admin/article-management/edit/:id', 
+      path: '/admin/category-management/create-category', 
       element: (
         <ProtectedRoute roles={["admin"]}>
-          <EditArticlePage />
+          <CreateCategory />
         </ProtectedRoute>
       )
     },

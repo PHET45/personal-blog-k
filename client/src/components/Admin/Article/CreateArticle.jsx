@@ -4,6 +4,7 @@ import SideBar from '../SideBar.jsx'
 import { useNavigate } from 'react-router-dom'
 import { getStatuses, createPost, uploadImage } from '@/services/blogService.js'
 import { getCategories } from '@/services/categoriesService.js'
+import { toast } from 'react-toast'
 
 const CreateArticle = () => {
   const navigate = useNavigate()
@@ -101,22 +102,26 @@ const CreateArticle = () => {
         likes_count: 0
       }
 
-      console.log('💾 Creating post...', postData)
-
       // Create post
-      const result = await createPost(postData)
-      console.log('✅ Post created:', result)
+    await createPost(postData)
 
-      // Navigate back to article management
-      navigate('/admin/article-management')
-    } catch (err) {
-      console.error('Error saving post:', err)
-      setError(err.message || 'Failed to save article')
-    } finally {
-      setLoading(false)
-      setUploadingImage(false)
+    // ✅ Show toast based on status
+    if (status === 'draft') {
+      toast.success('Create article and saved as draft. You can publish article later.')
+    } else if (status === 'publish') {
+      toast.success('Create article and published. Your article has been successfully published.')
     }
+
+    navigate('/admin/article-management')
+  } catch (err) {
+    console.error('Error saving post:', err)
+    toast.error(err.message || 'Failed to save article')
+    setError(err.message || 'Failed to save article')
+  } finally {
+    setLoading(false)
+    setUploadingImage(false)
   }
+}
 
   const handleSaveAsDraft = () => handleSave('draft')
   const handleSaveAndPublish = () => handleSave('publish')

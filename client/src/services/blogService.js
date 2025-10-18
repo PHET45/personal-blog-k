@@ -184,7 +184,6 @@ export const deletePost = async (id) => {
   }
 }
 // Upload image 
-
 export const uploadImage = async (base64Image) => {
   try {
     const token = getAuthToken()

@@ -8,7 +8,6 @@ const API = API_URL.replace(/\/$/, "") + '/api/comments'
 export const getCommentsByPost = async (postId) => {
   try {
     const res = await axios.get(`${API}/${postId}`)
-    toast.success('Comments loaded successfully!')
     return res.data?.data || []
   } catch (err) {
     console.error('Error fetching comments:', err)

@@ -4,6 +4,7 @@ import SideBar from '../SideBar.jsx'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getStatuses, getBlogById, updatePost, uploadImage } from '@/services/blogService.js'
 import { getCategories } from '@/services/categoriesService.js'
+import { toast } from 'react-toast'
 
 const EditArticle = () => {
   const navigate = useNavigate()
@@ -64,35 +65,29 @@ const EditArticle = () => {
   const handleUpdate = async (status) => {
     setLoading(true)
     setError(null)
-
+  
     try {
       // ✅ Validation
       if (!title.trim()) throw new Error('Title is required')
       if (!categoryId) throw new Error('Please select a category')
       if (!introduction.trim()) throw new Error('Introduction is required')
       if (!content.trim()) throw new Error('Content is required')
-
+  
       const statusObj = statuses.find((s) => s.status === status)
       if (!statusObj) throw new Error('Invalid status')
-
-      // ✅ อัปโหลดรูปภาพใหม่ถ้ามี
+  
+      // ✅ Upload image if new
       let imageUrl = thumbnailPreview
       if (thumbnailFile) {
         try {
           setUploadingImage(true)
-          console.log('📤 Uploading image to Supabase...')
           const uploadResult = await uploadImage(thumbnailPreview)
           imageUrl = uploadResult.url
-          console.log('✅ Uploaded image URL:', imageUrl)
-        } catch (uploadErr) {
-          console.error('❌ Upload failed:', uploadErr)
-          throw new Error('Failed to upload image: ' + uploadErr.message)
         } finally {
           setUploadingImage(false)
         }
       }
-
-      // ✅ เตรียมข้อมูลอัปเดต
+  
       const updateData = {
         title: title.trim(),
         description: introduction.trim(),
@@ -101,14 +96,20 @@ const EditArticle = () => {
         status_id: statusObj.id,
         image: imageUrl,
       }
-
-      // ✅ ส่งไปอัปเดต
+  
       await updatePost(id, updateData)
-      console.log('✅ Post updated successfully')
-
+  
+      // ✅ Toast notification
+      if (status === 'draft') {
+        toast.success('Article updated and saved as draft. You can publish it later.')
+      } else if (status === 'publish') {
+        toast.success('Article updated and published. Your article has been successfully published.')
+      }
+  
       navigate('/admin/article-management')
     } catch (err) {
       console.error('Error updating post:', err)
+      toast.error(err.message || 'Failed to update article')
       setError(err.message || 'Failed to update article')
     } finally {
       setLoading(false)

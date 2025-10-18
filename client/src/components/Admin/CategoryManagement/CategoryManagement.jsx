@@ -44,11 +44,11 @@ const CategoryManagement = () => {
       {/* Header */}
       <div className="flex justify-between items-center px-15 border-b-1 border-stone-200 h-[96px]">
         <h1 className="text-2xl font-semibold text-gray-800">
-          Article management
+          Category management
         </h1>
         <button className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-4xl flex items-center transition-colors ">
           <Plus className="w-4 h-4 mr-2" />
-          <Link to="/admin/create-article">Create article</Link>
+          <Link to="/admin/category-management/create-category">Create category</Link>
         </button>
       </div>
 
