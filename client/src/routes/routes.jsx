@@ -13,7 +13,8 @@ import ResetpasswordPage from '@/page/User/ResetpasswordPage'
 import { EditArticlePage } from '@/page/Admin/ArticlePage/EditArticlePage'
 import EditCategoryPage from '@/page/Admin/CategoryPage/EditCategoryPage'
 import AdminProfilePage from '@/page/Admin/ProfilePage/AdminProfilePage'
-
+import AdminResetPasswordPage from '@/page/Admin/AdminResetPasswordPage/AdminResetPasswordPage'
+import NotiPage from '@/page/Admin/NotificationPage/NotiPage'
 export default function AppRoutes() {
   return useRoutes([
     { path: '/', element: <HomePage /> },
@@ -76,6 +77,22 @@ export default function AppRoutes() {
       element: (
         <ProtectedRoute roles={["admin"]}>
           <AdminProfilePage  />
+        </ProtectedRoute>
+      )
+    },
+    { 
+      path: '/admin/reset-password', 
+      element: (
+        <ProtectedRoute roles={["admin"]}>
+          <AdminResetPasswordPage />
+        </ProtectedRoute>
+      )
+    },
+    { 
+      path: '/admin/notification', 
+      element: (
+        <ProtectedRoute roles={["admin"]}>
+          <NotiPage />
         </ProtectedRoute>
       )
     },

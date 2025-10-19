@@ -4,6 +4,25 @@ import { toast } from 'react-toast'
 
 const API = API_URL.replace(/\/$/, "") + '/api/comments'
 
+export const getNotifications = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      toast.error('Unauthorized. Please login first.')
+      throw new Error('Unauthorized')
+    }
+
+    const res = await axios.get(`${API}/notifications`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return res.data?.data || []
+  } catch (err) {
+    console.error('Error fetching notifications:', err)
+    toast.error('Failed to load notifications.')
+    return []
+  }
+}
 // ======================= Get Comments =======================
 export const getCommentsByPost = async (postId) => {
   try {
