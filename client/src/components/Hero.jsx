@@ -6,7 +6,7 @@ const Hero = () => {
 
   }
   return (
-    <div className="flex flex-col justify-center w-full items-center lg:w-[1200px] lg:gap-10 md:gap-5 container md:px-8 px-4 py-8 lg:flex-row lg:py-16 mx-auto">
+    <div className="flex flex-col justify-center w-full items-center lg:w-[1200px] lg:gap-14 md:gap-5 container md:px-8 px-4 py-8 lg:flex-row lg:py-16 mx-auto ">
       <div className="flex flex-col  lg:w-1/3 ">
         <h1
           className="flex flex-col 
@@ -15,7 +15,7 @@ const Hero = () => {
              font-poppins font-semibold 
              text-3xl md:text-5xl lg:text-[52px] 
              leading-snug  lg:leading-[60px] 
-             tracking-normal 
+             tracking-normal  
              text-left md:text-center lg:text-right 
              mb-4"
         >
@@ -79,7 +79,7 @@ const Hero = () => {
         </AnimatedContent>
       </div>
 
-      <div className="flex flex-col lg:w-1/3 lg:pl-8 ">
+      <div className="flex flex-col lg:w-1/3  ">
         <h2
           className="font-poppins font-medium 
              text-[10px] sm:text-[12px] md:text-[14px] lg:text-[16px] 
@@ -89,12 +89,12 @@ const Hero = () => {
           -Author
         </h2>
         <h3 className="text-2xl font-bold mb-4">Thompson P.</h3>
-        <p className="text-[#78716c] text-muted-foreground mb-4">
+        <p className="text-[#78716c]  mb-4">
           I am a pet enthusiast and freelance writer who specializes in animal
           behavior and care. With a deep love for cats, I enjoy sharing insights
           on feline companionship and wellness.
         </p>
-        <p className="text-[#78716c] text-muted-foreground">
+        <p className="text-[#78716c] ">
           When i'm not writing, I spends time volunteering at my local animal
           shelter, helping cats find loving homes.
         </p>

@@ -1,4 +1,6 @@
-import { motion } from 'motion/react';
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
+
 import { useEffect, useRef, useState, useMemo } from 'react';
 
 const buildKeyframes = (from, steps) => {
@@ -65,7 +67,7 @@ const BlurText = ({
   );
 
   return (
-    <p ref={ref} className={`blur-text ${className} flex flex-wrap`}>
+    <p ref={ref} className={`blur-text ${className} inline-block`}>
       {elements.map((segment, index) => {
         const animateKeyframes = buildKeyframes(fromSnapshot, toSnapshots);
 
@@ -85,7 +87,7 @@ const BlurText = ({
             transition={spanTransition}
             onAnimationComplete={index === elements.length - 1 ? onAnimationComplete : undefined}>
             {segment === ' ' ? '\u00A0' : segment}
-            {animateBy === 'words' && index < elements.length - 1 && '\u00A0'}
+            {animateBy === 'words' && index < elements.length - 1 && ' '}
           </motion.span>
         );
       })}

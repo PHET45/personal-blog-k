@@ -42,8 +42,8 @@ const Navbar = () => {
     navigate('/login')
   }
 
-  const avatarUrl = user?.profile_pic ||  '/default-avatar.png';
-  const displayName = user?.name ||  'User';
+  const avatarUrl = user?.profile_pic || '/default-avatar.png'
+  const displayName = user?.name || 'User'
 
   return (
     <>
@@ -67,8 +67,9 @@ const Navbar = () => {
                 <FaBell className="text-xl text-gray-700" />
                 <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
               </button>
-              <div className='flex  gap-5 items-center '
-              onClick={() => setMenuOpen((v) => !v)}
+              <div
+                className="flex  gap-5 items-center "
+                onClick={() => setMenuOpen((v) => !v)}
               >
                 {/* Avatar */}
                 <img
@@ -77,9 +78,7 @@ const Navbar = () => {
                   className="w-8 h-8 rounded-full object-cover"
                 />
                 {/* Username */}
-                <span className="font-medium text-gray-800">
-                  {user.name}
-                </span>
+                <span className="font-medium text-gray-800">{user.name}</span>
                 <FaChevronDown className="text-sm text-gray-500" />
               </div>
             </div>
@@ -106,20 +105,45 @@ const Navbar = () => {
                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 onClick={() => setMenuOpen(false)}
               >
-                <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/> Profile
+                <img
+                  src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg"
+                  alt="profile"
+                />{' '}
+                Profile
               </Link>
               <Link
                 to="/reset-password"
                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 onClick={() => setMenuOpen(false)}
               >
-                <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg' alt='reset-pass'/> Reset password
+                <img
+                  src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg"
+                  alt="reset-pass"
+                />{' '}
+                Reset password
               </Link>
+              {user.role === 'admin' && (
+                <Link
+                  to="/admin/article-management"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 "
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <img
+                    src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Out_light.svg"
+                    alt="admin-panel"
+                  />
+                  Admin panel
+                </Link>
+              )}
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left"
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left border-t border-[#DAD6D1]"
               >
-                <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Sign_out_squre_light.svg' alt='logout'/> Log out
+                <img
+                  src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Sign_out_squre_light.svg"
+                  alt="logout"
+                />{' '}
+                Log out
               </button>
             </div>
           )}
@@ -159,12 +183,12 @@ const Navbar = () => {
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex flex-row gap-3 items-center">
                       <img
-                        src={avatarUrl }
+                        src={avatarUrl}
                         alt="avatar"
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <span className="font-medium text-gray-800 text-lg">
-                        {displayName }
+                        {displayName}
                       </span>
                     </div>
                     <button className="relative">
@@ -178,7 +202,10 @@ const Navbar = () => {
                     className="flex items-center gap-3 py-2 text-gray-700 border-b border-gray-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/>
+                    <img
+                      src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg"
+                      alt="profile"
+                    />
                     <span className="text-base">Profile</span>
                   </Link>
 
@@ -187,7 +214,10 @@ const Navbar = () => {
                     className="flex items-center gap-3 py-2 text-gray-700 border-b border-gray-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg' alt='reset-pass'/>
+                    <img
+                      src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg"
+                      alt="reset-pass"
+                    />
                     <span className="text-base">Reset password</span>
                   </Link>
 
@@ -195,7 +225,10 @@ const Navbar = () => {
                     onClick={handleLogout}
                     className="flex items-center gap-3 py-2 text-gray-700 border-b border-gray-100 text-left"
                   >
-                    <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Sign_out_squre_light.svg' alt='logout'/>
+                    <img
+                      src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Sign_out_squre_light.svg"
+                      alt="logout"
+                    />
                     <span className="text-base">Log out</span>
                   </button>
                 </>
