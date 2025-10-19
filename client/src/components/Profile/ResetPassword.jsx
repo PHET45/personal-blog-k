@@ -137,10 +137,10 @@ const ResetPassword = () => {
             alt="avatar"
             className="w-10 h-10 rounded-full object-cover"
           />
-          <span className="font-semibold text-gray-800 text-base lg:text-lg">
+          <span className="font-semibold text-[#75716B] text-base lg:text-lg">
             {displayName}
           </span> 
-          <div className="lg:hidden text-[#DAD6D1]">|</div>
+          <div className=" text-[#DAD6D1]">|</div>
           <div className='lg:hidden font-semibold text-gray-800 text-base '>Reset password</div>
         </div>
 
@@ -162,6 +162,7 @@ const ResetPassword = () => {
 
       {/* Main content */}
       <div className="flex flex-col items-center lg:items-start bg-[#f8f8f6] lg:bg-white lg:gap-5 w-full">
+        
         <div className="hidden lg:block text-xl font-semibold">Reset Password</div>
         
         {/* Alert Messages */}
@@ -193,7 +194,7 @@ const ResetPassword = () => {
           </div>
         )}
 
-        <div className="lg:bg-[#f8f8f6] flex flex-col items-center lg:items-start lg:rounded-2xl lg:shadow-sm p-6 w-full">
+        <div className="lg:bg-[#EFEEEB] flex flex-col items-center lg:items-start lg:rounded-2xl lg:shadow-sm p-6 lg:min-w-[550px] w-full">
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 max-w-md">
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-1">
@@ -204,7 +205,7 @@ const ResetPassword = () => {
                 name="currentPassword"
                 value={formData.currentPassword}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                className="w-full border bg-white border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 placeholder="Enter current password"
                 required
               />
@@ -219,14 +220,11 @@ const ResetPassword = () => {
                 name="newPassword"
                 value={formData.newPassword}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                className="w-full border bg-white border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 placeholder="Enter new password"
                 required
                 minLength={6}
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Password must be at least 6 characters
-              </p>
             </div>
 
             <div>
@@ -238,7 +236,7 @@ const ResetPassword = () => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                className="w-full border bg-white border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 placeholder="Confirm new password"
                 required
               />
@@ -247,11 +245,11 @@ const ResetPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-gray-800 text-white font-medium rounded-full text-sm py-2 px-8 hover:bg-gray-900 mt-4 self-start transition-all ${
+              className={`bg-gray-800 lg:min-w-[120px] lg:min-h-[48px] cursor-pointer text-white font-medium rounded-full text-sm py-2 px-8 hover:bg-gray-900 mt-4 self-start transition-all ${
                 loading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {loading ? '🔄 Changing...' : '🔒 Change Password'}
+              {loading ? 'Changing...' : 'Change Password'}
             </button>
           </form>
         </div>

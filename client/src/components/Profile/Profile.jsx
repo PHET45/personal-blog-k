@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { AuthService } from '@/services/auth';
 import { UploadService } from '@/services/upload';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toast';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -119,7 +120,16 @@ const Profile = () => {
 
       const result = await UploadService.updateProfile(formData.name, formData.username);
       console.log('Update result:', result);
-      
+      toast.success(
+        <div>
+          <p className="font-semibold text-lg">
+          Saved profile{' '}
+          </p>
+          <p className="text-sm text-white/90">
+          Your profile has been successfully updated
+          </p>
+        </div>
+      )
       setSuccess('Profile updated successfully! 🎉');
       
       await fetchProfile();
@@ -177,10 +187,10 @@ const Profile = () => {
             alt="avatar"
             className="w-10 h-10 rounded-full object-cover"
           />
-          <span className="font-semibold text-gray-800 text-base lg:text-lg">
+          <span className="font-semibold text-[#75716B] text-base lg:text-lg">
             {displayName}
           </span>
-          <div className="lg:hidden text-[#DAD6D1]">|</div>
+          <div className=" text-[#DAD6D1]">|</div>
           <div className="flex flex-row justify-end-safe font-semibold text-gray-800 text-base lg:hidden">
             Profile
           </div>
@@ -236,9 +246,9 @@ const Profile = () => {
           </div>
         )}
 
-        <div className="lg:bg-[#f8f8f6] flex flex-col items-center lg:items-start lg:rounded-2xl lg:shadow-sm p-6 w-full">
+        <div className="lg:bg-[#EFEEEB] flex flex-col items-center lg:items-start lg:rounded-2xl lg:shadow-sm p-6 lg:min-w-[550px] w-full">
           {/* Profile Picture Section */}
-          <div className="relative mb-4">
+          <div className="relative mb-4 flex flex-col lg:flex-row gap-4 justify-center items-center">
             <img
               src={avatarUrl}
               alt="profile"
@@ -249,6 +259,16 @@ const Profile = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
               </div>
             )}
+             {/* Upload button */}
+          <button
+            onClick={handleUploadClick}
+            disabled={uploading}
+            className={`border border-gray-400 rounded-full px-5 py-2  font-medium hover:bg-gray-50 bg-white max-lg:mb-6 transition-all min-w-[255px] min-h-[48px] ${
+              uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+            }`}
+          >
+            {uploading ? 'Uploading...' : 'Upload profile picture'}
+          </button>
           </div>
 
           {/* Hidden file input */}
@@ -260,16 +280,7 @@ const Profile = () => {
             className="hidden"
           />
 
-          {/* Upload button */}
-          <button
-            onClick={handleUploadClick}
-            disabled={uploading}
-            className={`border border-gray-400 rounded-full px-5 py-2 text-sm font-medium hover:bg-gray-50 mb-6 transition-all ${
-              uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-            }`}
-          >
-            {uploading ? '📤 Uploading...' : '📷 Upload profile picture'}
-          </button>
+         
 
           {/* Profile Form */}
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
@@ -282,7 +293,7 @@ const Profile = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                className="w-full border bg-white border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 placeholder="Enter your name"
                 required
               />
@@ -297,35 +308,32 @@ const Profile = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                className="w-full border bg-white border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 placeholder="Enter your username"
                 required
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">
+              <label className="text-sm font-medium text-gray-400 block mb-1" >
                 Email
               </label>
               <input
                 type="email"
                 value={user.email}
                 disabled
-                className="w-full border border-gray-200 rounded-md px-3 py-2 text-gray-400 bg-gray-50 cursor-not-allowed"
+                className="w-full border bg-[#EFEEEB] border-gray-200 rounded-md px-3 py-2 text-gray-400 cursor-not-allowed"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Email cannot be changed
-              </p>
             </div>
 
             <button
               type="submit"
               disabled={saving}
-              className={`bg-gray-800 text-white font-medium rounded-full text-sm py-2 px-8 hover:bg-gray-900 mt-4 self-start transition-all ${
+              className={`bg-gray-800 lg:min-w-[120px] lg:min-h-[48px]  cursor-pointer text-white font-medium rounded-full text-sm py-2 px-8 hover:bg-gray-900 mt-4 self-start transition-all ${
                 saving ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {saving ? '💾 Saving...' : '💾 Save'}
+              {saving ? 'Saving...' : 'Save'}
             </button>
           </form>
         </div>

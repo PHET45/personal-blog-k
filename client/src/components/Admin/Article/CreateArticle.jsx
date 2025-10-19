@@ -282,8 +282,9 @@ const CreateArticle = () => {
             </div>
             <input
               type="text"
-              placeholder="Enter author name"
-              className="flex w-full bg-[#EFEEEB] text-base outline-none border rounded-md px-3 py-2 border-gray-300 text-black placeholder-gray-400 h-[48px]"
+              disabled
+              value='Admin'
+              className="flex w-full bg-[#EFEEEB] text-base outline-none border rounded-md px-3 py-2 border-gray-300 text-gray-400 placeholder-gray-400 h-[48px] cursor-not-allowed"
             />
           </div>
 
