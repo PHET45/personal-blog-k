@@ -41,7 +41,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isLoading }) => {
         <button
           onClick={() => handlePageClick(currentPage - 1)}
           disabled={currentPage === 1 || isLoading}
-          className="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-3 py-2 cursor-pointer rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           aria-label="Previous page"
         >
           <svg
@@ -66,7 +66,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isLoading }) => {
             onClick={() => handlePageClick(page)}
             disabled={page === '...' || isLoading}
             className={`
-              min-w-[40px] px-3 py-2 rounded-lg border transition-all
+              min-w-[40px] px-3 py-2 rounded-lg border transition-all cursor-pointer
               ${
                 page === currentPage
                   ? 'bg-black text-white border-black font-semibold'
@@ -85,7 +85,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isLoading }) => {
         <button
           onClick={() => handlePageClick(currentPage + 1)}
           disabled={currentPage === totalPages || isLoading}
-          className="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-3 py-2 cursor-pointer rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           aria-label="Next page"
         >
           <svg
