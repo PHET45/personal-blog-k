@@ -1,16 +1,30 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import SideBar from '../SideBar'
-import { createCategory } from '@/services/categoriesService.js'
-import { toast } from 'react-toast' 
+import { getCategoryById, updateCategory } from '@/services/categoriesService.js'
+import { toast } from 'react-toast'
 
-
-const CreateCategory = () => {
+const EditCategory = () => {
+  const { id } = useParams() // ดึง id จาก URL
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  // ✅ ฟังก์ชันบันทึก category
+  // ดึงข้อมูล category เดิม
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const data = await getCategoryById(id)
+        setName(data.name)
+      } catch (error) {
+        console.error('Error fetching category:', error)
+        toast.error('Failed to load category data.')
+      }
+    }
+    fetchCategory()
+  }, [id])
+
+  // บันทึกการแก้ไข
   const handleSave = async () => {
     if (!name.trim()) {
       toast.error('Please enter a category name.')
@@ -18,12 +32,12 @@ const CreateCategory = () => {
     }
     try {
       setLoading(true)
-      await createCategory(name.trim())
-      toast.success('Category created successfully!')
+      await updateCategory(id, name.trim())
+      toast.success('Category updated successfully!')
       setTimeout(() => navigate('/admin/category-management'), 1200)
     } catch (error) {
-      console.error('Error creating category:', error)
-      toast.error(error.message || 'Failed to create category.')
+      console.error('Error updating category:', error)
+      toast.error(error.message || 'Failed to update category.')
     } finally {
       setLoading(false)
     }
@@ -32,12 +46,11 @@ const CreateCategory = () => {
   return (
     <div className="min-h-screen ml-[280px] bg-[#F9F8F6]">
       <SideBar />
-  
 
       {/* Header */}
       <div className="flex justify-between items-center px-15 border-b border-stone-200 h-[96px]">
         <h1 className="text-2xl font-semibold text-gray-800">
-          Create Category
+          Edit Category
         </h1>
 
         <div className="flex gap-3">
@@ -70,4 +83,4 @@ const CreateCategory = () => {
   )
 }
 
-export default CreateCategory
+export default EditCategory

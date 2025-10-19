@@ -137,14 +137,14 @@ const CreateArticle = () => {
           <button
             onClick={handleSaveAsDraft}
             disabled={loading || uploadingImage}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="lg:h-[48px] px-6 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Saving...' : 'Save as draft'}
           </button>
           <button
             onClick={handleSaveAndPublish}
             disabled={loading || uploadingImage}
-            className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="lg:h-[48px] px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {uploadingImage ? 'Uploading image...' : loading ? 'Publishing...' : 'Save and publish'}
           </button>

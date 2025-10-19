@@ -5,12 +5,13 @@ import { useRoutes } from 'react-router-dom'
 import { ViewPostPage } from '@/page/User/ViewPostPage'
 import ArticleManagementPage from '@/page/Admin/ArticlePage/ArticleManagementPage'
 import { CreateArticlePage } from '@/page/Admin/ArticlePage/CreateArticlePage'
-import CreateCategory from '@/components/Admin/CategoryManagement/CreateCategory'
+import CreateCategoryPage from '@/page/Admin/CategoryPage/CreateCategoryPage'
 import CategoryManagementPage from '@/page/Admin/CategoryPage/CategoryManagementPage'
 import { ProfilePage } from '@/page/User/ProfilePage'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import ResetpasswordPage from '@/page/User/ResetpasswordPage'
 import { EditArticlePage } from '@/page/Admin/ArticlePage/EditArticlePage'
+import EditCategoryPage from '@/page/Admin/CategoryPage/EditCategoryPage'
 
 export default function AppRoutes() {
   return useRoutes([
@@ -57,7 +58,15 @@ export default function AppRoutes() {
       path: '/admin/category-management/create-category', 
       element: (
         <ProtectedRoute roles={["admin"]}>
-          <CreateCategory />
+          <CreateCategoryPage />
+        </ProtectedRoute>
+      )
+    },
+    { 
+      path: '/admin/category-management/edit/:id', 
+      element: (
+        <ProtectedRoute roles={["admin"]}>
+          <EditCategoryPage  />
         </ProtectedRoute>
       )
     },
