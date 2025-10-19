@@ -75,14 +75,14 @@ const SideBar = () => {
       <div className="absolute bottom-0 left-0 w-[280px] p-6  border-gray-200">
         <div className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800 mb-3 border-b border-gray-200 pb-3">
         <Link to="/">
-        <div className='flex items-center'><ExternalLink className="w-4 h-4 mr-3" /> hh. website</div>
+        <div className='flex items-center gap-3'><img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Out_light.svg' alt='admin-panel'/> hh. website</div>
         </Link>
         </div>
         <div
-          className="flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-800"
+          className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-gray-800"
           onClick={handleLogout}
         >
-          <span className="mr-3">🚪</span>
+          <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Sign_out_squre_light.svg' alt='logout'/>
           Log out
         </div>
       </div>
