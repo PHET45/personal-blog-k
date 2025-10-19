@@ -63,7 +63,16 @@ export const Login = () => {
     } catch (err) {
       // 5️⃣ Handle error
       setError(err.message || "Login failed")
-      toast.error("Your password is incorrect or this email doesn't exist")
+      toast.error(
+        <div>
+          <p className="font-semibold text-lg">
+          Your password is incorrect or this email doesn't exist
+          </p>
+          <p className="text-sm text-white/90">
+          Please try another password or email
+          </p>
+        </div>
+      )
     }
   }
   

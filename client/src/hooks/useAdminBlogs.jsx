@@ -1,3 +1,4 @@
+//hooks/useAdminBlogs.jsx
 import { useState, useEffect, useCallback } from 'react'
 import { getBlogs, getStatuses, deletePost } from '../services/blogService'
 

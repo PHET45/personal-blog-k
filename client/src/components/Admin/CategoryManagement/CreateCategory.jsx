@@ -19,7 +19,14 @@ const CreateCategory = () => {
     try {
       setLoading(true)
       await createCategory(name.trim())
-      toast.success('Category created successfully!')
+      toast.success(
+        <div>
+          <p className="font-semibold text-lg">Create category</p>
+          <p className="text-sm text-white/90">
+            Category has been successfully created.
+          </p>
+        </div>
+      )
       setTimeout(() => navigate('/admin/category-management'), 1200)
     } catch (error) {
       console.error('Error creating category:', error)

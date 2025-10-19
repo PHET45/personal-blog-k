@@ -2,9 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { Image } from 'lucide-react'
 import SideBar from '../SideBar.jsx'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getStatuses, getBlogById, updatePost, uploadImage } from '@/services/blogService.js'
+import {
+  getStatuses,
+  getBlogById,
+  updatePost,
+  uploadImage,
+} from '@/services/blogService.js'
 import { getCategories } from '@/services/categoriesService.js'
 import { toast } from 'react-toast'
+import { useAdminBlogs } from '@/hooks/useAdminBlogs.jsx'
 
 const EditArticle = () => {
   const navigate = useNavigate()
@@ -21,6 +27,13 @@ const EditArticle = () => {
   const [loadingData, setLoadingData] = useState(true)
   const [uploadingImage, setUploadingImage] = useState(false)
   const [error, setError] = useState(null)
+  const {
+    handleDelete,
+    confirmDelete,
+    showDeleteDialog,
+    setShowDeleteDialog,
+    deleteLoading,
+  } = useAdminBlogs()
 
   // 🔹 โหลดข้อมูลบทความ
   useEffect(() => {
@@ -30,7 +43,7 @@ const EditArticle = () => {
         const [postData, categoriesData, statusesData] = await Promise.all([
           getBlogById(id),
           getCategories(),
-          getStatuses()
+          getStatuses(),
         ])
 
         setTitle(postData.title || '')
@@ -65,17 +78,17 @@ const EditArticle = () => {
   const handleUpdate = async (status) => {
     setLoading(true)
     setError(null)
-  
+
     try {
       // ✅ Validation
       if (!title.trim()) throw new Error('Title is required')
       if (!categoryId) throw new Error('Please select a category')
       if (!introduction.trim()) throw new Error('Introduction is required')
       if (!content.trim()) throw new Error('Content is required')
-  
+
       const statusObj = statuses.find((s) => s.status === status)
       if (!statusObj) throw new Error('Invalid status')
-  
+
       // ✅ Upload image if new
       let imageUrl = thumbnailPreview
       if (thumbnailFile) {
@@ -87,7 +100,7 @@ const EditArticle = () => {
           setUploadingImage(false)
         }
       }
-  
+
       const updateData = {
         title: title.trim(),
         description: introduction.trim(),
@@ -96,16 +109,20 @@ const EditArticle = () => {
         status_id: statusObj.id,
         image: imageUrl,
       }
-  
+
       await updatePost(id, updateData)
-  
+
       // ✅ Toast notification
       if (status === 'draft') {
-        toast.success('Article updated and saved as draft. You can publish it later.')
+        toast.success(
+          'Article updated and saved as draft. You can publish it later.'
+        )
       } else if (status === 'publish') {
-        toast.success('Article updated and published. Your article has been successfully published.')
+        toast.success(
+          'Article updated and published. Your article has been successfully published.'
+        )
       }
-  
+
       navigate('/admin/article-management')
     } catch (err) {
       console.error('Error updating post:', err)
@@ -154,7 +171,11 @@ const EditArticle = () => {
             disabled={loading || uploadingImage}
             className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors disabled:opacity-50"
           >
-            {uploadingImage ? 'Uploading image...' : loading ? 'Publishing...' : 'Save and publish'}
+            {uploadingImage
+              ? 'Uploading image...'
+              : loading
+              ? 'Publishing...'
+              : 'Save and publish'}
           </button>
         </div>
       </div>
@@ -193,7 +214,9 @@ const EditArticle = () => {
               </div>
               <div
                 className="bg-[#EFEEEB] w-[460px] h-[260px] flex flex-col items-center justify-center rounded-lg shadow-sm border border-[#DAD6D1] border-dashed cursor-pointer"
-                onClick={() => document.getElementById('thumbnailInput').click()}
+                onClick={() =>
+                  document.getElementById('thumbnailInput').click()
+                }
               >
                 {thumbnailPreview ? (
                   <div className="relative">
@@ -232,7 +255,9 @@ const EditArticle = () => {
               <button
                 type="button"
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors"
-                onClick={() => document.getElementById('thumbnailInput').click()}
+                onClick={() =>
+                  document.getElementById('thumbnailInput').click()
+                }
               >
                 Upload thumbnail image
               </button>
@@ -260,7 +285,9 @@ const EditArticle = () => {
 
           {/* Title, Intro, Content */}
           <div className="flex flex-col w-[1040px]">
-            <label className="font-poppins font-medium text-[#75716B]">Title *</label>
+            <label className="font-poppins font-medium text-[#75716B]">
+              Title *
+            </label>
             <input
               type="text"
               placeholder="Article title"
@@ -288,7 +315,9 @@ const EditArticle = () => {
           </div>
 
           <div className="flex flex-col w-[1040px]">
-            <label className="font-poppins font-medium text-[#75716B]">Content *</label>
+            <label className="font-poppins font-medium text-[#75716B]">
+              Content *
+            </label>
             <textarea
               placeholder="Content"
               value={content}
@@ -297,6 +326,68 @@ const EditArticle = () => {
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>
+          <div
+            onClick={() => handleDelete(id)}
+            className="flex flex-row gap-x-2 items-center cursor-pointer text-black hover:text-red-700"
+          >
+            <img
+              src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Trash_light.svg"
+              alt="trash"
+              className="w-4 h-4"
+            />
+            <span>Delete article</span>
+          </div>
+
+          {showDeleteDialog && (
+            <div
+              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              <div
+                className="bg-white rounded-2xl p-8 shadow-2xl max-w-md w-full text-center relative mx-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => setShowDeleteDialog(false)}
+                  className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  ×
+                </button>
+
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Delete article
+                </h2>
+                <p className="text-gray-600 mb-8">
+                  Do you want to delete this article? This action cannot be
+                  undone.
+                </p>
+
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={() => setShowDeleteDialog(false)}
+                    className="px-6 py-2 border border-gray-300 rounded-full text-gray-700 font-medium hover:bg-gray-100 transition-colors"
+                    disabled={!!deleteLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await confirmDelete()
+                      navigate('/admin/article-management')
+                    }}
+                    disabled={!!deleteLoading}
+                    className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                      deleteLoading
+                        ? 'bg-gray-400 text-white cursor-not-allowed'
+                        : 'bg-black text-white hover:bg-gray-800'
+                    }`}
+                  >
+                    {deleteLoading ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

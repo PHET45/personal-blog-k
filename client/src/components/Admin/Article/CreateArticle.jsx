@@ -16,7 +16,7 @@ const CreateArticle = () => {
   const [statuses, setStatuses] = useState([])
   const [thumbnailPreview, setThumbnailPreview] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [uploadingImage, setUploadingImage] = useState(false) 
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [error, setError] = useState(null)
 
   // Fetch categories and statuses
@@ -25,7 +25,7 @@ const CreateArticle = () => {
       try {
         const [categoriesData, statusesData] = await Promise.all([
           getCategories(),
-          getStatuses()
+          getStatuses(),
         ])
         setCategories(categoriesData)
         setStatuses(statusesData)
@@ -66,7 +66,7 @@ const CreateArticle = () => {
       }
 
       // Find status ID based on status name
-      const statusObj = statuses.find(s => s.status === status)
+      const statusObj = statuses.find((s) => s.status === status)
       if (!statusObj) {
         throw new Error('Invalid status')
       }
@@ -77,10 +77,10 @@ const CreateArticle = () => {
         try {
           setUploadingImage(true)
           console.log('📤 Uploading image...')
-          
+
           const uploadResult = await uploadImage(thumbnailPreview)
           imageUrl = uploadResult.url
-          
+
           console.log('✅ Image uploaded:', imageUrl)
         } catch (uploadErr) {
           console.error('Image upload failed:', uploadErr)
@@ -99,29 +99,47 @@ const CreateArticle = () => {
         status_id: statusObj.id,
         image: imageUrl, // 🆕 ใช้ URL จาก Supabase
         date: new Date().toISOString(),
-        likes_count: 0
+        likes_count: 0,
       }
 
       // Create post
-    await createPost(postData)
+      await createPost(postData)
 
-    // ✅ Show toast based on status
-    if (status === 'draft') {
-      toast.success('Create article and saved as draft. You can publish article later.')
-    } else if (status === 'publish') {
-      toast.success('Create article and published. Your article has been successfully published.')
+      // ✅ Show toast based on status
+      if (status === 'draft') {
+        toast.success(
+          <div>
+            <p className="font-semibold text-lg">
+              Create article and saved as draft.
+            </p>
+            <p className="text-sm text-white/90">
+              You can publish article later.
+            </p>
+          </div>
+        )
+      } else if (status === 'publish') {
+        toast.success(
+          <div>
+            <p className="font-semibold text-lg">
+              Create article and published.{' '}
+            </p>
+            <p className="text-sm text-white/90">
+              Your article has been successfully published.
+            </p>
+          </div>
+        )
+      }
+
+      navigate('/admin/article-management')
+    } catch (err) {
+      console.error('Error saving post:', err)
+      toast.error(err.message || 'Failed to save article')
+      setError(err.message || 'Failed to save article')
+    } finally {
+      setLoading(false)
+      setUploadingImage(false)
     }
-
-    navigate('/admin/article-management')
-  } catch (err) {
-    console.error('Error saving post:', err)
-    toast.error(err.message || 'Failed to save article')
-    setError(err.message || 'Failed to save article')
-  } finally {
-    setLoading(false)
-    setUploadingImage(false)
   }
-}
 
   const handleSaveAsDraft = () => handleSave('draft')
   const handleSaveAndPublish = () => handleSave('publish')
@@ -146,7 +164,11 @@ const CreateArticle = () => {
             disabled={loading || uploadingImage}
             className="lg:h-[48px] px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {uploadingImage ? 'Uploading image...' : loading ? 'Publishing...' : 'Save and publish'}
+            {uploadingImage
+              ? 'Uploading image...'
+              : loading
+              ? 'Publishing...'
+              : 'Save and publish'}
           </button>
         </div>
       </div>
@@ -185,7 +207,9 @@ const CreateArticle = () => {
               </div>
               <div
                 className="bg-[#EFEEEB] w-[460px] h-[260px] flex flex-col items-center justify-center rounded-lg shadow-sm border border-[#DAD6D1] border-dashed cursor-pointer"
-                onClick={() => document.getElementById('thumbnailInput').click()}
+                onClick={() =>
+                  document.getElementById('thumbnailInput').click()
+                }
               >
                 {thumbnailPreview ? (
                   <div className="relative">
@@ -223,7 +247,9 @@ const CreateArticle = () => {
               <button
                 type="button"
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors hover:cursor-pointer"
-                onClick={() => document.getElementById('thumbnailInput').click()}
+                onClick={() =>
+                  document.getElementById('thumbnailInput').click()
+                }
               >
                 Upload thumbnail image
               </button>
