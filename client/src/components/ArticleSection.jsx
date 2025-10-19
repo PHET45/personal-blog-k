@@ -11,6 +11,8 @@ import GooeyNav from './ui/GooeyNav'
 import { useFetch } from '@/hooks/useFetch'
 import MetaBalls from './ui/MetaBalls'
 import SearchAutocomplete from './SearchAutocomplete'
+import Pagination from './Pagination'
+
 const ArticleSection = () => {
   const {
     blogs,
@@ -19,11 +21,11 @@ const ArticleSection = () => {
     setText,
     category,
     setCategory,
-    hasMore,
     isLoading,
-    loadMore,
     setPage,
     fetchBlog,
+    page,
+    totalPages,
   } = useFetch()
 
   const categories = [
@@ -38,8 +40,12 @@ const ArticleSection = () => {
 
   const handleCategoryChange = (val) => {
     setCategory(val)
-    setPage(1) // reset page
+    setPage(1)
     fetchBlog({ append: false, selectedCategory: val })
+  }
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage)
   }
 
   // Filter frontend: search + category
@@ -53,10 +59,9 @@ const ArticleSection = () => {
 
         return matchText && b.category?.name === category
       })
-    : blogs.filter((b) => {
-        if (!category || category === 'Highlight') return true
-        return b.category?.name === category
-      })
+    : category && category !== 'Highlight'
+    ? allBlogs.filter((b) => b.category?.name === category)
+    : blogs
 
   return (
     <div className="flex flex-col gap-10 justify-center items-center p-4 md:p-4 w-full">
@@ -67,22 +72,80 @@ const ArticleSection = () => {
 
       {/* Desktop Filter */}
       <div className="hidden md:flex items-center justify-between w-[1200px] mx-auto p-4 px-16 rounded-lg bg-stone-100 shadow-sm">
-        <div className="flex items-center gap-3">
-          <GooeyNav
-            items={categories}
-            value={category || 'Highlight'}
-            onValueChange={handleCategoryChange}
-            particleCount={15}
-            particleDistances={[90, 10]}
-            particleR={100}
-            initialActiveIndex={0}
-            animationTime={600}
-            timeVariance={300}
-            colors={[1, 2, 3, 1, 2, 3, 1, 4]}
-          />
+        <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
+          <button
+            onClick={() => {
+              const container = document.getElementById('gooey-nav-container')
+              if (container) {
+                container.scrollBy({ left: -200, behavior: 'smooth' })
+              }
+            }}
+            className="flex-shrink-0 p-2 hover:bg-white rounded-lg transition-colors"
+            aria-label="Scroll left"
+          >
+            <svg
+              className="w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
+          <div
+            id="gooey-nav-container"
+            className="flex-1 overflow-x-auto overflow-y-hidden scrollbar-hide"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            <div className="flex items-center gap-3">
+              <GooeyNav
+                items={categories}
+                value={category || 'Highlight'}
+                onValueChange={handleCategoryChange}
+                particleCount={15}
+                particleDistances={[90, 10]}
+                particleR={100}
+                initialActiveIndex={0}
+                animationTime={600}
+                timeVariance={300}
+                colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              const container = document.getElementById('gooey-nav-container')
+              if (container) {
+                container.scrollBy({ left: 200, behavior: 'smooth' })
+              }
+            }}
+            className="flex-shrink-0 p-2 hover:bg-white rounded-lg transition-colors"
+            aria-label="Scroll right"
+          >
+            <svg
+              className="w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
         </div>
 
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <SearchAutocomplete
             blogs={allBlogs}
             value={text}
@@ -137,7 +200,7 @@ const ArticleSection = () => {
 
       {/* Loading */}
       {isLoading && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 w-full max-w-6xl h-full  ">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 w-full max-w-6xl h-full">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="w-full animate-pulse">
               <div className="h-[212px] sm:h-[360px] w-full rounded-lg bg-gray-200 mb-4" />
@@ -156,50 +219,29 @@ const ArticleSection = () => {
           <BlogCard blogs={filteredBlogs} />
         ) : (
           <div className="flex justify-center items-center w-full max-w-6xl h-[600px] text-gray-500 text-lg">
-           <MetaBalls
-                  color="oklch(89.7% 0.196 126.665)"
-                  cursorBallColor="oklch(89.7% 0.196 126.665)"
-                  cursorBallSize={5}
-                  ballCount={30}
-                  animationSize={30}
-                  enableMouseInteraction={true}
-                  enableTransparency={true}
-                  hoverSmoothness={0.05}
-                  clumpFactor={2}
-                  speed={0.3}
-                />
+            <MetaBalls
+              color="oklch(89.7% 0.196 126.665)"
+              cursorBallColor="oklch(89.7% 0.196 126.665)"
+              cursorBallSize={5}
+              ballCount={30}
+              animationSize={30}
+              enableMouseInteraction={true}
+              enableTransparency={true}
+              hoverSmoothness={0.05}
+              clumpFactor={2}
+              speed={0.3}
+            />
           </div>
         ))}
 
-      {/* Load More */}
-      {hasMore && (
-        <div className="text-center mt-8">
-          <button
-            type="button"
-            onClick={loadMore}
-            disabled={isLoading}
-            className="hover:text-muted-foreground font-medium underline disabled:opacity-60 cursor-pointer"
-          >
-            {isLoading ? (
-              <div className="flex flex-col items-center  h-screen gap-6 lg:py-100">
-                <MetaBalls
-                  color="oklch(89.7% 0.196 126.665)"
-                  cursorBallColor="oklch(89.7% 0.196 126.665)"
-                  cursorBallSize={5}
-                  ballCount={30}
-                  animationSize={30}
-                  enableMouseInteraction={true}
-                  enableTransparency={true}
-                  hoverSmoothness={0.05}
-                  clumpFactor={2}
-                  speed={0.3}
-                />
-              </div>
-            ) : (
-              'View more'
-            )}
-          </button>
-        </div>
+      {/* Pagination */}
+      {!text && (!category || category === 'Highlight') && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          isLoading={isLoading}
+        />
       )}
     </div>
   )

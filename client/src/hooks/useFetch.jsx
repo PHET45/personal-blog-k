@@ -1,88 +1,94 @@
 // src/hooks/useFetch.jsx
-import { useState, useEffect, useCallback, useContext } from 'react'
-import {  getPublishedPosts } from '../services/blogService'
+import { useState, useEffect, useCallback, useContext, useRef } from 'react'
+import { getPublishedPosts } from '../services/blogService'
 import { AuthContext } from '@/context/AuthContextObject'
 
 export const useFetch = () => {
-  const { user } = useContext(AuthContext) // track login/logout
+  const { user } = useContext(AuthContext)
   const [blogs, setBlogs] = useState([])
-  const [allBlogs, setAllBlogs] = useState([]) // สำหรับ autocomplete
+  const [allBlogs, setAllBlogs] = useState([])
   const [text, setText] = useState('')
   const [category, setCategory] = useState('Highlight')
   const [page, setPage] = useState(1)
   const limit = 6
   const [isLoading, setIsLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
+  const [totalPages, setTotalPages] = useState(1)
+  
+  // ใช้ ref เพื่อป้องกัน infinite loop
+  const isFetchingRef = useRef(false)
 
-  // 🆕 เพิ่ม function นี้ - ดึงข้อมูลทั้งหมดสำหรับ autocomplete
+  // ดึงข้อมูลทั้งหมดสำหรับ autocomplete และ category filter
   const fetchAllBlogs = useCallback(async () => {
     try {
-      const params = { limit: 1000 } // ดึงมาเยอะๆ สำหรับ search
-      const res = await  getPublishedPosts(params)
-      const list = Array.isArray(res)
-        ? res
-        : res?.data || res?.blogs || []
+      const params = { limit: 1000 }
+      const res = await getPublishedPosts(params)
+      const list = Array.isArray(res) ? res : res?.data || res?.blogs || []
       setAllBlogs(list)
     } catch (err) {
       console.error('Error fetching all blogs:', err)
     }
   }, [])
 
- const fetchBlog = useCallback(
-  async ({ append = false, selectedCategory } = {}) => {
-    try {
-      setIsLoading(true)
-      const params = { page, limit }
+  const fetchBlog = useCallback(
+    async ({ append = false, selectedCategory, selectedPage } = {}) => {
+      // ป้องกันการเรียกซ้ำ
+      if (isFetchingRef.current) return
+      
+      try {
+        isFetchingRef.current = true
+        setIsLoading(true)
+        
+        const currentPage = selectedPage ?? page
+        const params = { page: currentPage, limit }
 
-      // ถ้าเลือก category เฉพาะ ให้ใช้ param
-      const cat = selectedCategory ?? category
-      if (cat && cat !== 'Highlight') params.category = cat
+        const cat = selectedCategory ?? category
+        if (cat && cat !== 'Highlight') params.category = cat
 
-      const res = await getPublishedPosts(params)
-      const list = Array.isArray(res) ? res : res?.data || res?.blogs || []
+        const res = await getPublishedPosts(params)
+        const list = Array.isArray(res) ? res : res?.data || res?.blogs || []
+        const pagination = res?.pagination || {}
 
-      setBlogs(prev => (append ? [...prev, ...list] : list))
-      setHasMore(list.length === limit)
-    } catch (err) {
-      console.error('Error fetching blogs:', err)
-      setHasMore(false)
-    } finally {
-      setIsLoading(false)
-    }
-  },
-  [category, page]
-)
+        setBlogs(prev => (append ? [...prev, ...list] : list))
+        setTotalPages(pagination.totalPages || 1)
+      } catch (err) {
+        console.error('Error fetching blogs:', err)
+      } finally {
+        setIsLoading(false)
+        isFetchingRef.current = false
+      }
+    },
+    [category, page, limit]
+  )
 
-
-  // 🆕 เพิ่ม useEffect นี้ - โหลดข้อมูลทั้งหมดครั้งแรก
+  // โหลดข้อมูลทั้งหมดครั้งแรก
   useEffect(() => {
     fetchAllBlogs()
   }, [fetchAllBlogs])
 
-  // รีเฟรชตอน login/logout หรือ category change
+  // รีเฟรชเมื่อ category หรือ user เปลี่ยน
   useEffect(() => {
     setPage(1)
-    fetchBlog({ append: false })
-  }, [category, user, fetchBlog])
+    fetchBlog({ append: false, selectedPage: 1 })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, user])
 
-  // โหลดเพิ่มตอนเปลี่ยนหน้า
+  // โหลดข้อมูลเมื่อเปลี่ยนหน้า
   useEffect(() => {
-    if (page > 1) fetchBlog({ append: true })
-  }, [page, fetchBlog])
-
-  const loadMore = () => {
-    if (!isLoading && hasMore) setPage(prev => prev + 1)
-  }
+    fetchBlog({ append: false, selectedPage: page })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
 
   return {
     blogs,
-    allBlogs, 
+    allBlogs,
     text,
     setText,
     category,
     setCategory,
     isLoading,
-    hasMore,
-    loadMore,
+    setPage,
+    fetchBlog,
+    page,
+    totalPages,
   }
 }
