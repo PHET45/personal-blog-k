@@ -256,7 +256,7 @@ const AdminProfile = () => {
               <button
                 onClick={handleUploadClick}
                 disabled={uploading}
-                className={`border border-gray-400 rounded-full px-6 py-2 text-sm font-normal hover:bg-gray-50 transition-all ${
+                className={`lg:w-[255px] bg-white lg:h-[48px] border border-gray-400 rounded-full px-6 py-2 text-sm font-normal hover:bg-gray-50 transition-all ${
                   uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                 }`}
               >
@@ -276,7 +276,7 @@ const AdminProfile = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className=" border min-w-[480px] border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm"
+                className=" border min-w-[480px] bg-white  border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm"
                 placeholder="Thompson P."
               />
             </div>
@@ -290,7 +290,7 @@ const AdminProfile = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleInputChange}
-                className="min-w-[480px] border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm"
+                className="min-w-[480px] border bg-white  border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm"
                 placeholder="thompson"
               />
             </div>
@@ -303,7 +303,7 @@ const AdminProfile = () => {
                 type="email"
                 value={user.email}
                 disabled
-                className="min-w-[480px] border border-gray-200 rounded-lg px-4 py-3 text-gray-400 bg-gray-50 cursor-not-allowed text-sm"
+                className="min-w-[480px] bg-white  border border-gray-200 rounded-lg px-4 py-3 text-gray-400  cursor-not-allowed text-sm"
               />
             </div>
 
@@ -317,7 +317,7 @@ const AdminProfile = () => {
                 onChange={handleInputChange}
                 maxLength={120}
                 rows={4}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm resize-none"
+                className="w-full bg-white  border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm resize-none"
                 placeholder="I am a pet enthusiast and freelance writer who specializes in animal behavior and care. With a deep love for cats, I enjoy sharing insights on feline companionship and wellness.&#10;&#10;When I'm not writing, I spends time volunteering at my local animal shelter, helping cats find loving homes."
               />
             </div>
