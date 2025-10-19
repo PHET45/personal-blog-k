@@ -85,12 +85,12 @@ const Navbar = () => {
           ) : (
             <div className="flex gap-3">
               <Link to="/login">
-                <button className="text-black bg-white px-[40px] py-[12px] rounded-full border">
+                <button className="text-black cursor-pointer bg-white min-w-[127px] min-h-[48px] rounded-full border">
                   Login
                 </button>
               </Link>
               <Link to="/register">
-                <button className="text-white bg-gray-800 px-[40px] py-[12px] rounded-full border">
+                <button className="text-white cursor-pointer bg-gray-800 min-w-[127px] min-h-[48px] rounded-full border">
                   Signup
                 </button>
               </Link>
