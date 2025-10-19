@@ -72,7 +72,7 @@ const CommentNotification = ({ notification }) => {
           "{comment_text}"
         </p>
 
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-sm text-[#F2B68C] mt-2">
           {getTimeAgo(created_at)}
         </p>
       </div>
