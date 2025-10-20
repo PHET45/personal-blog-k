@@ -181,7 +181,7 @@ const ArticleManagement = () => {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => handleEdit(article.id)}
-                      className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
+                      className="p-1.5 cursor-pointer text-gray-400 hover:text-blue-600 transition-colors"
                       title="Edit article"
                     >
                       <Edit2 className="w-4 h-4" />
@@ -189,7 +189,7 @@ const ArticleManagement = () => {
                     <button
                       onClick={() => handleDelete(article.id)}
                       disabled={deleteLoading === article.id}
-                      className="p-1.5 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                      className="p-1.5 text-gray-400 cursor-pointer hover:text-red-600 transition-colors disabled:opacity-50"
                       title="Delete article"
                     >
                       {deleteLoading === article.id ? (

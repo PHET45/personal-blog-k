@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SideBar from '../SideBar'
 import { createCategory } from '@/services/categoriesService.js'
-import { toast } from 'react-toast' 
-
+import { toast } from 'react-toast'
 
 const CreateCategory = () => {
   const [name, setName] = useState('')
@@ -39,7 +38,6 @@ const CreateCategory = () => {
   return (
     <div className="min-h-screen ml-[280px] bg-[#F9F8F6]">
       <SideBar />
-  
 
       {/* Header */}
       <div className="flex justify-between items-center px-15 border-b border-stone-200 h-[96px]">

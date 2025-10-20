@@ -1,164 +1,165 @@
 //components/Profile/Profile.jsx
-import React, { useEffect, useState, useRef } from 'react';
-import { AuthService } from '@/services/auth';
-import { UploadService } from '@/services/upload';
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toast';
+import React, { useEffect, useState, useRef } from 'react'
+import { AuthService } from '@/services/auth'
+import { UploadService } from '@/services/upload'
+import { Link } from 'react-router-dom'
+import { toast } from 'react-toast'
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
-  const [profileData, setProfileData] = useState(null);
-  const [formData, setFormData] = useState({ name: '', username: '' });
-  const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const fileInputRef = useRef(null);
+  const [user, setUser] = useState(null)
+  const [profileData, setProfileData] = useState(null)
+  const [formData, setFormData] = useState({ name: '', username: '' })
+  const [uploading, setUploading] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    fetchProfile()
+  }, [])
 
   const fetchProfile = async () => {
     try {
-      const authProfile = await AuthService.getProfile();
-      setUser(authProfile.user);
-      
+      const authProfile = await AuthService.getProfile()
+      setUser(authProfile.user)
+
       try {
-        const customProfile = await UploadService.getProfile();
-        setProfileData(customProfile.profile);
-        
+        const customProfile = await UploadService.getProfile()
+        setProfileData(customProfile.profile)
+
         setFormData({
-          name: customProfile.profile?.name || authProfile.user.user_metadata?.name || '',
-          username: customProfile.profile?.username || authProfile.user.user_metadata?.username || '',
-        });
-      } catch  {
+          name:
+            customProfile.profile?.name ||
+            authProfile.user.user_metadata?.name ||
+            '',
+          username:
+            customProfile.profile?.username ||
+            authProfile.user.user_metadata?.username ||
+            '',
+        })
+      } catch {
         setFormData({
           name: authProfile.user.user_metadata?.name || '',
           username: authProfile.user.user_metadata?.username || '',
-        });
+        })
       }
     } catch (err) {
-      console.error('Error fetching profile:', err);
-      setError(err.message);
+      console.error('Error fetching profile:', err)
+      toast.error(err.message || 'Failed to fetch profile')
     }
-  };
+  }
 
   const handleFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0]
+    if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file (JPG, PNG, GIF)');
-      return;
+      toast.error('Please upload an image file (JPG, PNG, GIF)')
+      return
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError('File size must be less than 5MB');
-      return;
+      toast.error('File size must be less than 5MB')
+      return
     }
 
     try {
-      setUploading(true);
-      setError('');
-      setSuccess('');
+      setUploading(true)
+      toast.info('Uploading profile picture...')
 
-      const result = await UploadService.uploadProfilePic(file);
-      console.log('Upload result:', result);
-      
-      setSuccess('Profile picture updated successfully! 🎉');
-      
-      await fetchProfile();
-      
-      setTimeout(() => {
-        setSuccess('');
-      }, 2000);
+      const result = await UploadService.uploadProfilePic(file)
+      console.log('Upload result:', result)
+
+      toast.success('Profile picture updated successfully! 🎉')
+
+      await fetchProfile()
     } catch (err) {
-      console.error('Upload error:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to upload profile picture');
+      console.error('Upload error:', err)
+      toast.error(
+        err.response?.data?.message ||
+          err.message ||
+          'Failed to upload profile picture'
+      )
     } finally {
-      setUploading(false);
+      setUploading(false)
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = ''
       }
     }
-  };
+  }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+    const { name, value } = e.target
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }));
-  };
+      [name]: value,
+    }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     if (!formData.name.trim()) {
-      setError('Name is required');
-      return;
+      toast.error('Name is required')
+      return
     }
 
     if (!formData.username.trim()) {
-      setError('Username is required');
-      return;
+      toast.error('Username is required')
+      return
     }
 
-    const currentName = profileData?.name || user.user_metadata?.name;
-    const currentUsername = profileData?.username || user.user_metadata?.username;
+    const currentName = profileData?.name || user.user_metadata?.name
+    const currentUsername =
+      profileData?.username || user.user_metadata?.username
 
-    if (formData.name === currentName && formData.username === currentUsername) {
-      setError('No changes detected');
-      return;
+    if (
+      formData.name === currentName &&
+      formData.username === currentUsername
+    ) {
+      toast.error('No changes detected')
+      return
     }
 
     try {
-      setSaving(true);
-      setError('');
-      setSuccess('');
+      setSaving(true)
+      toast.info('Saving profile...')
 
-      const result = await UploadService.updateProfile(formData.name, formData.username);
-      console.log('Update result:', result);
-      toast.success(
-        <div>
-          <p className="font-semibold text-lg">
-          Saved profile{' '}
-          </p>
-          <p className="text-sm text-white/90">
-          Your profile has been successfully updated
-          </p>
-        </div>
+      const result = await UploadService.updateProfile(
+        formData.name,
+        formData.username
       )
-      setSuccess('Profile updated successfully! 🎉');
-      
-      await fetchProfile();
-      
-      setTimeout(() => {
-        setSuccess('');
-      }, 2000);
+      console.log('Update result:', result)
+
+      toast.success('Profile updated successfully! 🎉')
+
+      await fetchProfile()
     } catch (err) {
-      console.error('Update error:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to update profile');
+      console.error('Update error:', err)
+      toast.error(
+        err.response?.data?.message || err.message || 'Failed to update profile'
+      )
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
-  };
+  }
 
   const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
+    fileInputRef.current?.click()
+  }
 
   if (!user) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
       </div>
-    );
+    )
   }
 
-  const avatarUrl = profileData?.profile_pic || user.user_metadata?.avatar_url || '/default-avatar.png';
-  const displayName = profileData?.name || user.user_metadata?.name || 'User';
+  const avatarUrl =
+    profileData?.profile_pic ||
+    user.user_metadata?.avatar_url ||
+    '/default-avatar.png'
+  const displayName = profileData?.name || user.user_metadata?.name || 'User'
 
   return (
     <div className="flex flex-col lg:flex-row lg:items-start lg:gap-10 w-full bg-white px-6 lg:px-120 py-8">
@@ -170,13 +171,21 @@ const Profile = () => {
             to="/profile"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/> Profile
+            <img
+              src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg"
+              alt="profile"
+            />{' '}
+            Profile
           </Link>
           <Link
             to="/reset-password"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg' alt='reset-pass'/> Reset password
+            <img
+              src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg"
+              alt="reset-pass"
+            />{' '}
+            Reset password
           </Link>
         </nav>
 
@@ -202,13 +211,21 @@ const Profile = () => {
             to="/profile"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg' alt='profile'/> Profile
+            <img
+              src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/User_duotone.svg"
+              alt="profile"
+            />{' '}
+            Profile
           </Link>
           <Link
             to="/reset-password"
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
           >
-            <img src='https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg' alt='reset-pass'/> Reset password
+            <img
+              src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Refresh_light.svg"
+              alt="reset-pass"
+            />{' '}
+            Reset password
           </Link>
         </nav>
       </div>
@@ -216,35 +233,6 @@ const Profile = () => {
       {/* Main content */}
       <div className="flex flex-col items-center lg:items-start bg-[#f8f8f6] lg:bg-white lg:gap-5 w-full">
         <div className="hidden lg:block text-xl font-semibold">Profile</div>
-        
-        {/* ✅ Alert Messages */}
-        {error && (
-          <div className="w-full bg-red-50 border-l-4 border-red-500 p-4 rounded">
-            <div className="flex items-center">
-              <span className="text-red-700">❌ {error}</span>
-              <button 
-                onClick={() => setError('')}
-                className="ml-auto text-red-500 hover:text-red-700 font-bold"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        )}
-
-        {success && (
-          <div className="w-full bg-green-50 border-l-4 border-green-500 p-4 rounded">
-            <div className="flex items-center">
-              <span className="text-green-700">✅ {success}</span>
-              <button 
-                onClick={() => setSuccess('')}
-                className="ml-auto text-green-500 hover:text-green-700 font-bold"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        )}
 
         <div className="lg:bg-[#EFEEEB] flex flex-col items-center lg:items-start lg:rounded-2xl lg:shadow-sm p-6 lg:min-w-[550px] w-full">
           {/* Profile Picture Section */}
@@ -259,16 +247,16 @@ const Profile = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
               </div>
             )}
-             {/* Upload button */}
-          <button
-            onClick={handleUploadClick}
-            disabled={uploading}
-            className={`border border-gray-400 rounded-full px-5 py-2  font-medium hover:bg-gray-50 bg-white max-lg:mb-6 transition-all min-w-[255px] min-h-[48px] ${
-              uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-            }`}
-          >
-            {uploading ? 'Uploading...' : 'Upload profile picture'}
-          </button>
+            {/* Upload button */}
+            <button
+              onClick={handleUploadClick}
+              disabled={uploading}
+              className={`border border-gray-400 rounded-full px-5 py-2  font-medium hover:bg-gray-50 bg-white max-lg:mb-6 transition-all min-w-[255px] min-h-[48px] ${
+                uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+              }`}
+            >
+              {uploading ? 'Uploading...' : 'Upload profile picture'}
+            </button>
           </div>
 
           {/* Hidden file input */}
@@ -279,8 +267,6 @@ const Profile = () => {
             onChange={handleFileChange}
             className="hidden"
           />
-
-         
 
           {/* Profile Form */}
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
@@ -315,7 +301,7 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-400 block mb-1" >
+              <label className="text-sm font-medium text-gray-400 block mb-1">
                 Email
               </label>
               <input
@@ -339,7 +325,7 @@ const Profile = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile

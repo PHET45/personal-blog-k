@@ -28,7 +28,7 @@ export const Login = () => {
     e.preventDefault()
     setError('')
     setFieldErrors({})
-  
+
     // 1️⃣ Validate form
     try {
       await loginSchema.validate({ email, password }, { abortEarly: false })
@@ -42,14 +42,14 @@ export const Login = () => {
       }
       return
     }
-  
+
     // 2️⃣ Try login
     try {
       const res = await login(email, password)
       if (res?.user) {
         // 3️⃣ Success toast
         toast.success('Login successful')
-  
+
         // 4️⃣ Check role and navigate
         const role = res.user.app_metadata?.role || res.user.role
         if (role === 'admin') {
@@ -62,20 +62,19 @@ export const Login = () => {
       }
     } catch (err) {
       // 5️⃣ Handle error
-      setError(err.message || "Login failed")
+      setError(err.message || 'Login failed')
       toast.error(
         <div>
           <p className="font-semibold text-lg">
-          Your password is incorrect or this email doesn't exist
+            Your password is incorrect or this email doesn't exist
           </p>
           <p className="text-sm text-white/90">
-          Please try another password or email
+            Please try another password or email
           </p>
         </div>
       )
     }
   }
-  
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-stone-100">

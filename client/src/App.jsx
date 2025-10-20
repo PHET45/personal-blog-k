@@ -6,7 +6,7 @@ function App() {
   return (
     <BrowserRouter>
       <AppRoutes />
-      <ToastContainer position="bottom-right" />
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </BrowserRouter>
   )
 }

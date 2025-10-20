@@ -2,6 +2,8 @@ import SideBar from '../SideBar'
 import React, { useEffect, useState, useRef } from 'react'
 import { AuthService } from '@/services/auth'
 import { UploadService } from '@/services/upload'
+import { toast } from 'react-toast'
+
 const AdminProfile = () => {
   const [user, setUser] = useState(null)
   const [profileData, setProfileData] = useState(null)
@@ -12,8 +14,6 @@ const AdminProfile = () => {
   })
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const AdminProfile = () => {
       }
     } catch (err) {
       console.error('Error fetching profile:', err)
-      setError(err.message)
+      toast.error(err.message || 'Failed to fetch profile')
     }
   }
 
@@ -58,33 +58,28 @@ const AdminProfile = () => {
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file (JPG, PNG, GIF)')
+      toast.error('Please upload an image file (JPG, PNG, GIF)')
       return
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError('File size must be less than 5MB')
+      toast.error('File size must be less than 5MB')
       return
     }
 
     try {
       setUploading(true)
-      setError('')
-      setSuccess('')
+      toast.info('Uploading profile picture...')
 
       const result = await UploadService.uploadProfilePic(file)
       console.log('Upload result:', result)
 
-      setSuccess('Profile picture updated successfully! 🎉')
+      toast.success('Profile picture updated successfully! 🎉')
 
       await fetchProfile()
-
-      setTimeout(() => {
-        setSuccess('')
-      }, 2000)
     } catch (err) {
       console.error('Upload error:', err)
-      setError(
+      toast.error(
         err.response?.data?.message ||
           err.message ||
           'Failed to upload profile picture'
@@ -107,12 +102,12 @@ const AdminProfile = () => {
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
-      setError('Name is required')
+      toast.error('Name is required')
       return
     }
 
     if (!formData.username.trim()) {
-      setError('Username is required')
+      toast.error('Username is required')
       return
     }
 
@@ -126,14 +121,13 @@ const AdminProfile = () => {
       formData.username === currentUsername &&
       formData.bio === currentBio
     ) {
-      setError('No changes detected')
+      toast.error('No changes detected')
       return
     }
 
     try {
       setSaving(true)
-      setError('')
-      setSuccess('')
+      toast.info('Saving profile...')
 
       const result = await UploadService.updateProfile(
         formData.name,
@@ -142,16 +136,12 @@ const AdminProfile = () => {
       )
       console.log('Update result:', result)
 
-      setSuccess('Profile updated successfully! 🎉')
+      toast.success('Profile updated successfully! ✅')
 
       await fetchProfile()
-
-      setTimeout(() => {
-        setSuccess('')
-      }, 2000)
     } catch (err) {
       console.error('Update error:', err)
-      setError(
+      toast.error(
         err.response?.data?.message || err.message || 'Failed to update profile'
       )
     } finally {
@@ -185,10 +175,11 @@ const AdminProfile = () => {
         <h1 className="text-2xl font-semibold text-gray-800">Profile</h1>
 
         <div className="flex gap-3">
-          <button 
-          onClick={handleSubmit}
-          disabled={saving}
-          className="lg:w-[120px] lg:h-[48px] px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <button
+            onClick={handleSubmit}
+            disabled={saving}
+            className="lg:w-[120px] lg:h-[48px] px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {saving ? 'Saving...' : 'Save'}
           </button>
         </div>
@@ -196,35 +187,6 @@ const AdminProfile = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-15 w-full">
-        {/* Alert Messages */}
-        {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-            <div className="flex items-center">
-              <span className="text-red-700">❌ {error}</span>
-              <button
-                onClick={() => setError('')}
-                className="ml-auto text-red-500 hover:text-red-700 font-bold"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        )}
-
-        {success && (
-          <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-            <div className="flex items-center">
-              <span className="text-green-700">✅ {success}</span>
-              <button
-                onClick={() => setSuccess('')}
-                className="ml-auto text-green-500 hover:text-green-700 font-bold"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Profile Form Container */}
         <div className="bg-[#F9F8F6] rounded-lg p-8 ">
           {/* Profile Picture Section */}

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { API_URL } from './config'
 import { toast } from 'react-toast'
 
-const API = API_URL.replace(/\/$/, "") + '/api/comments'
+const API = API_URL.replace(/\/$/, '') + '/api/comments'
 
 export const getNotifications = async () => {
   try {
@@ -13,7 +13,7 @@ export const getNotifications = async () => {
     }
 
     const res = await axios.get(`${API}/notifications`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     })
 
     return res.data?.data || []
@@ -55,9 +55,7 @@ export const createComment = async (postId, commentText) => {
   } catch (err) {
     console.error('Error creating comment:', err)
     const message =
-      err.response?.data?.message ||
-      err.response?.data?.error ||
-      err.message
+      err.response?.data?.message || err.response?.data?.error || err.message
     toast.error(`Failed to create comment: ${message}`)
     throw new Error(message)
   }
@@ -73,7 +71,7 @@ export const deleteComment = async (commentId) => {
     }
 
     const res = await axios.delete(`${API}/${commentId}`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     })
 
     toast.success('Comment deleted successfully!')
@@ -81,9 +79,7 @@ export const deleteComment = async (commentId) => {
   } catch (err) {
     console.error('Error deleting comment:', err)
     const message =
-      err.response?.data?.message ||
-      err.response?.data?.error ||
-      err.message
+      err.response?.data?.message || err.response?.data?.error || err.message
     toast.error(`Failed to delete comment: ${message}`)
     throw new Error(message)
   }

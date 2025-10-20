@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import SideBar from '../SideBar'
-import { getCategoryById, updateCategory } from '@/services/categoriesService.js'
+import {
+  getCategoryById,
+  updateCategory,
+} from '@/services/categoriesService.js'
 import { toast } from 'react-toast'
 
 const EditCategory = () => {
@@ -49,9 +52,7 @@ const EditCategory = () => {
 
       {/* Header */}
       <div className="flex justify-between items-center px-15 border-b border-stone-200 h-[96px]">
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Edit Category
-        </h1>
+        <h1 className="text-2xl font-semibold text-gray-800">Edit Category</h1>
 
         <div className="flex gap-3">
           <button

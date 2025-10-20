@@ -1,6 +1,10 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
-import { getPublishedPostById , toggleLike, getLikes } from '@/services/blogService'
+import {
+  getPublishedPostById,
+  toggleLike,
+  getLikes,
+} from '@/services/blogService'
 import { AuthService } from '@/services/auth'
 import ReactMarkdown from 'react-markdown'
 import FuzzyText from './ui/FuzzyText'
@@ -21,7 +25,6 @@ import {
   deleteComment,
 } from '@/services/commentService'
 import { toast } from 'react-toast'
-
 
 export const ViewPost = () => {
   const { postid } = useParams()
@@ -45,7 +48,7 @@ export const ViewPost = () => {
       setLoading(true)
       try {
         const [postData, profile, likesData, commentData] = await Promise.all([
-          getPublishedPostById (postid),
+          getPublishedPostById(postid),
           AuthService.getProfile().catch(() => null),
           getLikes(postid, getToken()).catch(() => ({
             likes_count: 0,
@@ -75,13 +78,13 @@ export const ViewPost = () => {
       setTimeout(() => {
         const commentsSection = document.getElementById('comments')
         if (commentsSection) {
-          commentsSection.scrollIntoView({ 
-            behavior: 'smooth', 
+          commentsSection.scrollIntoView({
+            behavior: 'smooth',
             block: 'start',
             // เพิ่ม offset เล็กน้อยเพื่อไม่ให้ติดขอบบน
           })
           // ถ้าต้องการ offset มากกว่านี้ ใช้วิธีนี้แทน:
-          // const yOffset = -20; 
+          // const yOffset = -20;
           // const y = commentsSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
           // window.scrollTo({ top: y, behavior: 'smooth' });
         }
@@ -185,14 +188,14 @@ export const ViewPost = () => {
         {!loading && post && (
           <article className="max-w-auto markdown">
             <div className="flex items-center justify-center w-full box-border lg:mb-8">
-              <div className='lg:max-w-[1200px] w-full lg:aspect-[1200/587] overflow-hidden md:rounded-md md:mt-[60px]'>
-              {post.image && (
-                <img
-                  src={post.image || '/placeholder.svg'}
-                  alt={post.title}
-                  className="w-full h-full object-cover object-center"
-                />
-              )}
+              <div className="lg:max-w-[1200px] w-full lg:aspect-[1200/587] overflow-hidden md:rounded-md md:mt-[10px]">
+                {post.image && (
+                  <img
+                    src={post.image || '/placeholder.svg'}
+                    alt={post.title}
+                    className="w-full h-full object-cover object-center"
+                  />
+                )}
               </div>
             </div>
 
@@ -295,19 +298,25 @@ export const ViewPost = () => {
                         },
                         {
                           label: <FaFacebook />,
-                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+                          href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                            shareUrl
+                          )}`,
                           target: '_blank',
                           rel: 'noopener noreferrer',
                         },
                         {
                           label: <SlSocialLinkedin />,
-                          href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+                          href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                            shareUrl
+                          )}`,
                           target: '_blank',
                           rel: 'noopener noreferrer',
                         },
                         {
                           label: <CiTwitter />,
-                          href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post?.title || '')}`,
+                          href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                            shareUrl
+                          )}&text=${encodeURIComponent(post?.title || '')}`,
                           target: '_blank',
                           rel: 'noopener noreferrer',
                         },
@@ -333,31 +342,37 @@ export const ViewPost = () => {
                   </button>
 
                   <div className="flex flex-row flex-wrap gap-2 w-full justify-center">
-                    <button 
+                    <button
                       className="flex items-center justify-center border border-gray-300 rounded-full px-6 py-2 bg-white text-black text-base font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
                       onClick={handleCopyLink}
                     >
                       <IoCopyOutline className="text-xl mr-2" />
                       <span>Copy link</span>
                     </button>
-                    <a 
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                    <a
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                        shareUrl
+                      )}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
                     >
                       <FaFacebook />
                     </a>
-                    <a 
-                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+                    <a
+                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                        shareUrl
+                      )}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
                     >
                       <SlSocialLinkedin />
                     </a>
-                    <a 
-                      href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post?.title || '')}`}
+                    <a
+                      href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                        shareUrl
+                      )}&text=${encodeURIComponent(post?.title || '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center border border-gray-300 rounded-full w-12 h-12 bg-white text-black text-xl shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
@@ -368,7 +383,10 @@ export const ViewPost = () => {
                 </div>
 
                 {/* ✅ NEW: Added id="comments" here for scroll target */}
-                <div id="comments" className="flex flex-col w-full gap-3 scroll-mt-20">
+                <div
+                  id="comments"
+                  className="flex flex-col w-full gap-3 scroll-mt-20"
+                >
                   <Label htmlFor="message">Comment</Label>
                   <Textarea
                     placeholder={

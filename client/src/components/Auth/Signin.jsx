@@ -34,68 +34,79 @@ export const Signup = () => {
   })
 
   const handleSignup = async (e) => {
-    e.preventDefault();
-    setError('');
-    setFieldErrors({});
-  
+    e.preventDefault()
+    setError('')
+    setFieldErrors({})
+
     // 1️⃣ Validate ด้วย Yup
     try {
       await signupSchema.validate(
         { name, username, email, password },
         { abortEarly: false }
-      );
+      )
     } catch (validationError) {
       if (validationError?.name === 'ValidationError') {
-        const newErrors = {};
+        const newErrors = {}
         validationError.inner?.forEach((ve) => {
-          if (ve.path && !newErrors[ve.path]) newErrors[ve.path] = ve.message;
-        });
-        setFieldErrors(newErrors);
-        return;
+          if (ve.path && !newErrors[ve.path]) newErrors[ve.path] = ve.message
+        })
+        setFieldErrors(newErrors)
+        return
       }
     }
-  
+
     // 2️⃣ ส่งข้อมูลไป server ผ่าน service
     try {
-      const res = await AuthService.register({ name, username, email, password });
-  
+      const res = await AuthService.register({
+        name,
+        username,
+        email,
+        password,
+      })
+
       // 3️⃣ ถ้า register สำเร็จ
       if (res.user) {
-        toast.success('Sign up successful');
-        navigate('/login');
-        return;
+        toast.success('Sign up successful')
+        navigate('/login')
+        return
       }
-  
+
       // 4️⃣ ถ้า service return error
       if (res.error) {
-        const message = res.error.message || res.error;
-        if (message.toLowerCase().includes('already') || message.toLowerCase().includes('duplicate') || message.toLowerCase().includes('email')) {
-          const emailError = 'Email is already taken, Please try another email.';
-          setFieldErrors({ email: emailError });
-          toast.error(emailError);
+        const message = res.error.message || res.error
+        if (
+          message.toLowerCase().includes('already') ||
+          message.toLowerCase().includes('duplicate') ||
+          message.toLowerCase().includes('email')
+        ) {
+          const emailError = 'Email is already taken, Please try another email.'
+          setFieldErrors({ email: emailError })
+          toast.error(emailError)
         } else {
-          setError(message);
-          toast.error(message);
+          setError(message)
+          toast.error(message)
         }
-        return;
+        return
       }
-  
     } catch (err) {
       // 5️⃣ fallback error
-      const message = err.response?.data?.error || err.message || 'Sign up failed';
-  
-      if (message.toLowerCase().includes('already') || message.toLowerCase().includes('duplicate') || message.toLowerCase().includes('email')) {
-        const emailError = 'Email is already taken, Please try another email.';
-        setFieldErrors({ email: emailError });
-        toast.error(emailError);
+      const message =
+        err.response?.data?.error || err.message || 'Sign up failed'
+
+      if (
+        message.toLowerCase().includes('already') ||
+        message.toLowerCase().includes('duplicate') ||
+        message.toLowerCase().includes('email')
+      ) {
+        const emailError = 'Email is already taken, Please try another email.'
+        setFieldErrors({ email: emailError })
+        toast.error(emailError)
       } else {
-        setError(message);
-        toast.error(message);
+        setError(message)
+        toast.error(message)
       }
     }
-  };
-  
-  
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-stone-100">

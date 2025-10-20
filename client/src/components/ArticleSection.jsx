@@ -80,7 +80,7 @@ const ArticleSection = () => {
                 container.scrollBy({ left: -200, behavior: 'smooth' })
               }
             }}
-            className="flex-shrink-0 p-2 hover:bg-white rounded-lg transition-colors"
+            className="flex-shrink-0 p-2 cursor-pointer hover:bg-white rounded-lg transition-colors"
             aria-label="Scroll left"
           >
             <svg
@@ -126,7 +126,7 @@ const ArticleSection = () => {
                 container.scrollBy({ left: 200, behavior: 'smooth' })
               }
             }}
-            className="flex-shrink-0 p-2 hover:bg-white rounded-lg transition-colors"
+            className="flex-shrink-0 p-2 cursor-pointer hover:bg-white rounded-lg transition-colors"
             aria-label="Scroll right"
           >
             <svg

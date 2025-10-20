@@ -4,7 +4,7 @@ import { API_URL } from './config'
 import { toast } from 'react-toast'
 
 // ✅ แก้ไข: ใช้ /api เป็น base แล้วเพิ่ม /likes ตอนเรียก
-const base = API_URL.replace(/\/$/, "")
+const base = API_URL.replace(/\/$/, '')
 const API = `${base}/api`
 // Helper: get token from localStorage
 const getAuthToken = () => {
@@ -13,12 +13,12 @@ const getAuthToken = () => {
 
 export const getPublishedPosts = async (params = {}) => {
   const response = await axios.get(`${base}/posts/public`, { params })
-  return response.data 
+  return response.data
 }
 
 export const getPublishedPostById = async (id) => {
-    const response = await axios.get(`${API_URL}/posts/public/${id}`)
-    return response.data 
+  const response = await axios.get(`${API_URL}/posts/public/${id}`)
+  return response.data
 }
 export const getBlogs = async (params = {}) => {
   try {
@@ -38,7 +38,6 @@ export const getBlogById = async (id) => {
   }
 }
 
-
 export const getStatuses = async (params = {}) => {
   try {
     const res = await axios.get(`${base}/statuses`, { params })
@@ -52,9 +51,7 @@ export const getStatuses = async (params = {}) => {
 // ✅ getLikes จะเช็คว่ามี token ไหม
 export const getLikes = async (postId, token) => {
   try {
-    const headers = token
-      ? { Authorization: `Bearer ${token}` }
-      : undefined
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined
 
     const res = await axios.get(`${API}/likes/${postId}`, { headers })
     return res.data // guest: { likes_count }, user: { likes_count, liked }
@@ -71,15 +68,22 @@ export const toggleLike = async (postId, token) => {
     const res = await axios.post(
       `${API}/likes/${postId}/toggle`,
       {},
-      { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
     )
-    toast.success(res.data.liked ? 'You liked this post!' : 'You unliked this post!')
+    toast.success(
+      res.data.liked ? 'You liked this post!' : 'You unliked this post!'
+    )
     return res.data
   } catch (err) {
     console.error({
       status: err.response?.status,
       data: err.response?.data,
-      message: err.message
+      message: err.message,
     })
     toast.error('Failed to toggle like.')
     throw err
@@ -96,7 +100,7 @@ export const createPost = async (postData) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(postData),
     })
@@ -109,7 +113,8 @@ export const createPost = async (postData) => {
       }
 
       const errorData = await response.json().catch(() => ({}))
-      const message = errorData.error || errorData.message || 'Failed to create post'
+      const message =
+        errorData.error || errorData.message || 'Failed to create post'
       toast.error(`❌ ไม่สามารถสร้างโพสต์ได้: ${message}`)
       throw new Error(message)
     }
@@ -142,9 +147,9 @@ export const updatePost = async (id, postData) => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(postData)
+      body: JSON.stringify(postData),
     })
 
     if (!response.ok) {
@@ -167,7 +172,7 @@ export const deletePost = async (id) => {
 
     const response = await fetch(`${API_URL}/posts/${id}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     })
 
     if (!response.ok) {
@@ -183,18 +188,25 @@ export const deletePost = async (id) => {
     throw error
   }
 }
-// Upload image 
+// Upload image
 export const uploadImage = async (base64Image) => {
   try {
     const token = getAuthToken()
     if (!token) throw new Error('No authentication token found')
 
-    const response = await axios.post(`${base}/upload`, {
-      image: base64Image,
-      originalName: 'post-image.jpg'
-    }, {
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-    })
+    const response = await axios.post(
+      `${base}/upload`,
+      {
+        image: base64Image,
+        originalName: 'post-image.jpg',
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
 
     toast.success('Image uploaded successfully!')
     return response.data

@@ -134,13 +134,13 @@ const CategoryManagement = () => {
                     onClick={() =>
                       navigate(`/admin/category-management/edit/${cat.id}`)
                     }
-                    className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
+                    className="p-1.5 cursor-pointer text-gray-400 hover:text-blue-600 transition-colors"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteClick(cat)}
-                    className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                    className="p-1.5 text-gray-400 cursor-pointer hover:text-red-600 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
