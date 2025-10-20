@@ -163,6 +163,7 @@ const Navbar = () => {
                 {notificationOpen && (
                   <div className="absolute right-0 top-14 w-[400px] bg-white shadow-lg rounded-xl border border-gray-200 z-[9999] max-h-[500px] overflow-hidden flex flex-col">
                     <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                      Notification
                       {user.role === 'admin' && (
                         <button
                           onClick={handleViewAllNotifications}
