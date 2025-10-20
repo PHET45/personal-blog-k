@@ -142,7 +142,7 @@ const Navbar = () => {
           ref={dropdownRef}
         >
           {user ? (
-            <div className="flex items-center gap-5 cursor-pointer">
+            <div className="flex items-center gap-5 ">
               {/* 🔔 Notification */}
               <div className="relative" ref={notificationRef}>
                 <button
@@ -166,7 +166,7 @@ const Navbar = () => {
                       {user.role === 'admin' && (
                         <button
                           onClick={handleViewAllNotifications}
-                          className="text-sm text-blue-600 hover:underline"
+                          className="text-sm text-black cursor-pointer hover:underline"
                         >
                           View all
                         </button>

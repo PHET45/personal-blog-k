@@ -44,7 +44,7 @@ const CommentNotification = ({ notification }) => {
   };
 
   return (
-    <div className="flex gap-4 w-full border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors bg-white">
+    <div className="flex gap-4 w-full border-b border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
       {/* Profile Picture */}
       <div className="w-12 h-12 flex-shrink-0">
         <img
@@ -62,9 +62,9 @@ const CommentNotification = ({ notification }) => {
         <div className="flex justify-between items-start gap-2">
           <div className="flex-1 min-w-0">
             <p className="text-sm text-gray-900">
-              <span className="font-semibold">{user?.name || "Unknown User"}</span>
-              {" "}Commented on your article:{" "}
-              <span className="text-blue-600 hover:underline cursor-pointer">
+              <span className="font-semibold ">{user?.name || "Unknown User"}</span>
+              {" "}<span className="text-[#75716B]">Commented on your article:</span>{" "}
+              <span className="text-[#75716B]  ">
                 {post?.title || "your post"}
               </span>
             </p>
@@ -72,7 +72,7 @@ const CommentNotification = ({ notification }) => {
 
           <button
             onClick={handleViewPost}
-            className="text-blue-600 hover:underline text-sm font-medium flex-shrink-0"
+            className="text-black cursor-pointer hover:underline text-sm font-medium flex-shrink-0"
             title="View post"
           >
             View
