@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthService } from '@/services/auth'
 import { UploadService } from '@/services/upload'
-import { FaBell, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa'
+import { FaChevronDown, FaBars, FaTimes } from 'react-icons/fa'
 
 const Navbar = () => {
   const [user, setUser] = useState(null)
@@ -47,7 +47,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="flex justify-between items-center h-[80px] lg:px-88 px-20 border-b border-gray-200 bg-white ">
+      <nav className="flex justify-between items-center h-[80px] lg:px-88 px-20 border-b border-gray-200 bg-[#F9F8F6] ">
         {/* Logo */}
         <div>
           <Link to="/">
@@ -63,9 +63,13 @@ const Navbar = () => {
           {user ? (
             <div className="flex items-center gap-5 cursor-pointer">
               {/* Notification bell */}
-              <button className="relative">
-                <FaBell className="text-xl text-gray-700" />
-                <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+              <button className="relative w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-[#EFEEEB] transition-colors">
+                <img
+                  src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Bell_light.svg"
+                  alt="bell"
+                  className="w-5 h-5"
+                />
+                <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
               </button>
               <div
                 className="flex  gap-5 items-center "
@@ -192,7 +196,10 @@ const Navbar = () => {
                       </span>
                     </div>
                     <button className="relative">
-                      <FaBell className="text-xl text-gray-700" />
+                      <img
+                        src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Bell_light.svg"
+                        alt="bell"
+                      />
                       <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
                     </button>
                   </div>

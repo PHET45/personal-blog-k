@@ -71,8 +71,8 @@ const ArticleSection = () => {
       </div>
 
       {/* Desktop Filter */}
-      <div className="hidden md:flex items-center justify-between w-[1200px] mx-auto p-4 px-16 rounded-lg bg-stone-100 shadow-sm">
-        <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
+      <div className="hidden md:flex items-center justify-between w-[1200px] mx-auto p-4 px-16 rounded-lg bg-[#EFEEEB] shadow-sm">
+        <div className="flex items-center gap-3 flex-1 max-w-[538px] mr-4">
           <button
             onClick={() => {
               const container = document.getElementById('gooey-nav-container')
@@ -145,11 +145,11 @@ const ArticleSection = () => {
           </button>
         </div>
 
-        <div className="relative flex-shrink-0">
+        <div className="relative flex min-w-[360px]">
           <SearchAutocomplete
             blogs={allBlogs}
             value={text}
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+            className="w-full px-6 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
             onChange={setText}
             onSelect={(suggestion) => {
               console.log('Selected:', suggestion)
