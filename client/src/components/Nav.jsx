@@ -2,13 +2,18 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthService } from '@/services/auth'
 import { UploadService } from '@/services/upload'
+import { getNotifications } from '@/services/commentService'
 import { FaChevronDown, FaBars, FaTimes } from 'react-icons/fa'
 
 const Navbar = () => {
   const [user, setUser] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [notificationOpen, setNotificationOpen] = useState(false)
+  const [notifications, setNotifications] = useState([])
+  const [hasUnread, setHasUnread] = useState(false)
   const dropdownRef = useRef(null)
+  const notificationRef = useRef(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -23,6 +28,40 @@ const Navbar = () => {
     }
     fetchProfile()
   }, [])
+
+  // Fetch notifications - สำหรับทุกคนที่ login
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (user) {
+        try {
+          const data = await getNotifications()
+          setNotifications(data)
+
+          // Check if there are unread notifications
+          const lastViewedTime = localStorage.getItem('lastViewedNotifications')
+          if (data.length > 0) {
+            if (!lastViewedTime) {
+              setHasUnread(true)
+            } else {
+              const hasNewNotification = data.some(
+                (notif) => new Date(notif.created_at) > new Date(lastViewedTime)
+              )
+              setHasUnread(hasNewNotification)
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching notifications:', err)
+        }
+      }
+    }
+
+    if (user) {
+      fetchNotifications()
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(fetchNotifications, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [user])
 
   // ปิด dropdown เมื่อคลิกข้างนอก
   useEffect(() => {
@@ -42,6 +81,48 @@ const Navbar = () => {
     navigate('/login')
   }
 
+  const handleNotificationClick = () => {
+    setNotificationOpen(!notificationOpen)
+    if (!notificationOpen) {
+      // Mark as read when opening
+      localStorage.setItem('lastViewedNotifications', new Date().toISOString())
+      setHasUnread(false)
+    }
+  }
+
+  const handleViewAllNotifications = () => {
+    setNotificationOpen(false)
+    navigate('/admin/notification')
+  }
+
+  const handleViewPost = (postId) => {
+    setNotificationOpen(false)
+    navigate(`/post/${postId}#comments`)
+  }
+
+  const getTimeAgo = (timestamp) => {
+    const now = new Date()
+    const commentDate = new Date(timestamp)
+    const diffMs = now - commentDate
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+
+    if (diffHours < 1) {
+      const diffMins = Math.floor(diffMs / (1000 * 60))
+      return `${diffMins} ${diffMins === 1 ? 'minute' : 'minutes'} ago`
+    }
+
+    if (diffHours < 24) {
+      return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`
+    }
+
+    return commentDate.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    })
+  }
   const avatarUrl = user?.profile_pic || '/default-avatar.png'
   const displayName = user?.name || 'User'
 
@@ -62,15 +143,78 @@ const Navbar = () => {
         >
           {user ? (
             <div className="flex items-center gap-5 cursor-pointer">
-              {/* Notification bell */}
-              <button className="relative w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-[#EFEEEB] transition-colors">
-                <img
-                  src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Bell_light.svg"
-                  alt="bell"
-                  className="w-5 h-5"
-                />
-                <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
-              </button>
+              {/* 🔔 Notification */}
+              <div className="relative" ref={notificationRef}>
+                <button
+                  className="relative cursor-pointer w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-[#EFEEEB] transition-colors"
+                  onClick={handleNotificationClick}
+                >
+                  <img
+                    src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Bell_light.svg"
+                    alt="bell"
+                    className="w-5 h-5"
+                  />
+                  {hasUnread && (
+                    <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+                  )}
+                </button>
+
+                {/* 🔔 Notification Dropdown */}
+                {notificationOpen && (
+                  <div className="absolute right-0 top-14 w-[400px] bg-white shadow-lg rounded-xl border border-gray-200 z-[9999] max-h-[500px] overflow-hidden flex flex-col">
+                    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                      {user.role === 'admin' && (
+                        <button
+                          onClick={handleViewAllNotifications}
+                          className="text-sm text-blue-600 hover:underline"
+                        >
+                          View all
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="overflow-y-auto flex-1">
+                      {notifications.length === 0 ? (
+                        <div className="p-6 text-center text-gray-500">
+                          <p>No notifications</p>
+                        </div>
+                      ) : (
+                        notifications.slice(0, 2).map((notification) => (
+                          <div
+                            key={notification.id}
+                            onClick={() => handleViewPost(notification.post_id)}
+                            className="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 transition-colors"
+                          >
+                            <div className="flex gap-3">
+                              <img
+                                src={
+                                  notification.user?.profile_pic ||
+                                  `https://api.dicebear.com/7.x/avataaars/svg?seed=${
+                                    notification.user?.name || 'unknown'
+                                  }`
+                                }
+                                alt={notification.user?.name}
+                                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm text-gray-900">
+                                  <span className="font-semibold">
+                                    {notification.user?.name || 'Unknown User'}
+                                  </span>{' '}
+                                  commented on an article you commented on.
+                                </p>
+                                <p className="text-xs text-[#F2B68C] mt-1">
+                                  {getTimeAgo(notification.created_at)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
               <div
                 className="flex  gap-5 items-center "
                 onClick={() => setMenuOpen((v) => !v)}
@@ -195,13 +339,71 @@ const Navbar = () => {
                         {displayName}
                       </span>
                     </div>
-                    <button className="relative">
-                      <img
-                        src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Bell_light.svg"
-                        alt="bell"
-                      />
-                      <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
-                    </button>
+                    {/* 🔔 Notification */}
+                    <div className="relative" ref={notificationRef}>
+                      <button
+                        className="relative w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-[#EFEEEB] transition-colors"
+                        onClick={handleNotificationClick}
+                      >
+                        <img
+                          src="https://vrwgswqbjqgsqmbxhjuv.supabase.co/storage/v1/object/public/avatars/Bell_light.svg"
+                          alt="bell"
+                          className="w-5 h-5"
+                        />
+                        {hasUnread && (
+                          <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+                        )}
+                      </button>
+
+                      {/* 🔔 Notification Dropdown */}
+                      {notificationOpen && (
+                        <div className="absolute px-2 py-2 right-[-10px] top-14 min-w-[343px] bg-white shadow-lg rounded-xl border border-gray-200 z-[9999] max-h-[208px] overflow-hidden flex flex-col">
+                          <div className="overflow-y-auto ">
+                            {notifications.length === 0 ? (
+                              <div className="p-6 text-center text-gray-500">
+                                <p>No notifications</p>
+                              </div>
+                            ) : (
+                              notifications.slice(0, 2).map((notification) => (
+                                <div
+                                  key={notification.id}
+                                  onClick={() =>
+                                    handleViewPost(notification.post_id)
+                                  }
+                                  className="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 transition-colors"
+                                >
+                                  <div className="flex gap-3">
+                                    <img
+                                      src={
+                                        notification.user?.profile_pic ||
+                                        `https://api.dicebear.com/7.x/avataaars/svg?seed=${
+                                          notification.user?.name || 'unknown'
+                                        }`
+                                      }
+                                      alt={notification.user?.name}
+                                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm text-gray-900">
+                                        <span className="font-semibold">
+                                          {notification.user?.name ||
+                                            'Unknown User'}
+                                        </span>{' '}
+                                        commented on an article you commented
+                                        on.
+                                      </p>
+                                      <p className="text-xs text-[#F2B68C] mt-1">
+                                        {getTimeAgo(notification.created_at)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <Link

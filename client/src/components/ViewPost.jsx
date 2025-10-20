@@ -22,6 +22,7 @@ import {
 } from '@/services/commentService'
 import { toast } from 'react-toast'
 
+
 export const ViewPost = () => {
   const { postid } = useParams()
   const [post, setPost] = useState(null)
@@ -66,6 +67,27 @@ export const ViewPost = () => {
 
     fetchData()
   }, [postid])
+
+  // ✅ NEW: Auto scroll to comments section when hash is #comments
+  useEffect(() => {
+    if (location.hash === '#comments' && !loading) {
+      // รอให้ DOM render เสร็จก่อน
+      setTimeout(() => {
+        const commentsSection = document.getElementById('comments')
+        if (commentsSection) {
+          commentsSection.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            // เพิ่ม offset เล็กน้อยเพื่อไม่ให้ติดขอบบน
+          })
+          // ถ้าต้องการ offset มากกว่านี้ ใช้วิธีนี้แทน:
+          // const yOffset = -20; 
+          // const y = commentsSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          // window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      }, 300) // เพิ่มเวลารอให้ content โหลดเสร็จ
+    }
+  }, [location.hash, loading]) // เพิ่ม loading เป็น dependency
 
   useEffect(() => {
     // overflow control for dialog
@@ -345,7 +367,8 @@ export const ViewPost = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col w-full gap-3 ">
+                {/* ✅ NEW: Added id="comments" here for scroll target */}
+                <div id="comments" className="flex flex-col w-full gap-3 scroll-mt-20">
                   <Label htmlFor="message">Comment</Label>
                   <Textarea
                     placeholder={

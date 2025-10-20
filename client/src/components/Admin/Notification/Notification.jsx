@@ -1,10 +1,20 @@
+//Admin/Notification/Notification.jsx
 import { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import SideBar from "../SideBar";
 import { getNotifications } from "@/services/commentService";
 
 const CommentNotification = ({ notification }) => {
   const { user, post, comment_text, created_at } = notification;
+  const navigate = useNavigate();
+
+  const handleViewPost = () => {
+    if (post?.id) {
+      // Navigate to post detail page with comment section hash
+      navigate(`/post/${post.id}#comments`);
+    }
+  };
 
   const getTimeAgo = (timestamp) => {
     const now = new Date();
@@ -61,6 +71,7 @@ const CommentNotification = ({ notification }) => {
           </div>
 
           <button
+            onClick={handleViewPost}
             className="text-blue-600 hover:underline text-sm font-medium flex-shrink-0"
             title="View post"
           >
