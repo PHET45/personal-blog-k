@@ -71,7 +71,7 @@ const ArticleSection = () => {
       </div>
 
       {/* Desktop Filter */}
-      <div className="hidden md:flex items-center justify-between w-[1200px] mx-auto p-4 px-16 rounded-lg bg-[#EFEEEB] shadow-sm">
+      <div className="hidden md:flex items-center justify-between w-full lg:max-w-[1200px] mx-auto p-4 px-16 rounded-lg bg-[#EFEEEB] shadow-sm">
         <div className="flex items-center gap-3 flex-1 max-w-[538px] mr-4">
           <button
             onClick={() => {
