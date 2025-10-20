@@ -128,7 +128,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="flex justify-between items-center h-[80px] lg:px-88 px-20 border-b border-gray-200 bg-[#F9F8F6] ">
+      <nav className="flex justify-between items-center h-[80px] lg:px-88 px-20 border-b border-gray-200 min-w-[240px] bg-[#F9F8F6] ">
         {/* Logo */}
         <div>
           <Link to="/">
@@ -138,11 +138,11 @@ const Navbar = () => {
 
         {/* Right side - Desktop */}
         <div
-          className="hidden md:flex items-center gap-6 relative"
+          className="hidden cursor-pointer   md:flex items-center gap-6 relative"
           ref={dropdownRef}
         >
           {user ? (
-            <div className="flex items-center gap-5 ">
+            <div className="flex items-center gap-7 ">
               {/* 🔔 Notification */}
               <div className="relative" ref={notificationRef}>
                 <button
