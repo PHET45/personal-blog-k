@@ -51,7 +51,7 @@ const AIChatModal = () => {
       {/* ปุ่ม floating */}
       <button
         onClick={toggleOpen}
-        className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-50 hover:bg-blue-700"
+        className="fixed bottom-4 cursor-pointer right-4 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-50 hover:bg-blue-700"
       >
         💬
       </button>
