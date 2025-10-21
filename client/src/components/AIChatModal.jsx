@@ -1,11 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { askAI } from '@/services/blogService.js'
+
+const STORAGE_KEY = 'ai_chat_history'
 
 const AIChatModal = () => {
   const [open, setOpen] = useState(false)
   const [question, setQuestion] = useState('')
-  const [conversation, setConversation] = useState([]) // เก็บ history
+  
+  // Lazy init conversation จาก localStorage
+  const [conversation, setConversation] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    return saved ? JSON.parse(saved) : []
+  })
+
   const [loading, setLoading] = useState(false)
+  const chatEndRef = useRef(null)
 
   const toggleOpen = () => setOpen(!open)
 
@@ -14,27 +23,32 @@ const AIChatModal = () => {
     setLoading(true)
     try {
       const res = await askAI(question)
-
-      // เก็บ history
-      setConversation((prev) => [
-        ...prev,
-        { question, answer: res.answer }
-      ])
-
+      const newEntry = { question, answer: res.answer }
+      setConversation((prev) => [...prev, newEntry])
       setQuestion('')
     } catch (err) {
-      setConversation((prev) => [
-        ...prev,
-        { question, answer: `❌ Error: ${err.message}` }
-      ])
+      const newEntry = { question, answer: `❌ Error: ${err.message}` }
+      setConversation((prev) => [...prev, newEntry])
     } finally {
       setLoading(false)
     }
   }
 
+  // scroll ลงข้อความล่าสุด
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [conversation, open])
+
+  // update localStorage ทุกครั้ง conversation เปลี่ยน
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(conversation))
+  }, [conversation])
+
   return (
     <>
-      {/* ปุ่มเปิด/ปิด floating */}
+      {/* ปุ่ม floating */}
       <button
         onClick={toggleOpen}
         className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-50 hover:bg-blue-700"
@@ -60,6 +74,7 @@ const AIChatModal = () => {
                 <div className="bg-gray-100 p-2 rounded">{item.answer}</div>
               </div>
             ))}
+            <div ref={chatEndRef} />
           </div>
 
           {/* Input */}
@@ -70,6 +85,7 @@ const AIChatModal = () => {
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="ถาม AI..."
               className="flex-1 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300"
+              onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
             />
             <button
               onClick={handleAsk}
