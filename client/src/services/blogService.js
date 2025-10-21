@@ -216,3 +216,13 @@ export const uploadImage = async (base64Image) => {
     throw error
   }
 }
+
+export const askAI = async (question) => {
+  try {
+    const res = await axios.post(`${API_URL}/api/ai/ask`, { question })
+    return res.data
+  } catch (error) {
+    console.error('Error asking AI:', error.response?.data || error.message)
+    throw new Error(error.response?.data?.error || 'AI request failed')
+  }
+}
