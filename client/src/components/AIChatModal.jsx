@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { askAI } from '@/services/blogService.js'
+import { MessageCircle, X, Send } from 'lucide-react' // ✅ เพิ่มไอคอนหรูๆ
 
 const STORAGE_KEY = 'ai_chat_history'
 
 const AIChatModal = () => {
   const [open, setOpen] = useState(false)
   const [question, setQuestion] = useState('')
-  
-  // Lazy init conversation จาก localStorage
   const [conversation, setConversation] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
     return saved ? JSON.parse(saved) : []
   })
-
   const [loading, setLoading] = useState(false)
   const chatEndRef = useRef(null)
 
@@ -34,65 +32,83 @@ const AIChatModal = () => {
     }
   }
 
-  // scroll ลงข้อความล่าสุด
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [conversation, open])
 
-  // update localStorage ทุกครั้ง conversation เปลี่ยน
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(conversation))
   }, [conversation])
 
   return (
     <>
-      {/* ปุ่ม floating */}
+      {/* Floating Button */}
       <button
         onClick={toggleOpen}
-        className="fixed bottom-4 cursor-pointer right-4 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-50 hover:bg-blue-700"
+        className="fixed bottom-5 cursor-pointer right-5 bg-black text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl z-50 hover:scale-110 transition-transform duration-300"
+        title="AI Assistant"
       >
-        💬
+        <MessageCircle size={24} />
       </button>
 
       {/* Modal */}
       {open && (
-        <div className="fixed bottom-20 right-4 w-80 bg-white rounded-xl shadow-xl p-4 z-50 flex flex-col">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-lg">AI Assistant</h3>
-            <button onClick={toggleOpen} className="text-gray-500 cursor-pointer  hover:text-gray-700">
-              ✖
+        <div className="fixed bottom-24 right-6 w-96 bg-neutral-900 text-white rounded-2xl shadow-2xl border border-neutral-700 z-50 flex flex-col overflow-hidden backdrop-blur-md">
+          {/* Header */}
+          <div className="flex justify-between items-center px-4 py-3 border-b border-neutral-700 bg-neutral-800/80">
+            <h3 className="font-semibold text-lg tracking-wide">AI Assistant</h3>
+            <button
+              onClick={toggleOpen}
+              className="text-neutral-400 cursor-pointer hover:text-white transition"
+              title="Close"
+            >
+              <X size={20} />
             </button>
           </div>
 
-          {/* Conversation history */}
-          <div className="flex flex-col gap-2 flex-1 max-h-64 overflow-y-auto mb-2">
-            {conversation.map((item, index) => (
-              <div key={index} className="space-y-1">
-                <div className="bg-blue-100 p-2 rounded">💡 {item.question}</div>
-                <div className="bg-gray-100 p-2 rounded">{item.answer}</div>
+          {/* Conversation */}
+          <div className="flex flex-col gap-3 px-4 py-3 flex-1 max-h-80 overflow-y-auto custom-scroll">
+            {conversation.length === 0 ? (
+              <div className="text-center text-neutral-500 text-sm italic">
+                💬 เริ่มคุยกับผู้ช่วย AI ได้เลย
               </div>
-            ))}
+            ) : (
+              conversation.map((item, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="self-end bg-neutral-100 text-black p-2 rounded-xl max-w-[80%] ml-auto shadow-sm">
+                    {item.question}
+                  </div>
+                  <div className="self-start bg-neutral-800 p-2 rounded-xl max-w-[85%] shadow-sm text-neutral-100">
+                    {item.answer}
+                  </div>
+                </div>
+              ))
+            )}
             <div ref={chatEndRef} />
           </div>
 
           {/* Input */}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2 p-3 border-t border-neutral-700 bg-neutral-900">
             <input
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder="ถาม AI..."
-              className="flex-1 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300"
+              placeholder="พิมพ์คำถาม..."
+              className="flex-1 bg-neutral-800 text-white placeholder-neutral-500 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white/30 transition"
               onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
             />
             <button
               onClick={handleAsk}
-              className="bg-blue-600 text-white px-3 py-1 cursor-pointer rounded hover:bg-blue-700"
               disabled={loading}
+              className={`p-2 rounded-lg transition cursor-pointer ${
+                loading
+                  ? 'bg-neutral-700 text-neutral-400'
+                  : 'bg-white text-black hover:bg-neutral-200'
+              }`}
             >
-              {loading ? '...' : 'ส่ง'}
+              {loading ? '...' : <Send size={18} />}
             </button>
           </div>
         </div>

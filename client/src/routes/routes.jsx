@@ -15,6 +15,7 @@ import EditCategoryPage from '@/page/Admin/CategoryPage/EditCategoryPage'
 import AdminProfilePage from '@/page/Admin/ProfilePage/AdminProfilePage'
 import AdminResetPasswordPage from '@/page/Admin/AdminResetPasswordPage/AdminResetPasswordPage'
 import NotiPage from '@/page/Admin/NotificationPage/NotiPage'
+import AIChatModal from '@/components/AIChatModal'
 export default function AppRoutes() {
   return useRoutes([
     { path: '/', element: <HomePage /> },
